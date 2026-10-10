@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-P+kYjftVa14AVfLR9vpNOpPTn4EEmVffti10xaz5Hf4='; style-src 'unsafe-inline'; img-src 'self'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Overload · Strava</title>
+<style>
+  :root { --bg: #000; --card: #1C1C1E; --text: #fff; --text-2: #8E8E93; --ok: #30D158; --bad: #FF453A; --strava: #FC4C02; color-scheme: dark; }
+  @media (prefers-color-scheme: light) { :root { --bg: #F2F2F7; --card: #fff; --text: #000; --text-2: #6C6C70; --ok: #248A3D; --bad: #D70015; color-scheme: light; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--text);
+    font: 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom)); }
+  main { width: 100%; max-width: 420px; background: var(--card); border-radius: 22px; padding: 32px 24px; text-align: center; }
+  .ic { font-size: 54px; line-height: 1; }
+  h1 { font-size: 24px; margin: 14px 0 8px; letter-spacing: -.3px; }
+  p { color: var(--text-2); margin: 0 0 12px; }
+  ol { text-align: left; color: var(--text-2); padding-left: 22px; margin: 16px 0 0; }
+  li { margin: 6px 0; }
+  b { color: var(--text); }
+  .pw { margin-top: 22px; font-size: 13px; color: var(--strava); font-weight: 600; letter-spacing: .2px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="ic" id="ic">✅</div>
+  <h1 id="t">Strava ist verbunden</h1>
+  <p id="s">Du kannst dieses Fenster jetzt schließen.</p>
+  <ol id="steps">
+    <li>Tippe oben auf <b>Fertig</b> oder schließ dieses Fenster.</li>
+    <li>Wechsle zurück zur <b>Overload</b>-App.</li>
+    <li>Deine Aktivitäten der letzten 14 Tage werden automatisch übernommen.</li>
+  </ol>
+  <div class="pw">Powered by Strava</div>
+</main>
+<script>
+  var r = new URLSearchParams(location.search).get('r') || 'ok';
+  var M = {
+    denied: ['✋', 'Nicht verbunden', 'Du hast die Verbindung bei Strava abgebrochen. Versuch es in Overload einfach nochmal.'],
+    scope: ['⚠️', 'Zugriff fehlt', 'Overload braucht die Freigabe „Deine Aktivitäten ansehen“. Versuch es nochmal und lass das Häkchen bei den Aktivitäten an.'],
+    expired: ['⏱️', 'Link abgelaufen', 'Die Anmeldung hat zu lange gedauert. Öffne in Overload nochmal „Mit Strava verbinden“.'],
+    error: ['⚠️', 'Hat nicht geklappt', 'Strava oder der Overload-Server hat gerade nicht geantwortet. Versuch es später nochmal.']
+  };
+  if (M[r]) {
+    document.getElementById('ic').textContent = M[r][0];
+    document.getElementById('t').textContent = M[r][1];
+    document.getElementById('s').textContent = M[r][2];
+    document.getElementById('steps').remove();
+  }
+</script>
+</body>
+</html>
