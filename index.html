@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-48sDOr5AZe5xtCKlx9rrynwj7HRi13mpGwdjHk/922E=' 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-m728c9p4ARfy2tMElhyGy2ckObmNhWtBiyzHUGiI4mk='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/fx0lVxUhCx+AnjuBOZEAENHu4Gs5JfG7JDUwmXS5OQ=' 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -27,6 +27,7 @@
     var mode = t.mode === 'auto' ? (mq && mq.matches ? 'light' : 'dark') : t.mode === 'light' || t.mode === 'graphite' ? t.mode : 'dark';
     var a = ACC[t.accent] || ACC.lime, light = mode === 'light', c = light ? a[2] : a[1], r = document.documentElement;
     r.setAttribute('data-theme', mode);
+    r.setAttribute('data-style', t.style === 'classic' ? 'classic' : 'new');
     r.style.setProperty('--lime', c);
     r.style.setProperty('--lime-dim', rgba(c, light ? 0.14 : 0.16));
     r.style.setProperty('--on-accent', light ? a[4] : a[3]);
@@ -1266,6 +1267,88 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 .rf-btns button{width:112px;height:54px;border-radius:16px;background:var(--surface-2);font-family:var(--num);font-size:18px;font-weight:800}
 .rf-skip{width:100%;max-width:340px;margin:0}
 .rb-exp{display:flex;flex:1;align-items:center;gap:8px;min-width:0;text-align:left}
+
+/* ===== Neuer Stil (settings.theme.style = "new", Standard seit 12.10.2026). Der klassische Stil bleibt ohne diese Regeln unverändert. ===== */
+.sheet .choice{background:var(--surface-2)}
+/* Schwebende Tab-Leiste: runde Pille, aktiver Tab klappt mit Namen aus */
+:root[data-style="new"] #app{padding-bottom:132px}
+:root[data-style="new"] body.wk #app,:root[data-style="new"] body.chat #app{padding-bottom:48px}
+:root[data-style="new"] .tabbar{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:536px;margin:0 auto;padding:0;border:1px solid var(--sep);border-radius:32px;background:color-mix(in srgb,var(--surface) 92%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+:root[data-style="new"] .tabbar-inner{max-width:none;gap:2px;padding:6px;align-items:center}
+:root[data-style="new"] .tab{flex:none;width:52px;height:52px;padding:0;border-radius:26px;flex-direction:row;justify-content:center;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-2)}
+:root[data-style="new"] .tab span{display:none}
+:root[data-style="new"] .tab svg{width:24px;height:24px}
+:root[data-style="new"] .tab.on{flex:1;width:auto;background:var(--lime);color:var(--on-accent)}
+:root[data-style="new"] .tab.on span{display:inline;white-space:nowrap}
+/* Runde, ruhige Flächen */
+:root[data-style="new"] .group,:root[data-style="new"] .hc{border-radius:22px}
+:root[data-style="new"] .week,:root[data-style="new"] .goal,:root[data-style="new"] .wt-today,:root[data-style="new"] .hring,:root[data-style="new"] .verdict{border-radius:28px}
+:root[data-style="new"] .ex,:root[data-style="new"] .sess,:root[data-style="new"] .pw-card,:root[data-style="new"] .focus,:root[data-style="new"] .meal,:root[data-style="new"] .tile,:root[data-style="new"] .demo-card,:root[data-style="new"] .streak{border-radius:24px}
+:root[data-style="new"] .focus{border-radius:28px}
+:root[data-style="new"] .sheet{border-radius:28px 28px 0 0}
+:root[data-style="new"] .btn-primary,:root[data-style="new"] .btn-secondary,:root[data-style="new"] .btn-danger{border-radius:18px}
+:root[data-style="new"] .field{border-radius:14px}
+:root[data-style="new"] .lt h1{font-weight:700;letter-spacing:-.02em}
+/* Gym: „Als Nächstes“ als große Akzentkarte */
+:root[data-style="new"] .next{background:var(--lime);color:var(--on-accent);border-radius:28px;padding:22px 20px 20px}
+:root[data-style="new"] .next h2{color:var(--on-accent)}
+:root[data-style="new"] .next .muted{color:color-mix(in srgb,var(--on-accent) 70%,transparent)}
+:root[data-style="new"] .next .plan li{border-top-color:color-mix(in srgb,var(--on-accent) 18%,transparent)}
+:root[data-style="new"] .next .chip{background:color-mix(in srgb,var(--on-accent) 12%,transparent);color:var(--on-accent)}
+:root[data-style="new"] .next .legend span{color:color-mix(in srgb,var(--on-accent) 70%,transparent)}
+:root[data-style="new"] .next .legend i{background:var(--on-accent)}
+:root[data-style="new"] .next .btn-primary{background:var(--on-accent);color:var(--lime)}
+/* Laufen: nächster Lauf als Akzentkarte */
+.run-hero{margin-bottom:12px;padding:20px;border-radius:28px;background:var(--lime);color:var(--on-accent)}
+.run-hero .rh-lbl{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.7}
+.run-hero h2{margin-top:3px;font-size:28px;font-weight:700;letter-spacing:-.02em}
+.run-hero .rh-sub{margin-top:2px;font-size:15px;opacity:.78}
+.rh-btns{display:flex;gap:10px;margin-top:14px}
+.rh-btns .btn-primary{background:var(--on-accent);color:var(--lime)}
+.rh-btns .btn-secondary{background:color-mix(in srgb,var(--on-accent) 14%,transparent);color:var(--on-accent)}
+/* Heute (neu): Schnellaktionen, Zeitleiste „Dein Tag“, Kennzahlen */
+.hz-lt .sec-row{align-items:center}
+.hz-streak{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;background:var(--surface);font-family:var(--num);font-size:15px;font-weight:700}
+.hz-streak svg{width:16px;height:16px;color:var(--lime);fill:var(--lime)}
+.hz-qa{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px;margin:0 0 12px}
+.hz-qa button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:76px;border-radius:20px;background:var(--surface);font-size:12px;font-weight:600}
+.hz-qa button:active{background:var(--surface-2)}
+.hz-qa svg{width:24px;height:24px;color:var(--lime)}
+.hz-card{margin-top:12px;padding:18px 20px 12px;border-radius:28px;background:var(--surface)}
+.hz-card-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.hz-card-h b{font-size:17px}
+.hz-card-h span{font-size:13px;color:var(--text-2)}
+.hz-tl{position:relative}
+.hz-tl::before{content:"";position:absolute;left:13px;top:14px;bottom:30px;width:2px;background:var(--surface-2)}
+.hz-it{position:relative;display:flex;gap:14px;min-height:56px}
+.hz-dot{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--surface-3);background:var(--surface)}
+.hz-it.done .hz-dot{background:var(--lime);border-color:var(--lime);color:var(--on-accent)}
+.hz-it.done .hz-dot svg{width:14px;height:14px}
+.hz-it.nxt{margin:2px 0 10px}
+.hz-it.nxt .hz-dot{border:3px solid var(--lime)}
+.hz-it.nxt .hz-dot i{width:8px;height:8px;border-radius:50%;background:var(--lime)}
+.hz-t{flex:1;min-width:0;padding-top:3px}
+.hz-t b{display:block;font-size:16px;font-weight:600}
+.hz-t>span{display:block;font-size:13px;color:var(--text-2)}
+.hz-t .kbar{margin-top:7px;height:5px}
+.hz-r{padding-top:3px;text-align:right;font-family:var(--num);font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.hz-r small{display:block;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text-2)}
+.hz-add{flex:none;width:44px;height:44px;margin-top:-8px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--lime)}
+.hz-add svg{width:20px;height:20px}
+.hz-nx{flex:1;min-width:0;margin-top:-6px;padding:12px 14px 14px;border-radius:20px;background:var(--lime-dim)}
+.hz-lbl{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--lime)}
+.hz-nx h3{margin-top:2px;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.hz-sub{font-size:14px;color:var(--text-2)}
+.hz-btns{display:flex;gap:8px;margin-top:12px}
+.hz-btns .btn-primary,.hz-btns .btn-secondary{height:48px;font-size:16px;border-radius:16px}
+.hz-btns .btn-secondary{width:auto;flex:none;padding:0 16px;background:var(--surface-2)}
+.hz-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.hz-stat{padding:12px 14px;border-radius:22px;background:var(--surface);text-align:left}
+.hz-stat span{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2)}
+.hz-stat b{display:block;margin-top:3px;font-family:var(--num);font-size:20px;font-weight:700;line-height:1.15}
+.hz-stat b.sm{font-size:15px}
+.hz-stat small{display:block;font-size:12px;color:var(--text-2)}
+.hz-more{margin-top:12px}
 </style>
 </head>
 <body>
@@ -1285,8 +1368,12 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.09.2';
+const APP_VERSION = '2026.10.12.1';
 const PATCH_NOTES = [
+  {v: '2026.10.12.1', date: 'Update vom 12. Oktober 2026', items: [
+    ['✨', 'Neues Design', 'Overload sieht jetzt ruhiger und runder aus: Die Tab-Leiste schwebt als Pille am unteren Rand, der aktive Tab klappt mit seinem Namen aus. „Als Nächstes“ im Gym und im Laufen-Tab ist eine große Akzentkarte. Gefällt dir der alte Look besser, wechselst du unter Mehr → Erscheinungsbild → Stil jederzeit zurück zu „Klassisch“. Deine Daten bleiben davon unberührt.'],
+    ['🗓️', 'Heute mit Tagesplan', 'Heute zeigt deinen Tag jetzt als Zeitleiste: was schon erledigt ist (Mahlzeiten, Training, Schlaf), was als Nächstes ansteht und was noch offen ist. Darüber sitzen Schnellaktionen für Wasser, Essen, Gewicht und Aktivität. Seltenere Karten wie Wochenbericht, Freunde und Rezeptidee sind weiter unten gebündelt.'],
+  ]},
   {v: '2026.10.09.2', date: 'Update vom 9. Oktober 2026, Teil 2', items: [
     ['🔒', 'Sicherheits-Update', 'Overload wurde auf Schwachstellen geprüft. Die App lässt jetzt nur noch ihren eigenen Code laufen, Daten von Freunden und aus Freigaben werden streng geprüft, bevor sie angezeigt werden, und neue Geräte bekommen eine sicherere ID. Du musst nichts tun, deine Daten bleiben unverändert.'],
   ]},
@@ -1707,7 +1794,8 @@ function migrate(d, fresh) {
   if (!Array.isArray(d.settings.recipeFavs)) d.settings.recipeFavs = [];
   // Erscheinungsbild: Modus und Akzentfarbe
   const th = d.settings.theme && typeof d.settings.theme === 'object' ? d.settings.theme : {};
-  d.settings.theme = {mode: ['dark', 'graphite', 'light', 'auto'].includes(th.mode) ? th.mode : 'dark', accent: window.OVL_THEME && OVL_THEME.ACC[th.accent] ? th.accent : 'lime'};
+  // style: 'new' (Standard seit 12.10.2026) oder 'classic' (der bisherige Look, bleibt immer wählbar)
+  d.settings.theme = {mode: ['dark', 'graphite', 'light', 'auto'].includes(th.mode) ? th.mode : 'dark', accent: window.OVL_THEME && OVL_THEME.ACC[th.accent] ? th.accent : 'lime', style: th.style === 'classic' ? 'classic' : 'new'};
   d.dishes = Array.isArray(d.dishes) ? d.dishes : [];
   // Laufplan: Der feste Halbmarathon-Plan (Legacy) bleibt für bestehende Daten, neue Nutzer erstellen ihren Plan per Fragebogen
   if (d.runPlan === undefined) d.runPlan = !fresh && d.settings.showRun ? {legacy: true} : null;
@@ -1827,16 +1915,17 @@ function go(v) { view = v; render(); window.scrollTo(0, 0); rememberView(); }
 
 /* Tabbar: Heute, Gym, Laufen, Ernährung (Essen/Rezepte/Gewicht), Einstellungen (mit Verlauf und Übungen) */
 const TAB_OF = {feed: 'today', shared: 'more', tri: 'run', ideas: 'more', awards: 'home', admin: 'more', dishes: 'body', today: 'today', home: 'home', workout: 'home', gymob: 'home', coach: 'more', run: 'run', food: 'body', recipes: 'body', weight: 'body', more: 'more', history: 'more', library: 'more'};
+const newStyle = () => db.settings.theme.style !== 'classic';
 const runOn = () => !!(db.settings.unlockRun && db.settings.showRun);
 const foodOn = () => !!db.settings.showFood;
 let tabbarKey = null, lastBody = null;
 function renderTabbar() {
   const body = foodOn() ? lastBody || 'food' : 'weight';
   const endOn = runOn() || triOn(), endV = runOn() && triOn() ? lastEnd : runOn() ? 'run' : 'tri';
-  const key = [runOn(), triOn(), endV, foodOn(), body].join();
+  const key = [runOn(), triOn(), endV, foodOn(), body, newStyle()].join();
   if (key === tabbarKey) return;
   tabbarKey = key;
-  const tab = (v, t, ic, lbl) => `<button class="tab" data-act="tab" data-v="${v}" data-tab="${t}">${ic}<span>${lbl}</span></button>`;
+  const tab = (v, t, ic, lbl) => `<button class="tab" data-act="tab" data-v="${v}" data-tab="${t}" aria-label="${lbl}">${ic}<span>${lbl}</span></button>`;
   $('#tabbar').innerHTML = `<div class="tabbar-inner">${tab('today', 'today', ICON.today, 'Heute')}${tab('home', 'home', ICON.train, 'Gym')}${endOn ? tab(endV, 'run', ICON.run, runOn() && triOn() ? 'Ausdauer' : runOn() ? 'Laufen' : 'Triathlon') : ''}`
     + `${foodOn() ? tab(body, 'body', ICON.food, 'Ernährung') : tab('weight', 'body', ICON.scale, 'Gewicht')}${tab('more', 'more', ICON.gear, 'Einstellungen')}</div>`;
 }
@@ -1976,8 +2065,100 @@ function ringsSVG(list, size) {
     return `<circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${x.c}" stroke-opacity=".2" stroke-width="${sw}"/><circle class="ring-fg" cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${x.c}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${(c * (1 - p)).toFixed(2)}" transform="rotate(-90 ${m} ${m})"/>`;
   }).join('') + `</svg>`;
 }
+/* Neuer Stil: Heute mit Schnellaktionen, „Heute wichtig“ und der Zeitleiste „Dein Tag“ (weniger Karten, klare Reihenfolge) */
+function dayTimeline(cfg) {
+  const on = id => !cfg.hidden.includes(id) && homeAvail(id);
+  const t0 = new Date().setHours(0, 0, 0, 0), k = dateKey(Date.now()), done = [], heroes = [], todo = [];
+  const clock = ts => new Date(ts).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
+  const goal = db.settings.kcalGoal, mg = db.settings.macroGoal;
+  if (on('gym')) {
+    const S = db.sessions.filter(s => !s.demo && inDay(s.date, t0));
+    S.forEach(s => done.push({ts: s.date, t: s.title || 'Training', s: `${sessSets(s)} Sätze`, r: s.end ? `${Math.max(1, Math.round((s.end - s.date) / 60000))}` : '', rs: s.end ? 'min' : '', sub2: clock(s.date)}));
+    if (!db.active && !S.length && !needGymSetup() && !pauseOn('gym')) {
+      const nx = nextTemplate();
+      if (nx) heroes.push({lbl: 'Als Nächstes · Gym', t: nx.name, s: `${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ca. ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min`, btn: 'Training starten', act: `data-act="start" data-t="${esc(nx.id)}"`});
+    }
+  }
+  if (on('run') && !pauseOn('run')) {
+    const P = curPlan();
+    if (P) {
+      const wi = planWeekIndex(P, Date.now()), td = dow0(), W = wi >= 0 && wi < P.weeks.length ? P.weeks[wi] : null, s = W && W.s.find(x => x.dow === td);
+      if (s) {
+        const key = slotKey(P, wi, td), rd = db.runs.find(r => r.slot === key), nm = s.type === 'race' ? s.text : `${RTYPE[s.type]}, ${s.text}`;
+        if (rd) done.push({ts: rd.date, t: 'Laufen', s: runLine(rd), r: String(rd.min), rs: 'min', sub2: clock(rd.date)});
+        else if (!heroes.length) heroes.push({lbl: 'Als Nächstes · Laufen', t: RTYPE[s.type] || 'Lauf', s: s.text, btn: 'Lauf eintragen', act: `data-act="logRun" data-slot="${key}"`, btn2: liveVisible() ? {n: 'Live-Lauf', act: 'data-act="liveOpen"'} : null});
+        else todo.push({t: RTYPE[s.type] || 'Lauf', s: s.text, add: `data-act="logRun" data-slot="${key}"`, lbl: 'Lauf eintragen'});
+      }
+    }
+  }
+  db.xact.filter(x => inDay(x.date, t0)).forEach(x => done.push({ts: x.date, t: x.sport || 'Aktivität', s: `${x.min} min`, r: String(x.min), rs: 'min', sub2: clock(x.date)}));
+  if (triOn() && on('run')) db.tri.filter(x => inDay(x.date, t0)).forEach(x => done.push({ts: x.date, t: TTYPE[x.sport] || 'Triathlon', s: `${x.min} min`, r: String(x.min), rs: 'min', sub2: clock(x.date)}));
+  if (on('sleep')) {
+    const sl = (db.daily[k] || {}).s;
+    if (sl) done.push({ts: t0, t: 'Schlaf', s: 'Letzte Nacht', r: fmtN(sl), rs: 'h', sub2: ''});
+    else todo.unshift({t: 'Schlaf eintragen', s: 'Letzte Nacht noch nicht eingetragen', add: 'data-act="sleepSheet"', lbl: 'Schlaf eintragen'});
+  }
+  if (on('food')) {
+    SLOTS.forEach(([sl, nm]) => {
+      const L = db.meals.filter(m => dateKey(m.date) === k && m.slot === sl);
+      if (!L.length) return;
+      done.push({ts: Math.min(...L.map(m => m.date)), t: nm, s: L.slice(0, 3).map(m => m.name || 'Mahlzeit').join(', ') + (L.length > 3 ? ' …' : ''), r: fmtInt(mealSum(L).kcal), rs: 'kcal', sub2: clock(Math.min(...L.map(m => m.date)))});
+    });
+    const ns = nextMealSlot();
+    if (ns !== 'snack') {
+      const s = mealSum(db.meals.filter(m => dateKey(m.date) === k)), rem = mg ? Math.round(mg.p - s.p) : 0;
+      todo.push({t: SLOT_NAME[ns], s: [goal ? `Richtwert ca. ${fmtInt(Math.round(goal * SLOT_META[ns].share / 10) * 10)} kcal` : '', rem > 0 ? `${fmtInt(rem)} g Protein fehlen` : ''].filter(Boolean).join(' · ') || 'Noch nichts eingetragen', add: `data-act="addFood" data-slot="${ns}"`, lbl: `${SLOT_NAME[ns]} eintragen`});
+    }
+  }
+  if (on('water')) {
+    const W = waterStatus(), full = W.total >= W.goal, l = v => fmtN(Math.round(v / 10) / 100);
+    const it = {t: 'Wasser', s: `${l(W.total)} von ${l(W.goal)} l`, p: Math.min(1, W.total / W.goal), add: 'data-act="waterAdd" data-ml="250"', lbl: '250 ml trinken'};
+    if (full) done.push({ts: t0 + 1, t: it.t, s: it.s, r: '✓', rs: '', sub2: ''}); else todo.push(it);
+  }
+  done.sort((a, b) => a.ts - b.ts);
+  return {done, heroes, todo};
+}
+function vTodayNew() {
+  const cfg = db.settings.home, avail = id => !cfg.hidden.includes(id) && homeAvail(id);
+  const st = foodOn() ? foodStreak().cur : 0, open = d => d.act || `data-act="tab" data-v="${d.go}"`;
+  let h = `<header class="lt hz-lt"><div class="sec-row"><p class="date">${todayLine()}</p>${st > 1 ? `<span class="hz-streak">${ICON.flame}${st}</span>` : ''}</div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
+  if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
+  h += movedBanner() + wxChip();
+  h += `<div class="hz-qa">`
+    + `<button data-act="waterAdd" data-ml="250">${ICON.drop}<span>+250 ml</span></button>`
+    + (foodOn() ? `<button data-act="addFood" data-slot="${nextMealSlot()}">${ICON.food}<span>Essen</span></button>` : '')
+    + `<button data-act="tab" data-v="weight">${ICON.scale}<span>Gewicht</span></button>`
+    + `<button data-act="xaOpen">${ICON.plus}<span>Aktivität</span></button></div>`;
+  h += adviceHTML(dayAdvice(), 1);
+  const T = dayTimeline(cfg), n = T.done.length + T.heroes.length + T.todo.length;
+  if (n) {
+    const dot = ICON.check, rhs = it => it.r ? `<div class="hz-r">${esc(it.r)}${it.rs ? `<small>${esc(it.rs)}</small>` : ''}</div>` : '';
+    h += `<section class="hz-card"><div class="hz-card-h"><b>Dein Tag</b><span>${T.done.length} von ${n} erledigt</span></div><div class="hz-tl">`
+      + T.done.map(it => `<div class="hz-it done"><span class="hz-dot">${dot}</span><div class="hz-t"><b>${esc(it.t)}</b><span>${esc(it.s)}${it.sub2 ? ` · ${it.sub2}` : ''}</span></div>${rhs(it)}</div>`).join('')
+      + T.heroes.map(it => `<div class="hz-it nxt"><span class="hz-dot"><i></i></span><div class="hz-nx"><p class="hz-lbl">${esc(it.lbl)}</p><h3>${esc(it.t)}</h3><p class="hz-sub">${esc(it.s)}</p><div class="hz-btns"><button class="btn-primary" ${it.act}>${esc(it.btn)}</button>${it.btn2 ? `<button class="btn-secondary" ${it.btn2.act}>${esc(it.btn2.n)}</button>` : ''}</div></div></div>`).join('')
+      + T.todo.map(it => `<div class="hz-it"><span class="hz-dot"></span><div class="hz-t"><b>${esc(it.t)}</b><span>${esc(it.s)}</span>${it.p != null ? `<div class="kbar sm"><i style="width:${(it.p * 100).toFixed(0)}%"></i></div>` : ''}</div><button class="hz-add" ${it.add} aria-label="${esc(it.lbl)}">${ICON.plus}</button></div>`).join('')
+      + `</div></section>`;
+  }
+  // Kennzahlen: Kalorien, Schlaf, Belastung (sonst Gewicht)
+  const tiles = [];
+  if (avail('food')) {
+    const s = mealSum(db.meals.filter(m => dateKey(m.date) === dateKey(Date.now()))), goal = db.settings.kcalGoal, left = goal ? goal - s.kcal : null;
+    tiles.push({l: 'Kalorien', v: goal ? fmtInt(Math.abs(left)) : fmtInt(s.kcal), s: goal ? (left >= 0 ? 'übrig' : 'drüber') : 'gegessen', go: 'food'});
+  }
+  if (avail('sleep')) { const d = homeData('sleep'); tiles.push({l: 'Schlaf', v: d.val === '–' ? '–' : `${d.val} h`, s: d.val === '–' ? 'offen' : 'letzte Nacht', act: d.act}); }
+  const L = avail('load') ? loadCard() : null;
+  if (L) tiles.push({l: 'Belastung', v: L.val, s: 'letzte 7 Tage', act: L.act});
+  else if (avail('weight')) { const d = homeData('weight'); tiles.push({l: 'Gewicht', v: d.val === '–' ? '–' : `${d.val} kg`, s: d.val === '–' ? 'keine Messung' : 'zuletzt', go: 'weight'}); }
+  if (tiles.length) h += `<div class="hz-stats">${tiles.map(t => `<button class="hz-stat" ${t.act || `data-act="tab" data-v="${t.go}"`}><span>${t.l}</span><b${String(t.v).length > 8 ? ' class="sm"' : ''}>${esc(String(t.v))}</b><small>${t.s}</small></button>`).join('')}</div>`;
+  // Seltenere Karten gebündelt
+  const rest = cfg.order.filter(id => ['report', 'feed', 'recipe', 'week'].includes(id) && avail(id)).map(homeData).filter(Boolean);
+  h += `<div class="group hz-more">${rest.map(d => `<button class="row" ${open(d)}><span class="t"><b>${esc(d.title)}</b>${d.text ? `<span>${esc(String(d.val))}</span>` : d.id === 'week' ? `<span>${esc(String(d.val))} ${esc(d.unit)}</span>` : ''}</span><span class="chev">${ICON.chev}</span></button>`).join('')}`
+    + `<button class="row" data-act="homeSettings"><span class="t"><b class="lime-t">Heute anpassen</b></span></button></div>`;
+  return h;
+}
 function vToday() {
-  const cfg = db.settings.home, ids = cfg.order.filter(id => !cfg.hidden.includes(id) && homeAvail(id)), D = ids.map(homeData).filter(Boolean);
+  if (newStyle()) return vTodayNew();
+  const cfg = db.settings.home, ids =cfg.order.filter(id => !cfg.hidden.includes(id) && homeAvail(id)), D = ids.map(homeData).filter(Boolean);
   let h = `<header class="lt"><div class="sec-row"><p class="date">${todayLine()}</p><button class="btn-text sm" data-act="homeSettings">Anpassen</button></div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
   if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
   h += movedBanner() + wxChip() + adviceHTML(dayAdvice(), 2);
@@ -2003,7 +2184,8 @@ const hintRows = () => `<div class="group">${HINTS.filter(([k]) => k !== 'review
 function openHomeSettings(keep) {
   const cfg = db.settings.home, st = HOME_STYLES.find(s => s[0] === cfg.style) || HOME_STYLES[0];
   openSheet(`<div class="sheet-h"><span></span><h2>Startseite</h2><button class="btn-text strong" data-act="closeSheet">Fertig</button></div>`
-    + `<label class="lbl">Darstellung</label><div class="seg">${HOME_STYLES.map(([v, n]) => `<button class="${cfg.style === v ? 'on' : ''}" data-act="homeStyle" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${st[2]}</p>`
+    + (newStyle() ? `<p class="hint">Im neuen Stil zeigt Heute deinen Tag als Zeitleiste. Hier schaltest du ein, was darin und darunter vorkommt. Karten, Ringe oder Kacheln gibt es im klassischen Stil (Mehr → Erscheinungsbild).</p>`
+      : `<label class="lbl">Darstellung</label><div class="seg">${HOME_STYLES.map(([v, n]) => `<button class="${cfg.style === v ? 'on' : ''}" data-act="homeStyle" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${st[2]}</p>`)
     + `<label class="lbl">Karten und Reihenfolge</label><div class="group">${cfg.order.map((id, i) => {
       const on = !cfg.hidden.includes(id), av = homeAvail(id);
       return `<div class="row"><span class="t"><b>${HOME_CARDS[id]}</b>${av ? '' : `<span>Bereich ${id === 'run' ? 'Laufen' : 'Kalorien'} ist ausgeschaltet</span>`}</span><span class="row-tools"><button class="mini" data-act="homeMove" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICON.up}</button><button class="mini" data-act="homeMove" data-i="${i}" data-d="1" ${i === cfg.order.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICON.down}</button><button class="sw-btn" data-act="homeToggle" data-id="${esc(id)}" role="switch" aria-checked="${on}" aria-label="${HOME_CARDS[id]} anzeigen"><span class="switch${on ? ' on' : ''}"></span></button></span></div>`;
@@ -2519,7 +2701,7 @@ function vMore() {
     + (adminPw() ? `<button class="row" data-act="tab" data-v="ideas"><span class="ic-box ai">${ICON.spark}</span><span class="t"><b>Ideen und Wochen-Zusammenfassung</b><span>${(() => { const k = dateKey(reviewWeek()), n = ideas.list ? ideasIn(weekStartOf(Date.now())).length : 0; return `${db.ideaWeeks[k] ? 'KI-Vorschläge für letzte Woche bereit' : 'Vorschläge der Nutzer und der KI'}${n ? ` · ${n} neu diese Woche` : ''}`; })()}</span></span><span class="chev">${ICON.chev}</span></button>` : '')
     + `</div><button class="ver-btn" data-act="verTap">Version ${APP_VERSION}</button></section>`;
   const th = db.settings.theme;
-  h += `<section class="sec"><h3 class="sec-h">Erscheinungsbild</h3><div class="group"><button class="row" data-act="appearance"><span class="ic-box">${ICON.sun}</span><span class="t"><b>Modus und Farbe</b><span>${THEME_MODES.find(m => m[0] === th.mode)[1]}, Akzent ${OVL_THEME.ACC[th.accent][0]}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
+  h += `<section class="sec"><h3 class="sec-h">Erscheinungsbild</h3><div class="group"><button class="row" data-act="appearance"><span class="ic-box">${ICON.sun}</span><span class="t"><b>Stil, Modus und Farbe</b><span>${th.style === 'classic' ? 'Klassisch' : 'Neu'}, ${THEME_MODES.find(m => m[0] === th.mode)[1]}, Akzent ${OVL_THEME.ACC[th.accent][0]}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
   const PZ = db.settings.pause;
   h += `<section class="sec"><h3 class="sec-h">Pause</h3><div class="group"><button class="row" data-act="pauseSheet"><span class="ic-box">${PZ ? PAUSE_TYPES.find(x => x[0] === PZ.type)[1] : '⏸️'}</span><span class="t"><b>Krank, verletzt, Urlaub</b><span>${PZ ? `Aktiv seit ${esc(shortDate(PZ.from))}` : comebackActive() ? 'Wiedereinstieg läuft' : (a => (a.length > 1 ? a.slice(0, -1).join(', ') + ' und ' + a[a.length - 1] : a[0]) + ' pausieren')(['Gym', ...(runOn() ? ['Laufen'] : []), ...(triOn() ? ['Triathlon'] : [])])}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
   h += `<section class="sec"><h3 class="sec-h">Wochenziel</h3><div class="group"><div class="row"><span class="t"><b>Trainings pro Woche</b><span>Füllt den Wochenring im Gym</span></span>${stepper('goalStep', db.settings.weeklyGoal)}</div></div></section>`;
@@ -2970,12 +3152,22 @@ function runCoachCard() {
     + `<div class="fchips rc-tips">${tips.map(t => `<button class="fchip" data-act="runCoachTip" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>`
     + `<button class="btn-primary" data-act="runCoach">Chat öffnen</button></div></section>`;
 }
+/* Neuer Stil: nächster offener Lauf dieser Woche als große Karte oben */
+function runHero(P, wi) {
+  if (wi < 0 || wi >= P.weeks.length || pauseOn('run')) return '';
+  const W = P.weeks[wi], td = dow0(), ws = planWeekStart(P, wi);
+  const s = W.s.find(x => x.dow >= td && !db.runs.some(r => r.slot === slotKey(P, wi, x.dow)));
+  if (!s) return '';
+  const key = slotKey(P, wi, s.dow), day = s.dow === td ? 'Heute' : new Date(addDays(ws, s.dow)).toLocaleDateString('de-DE', {weekday: 'long'}), mins = sessMin(P, s);
+  return `<section class="run-hero"><p class="rh-lbl">Nächster Lauf · ${esc(day)}</p><h2>${esc(RTYPE[s.type] || 'Lauf')}${mins ? `, ${mins} min` : ''}</h2><p class="rh-sub">${esc(s.text)}</p>`
+    + `<div class="rh-btns"><button class="btn-primary" data-act="logRun" data-slot="${key}">Lauf eintragen</button>${liveVisible() ? `<button class="btn-secondary" data-act="liveOpen">Live-Lauf</button>` : ''}</div></section>`;
+}
 function vRun() {
   const P = curPlan();
   if (!P || rob) return endSeg() + vRunOnboard();
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
   const wi = planWeekIndex(P, Date.now()), n = P.weeks.length, idx = wi < 0 ? 0 : wi, PHS = P.phases;
-  let h = endSeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Laufen</h1></header>`;
+  let h = endSeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Laufen</h1></header>` + (newStyle() ? runHero(P, wi) : '');
 
   const cells = P.weeks.map((w, i) => `<i style="--pc:${PHS[w.ph].c}" class="${i < wi ? 'past' : i === wi ? 'now' : ''}"></i>`).join('');
   const cap = wi < 0 ? `Dein Plan startet am ${esc(longDate(P.start))}` : wi >= n ? 'Plan abgeschlossen' : `Woche ${wi + 1} von ${n}, Phase ${PHS[P.weeks[wi].ph].n}`;
@@ -4884,7 +5076,10 @@ const THEME_MODES = [['dark', 'Dunkel', '#000', '#1C1C1E', '#fff'], ['graphite',
 function openAppearance(keep) {
   const t = db.settings.theme, A = OVL_THEME.ACC;
   const tile = ([v, n, bg, sf, tx]) => `<button class="th-tile${t.mode === v ? ' on' : ''}" data-act="themeMode" data-v="${v}" aria-pressed="${t.mode === v}"><span class="th-prev${v === 'auto' ? ' auto' : ''}"${v === 'auto' ? '' : ` style="--tb:${bg};--ts:${sf};--tt:${tx}"`}><i></i><i></i><i class="acc"></i></span><b>${n}</b></button>`;
+  const cur = t.style === 'classic' ? 'classic' : 'new';
+  const stl = (v, n, s) => `<button class="choice${cur === v ? ' on' : ''}" data-act="themeStyle" data-v="${v}" aria-pressed="${cur === v}"><b>${n}</b><span>${s}</span></button>`;
   openSheet(`<div class="sheet-h"><span></span><h2>Erscheinungsbild</h2><button class="btn-text strong" data-act="closeSheet">Fertig</button></div>`
+    + `<label class="lbl">Stil</label>${stl('new', 'Neu', 'Schwebende Tab-Leiste, Tagesplan auf Heute, große runde Karten')}${stl('classic', 'Klassisch', 'Der bisherige Look mit Karten, Ringen und Kacheln auf Heute')}`
     + `<label class="lbl">Modus</label><div class="th-grid">${THEME_MODES.map(tile).join('')}</div>`
     + `<p class="hint">${t.mode === 'auto' ? 'Folgt der Einstellung deines iPhones: tagsüber hell, nachts dunkel, wenn du das so eingestellt hast.' : t.mode === 'graphite' ? 'Dunkel, aber etwas weicher als reines Schwarz.' : t.mode === 'light' ? 'Hell wie die Einstellungen-App.' : 'Tiefschwarz, spart auf OLED-Displays Akku.'}</p>`
     + `<label class="lbl">Akzentfarbe</label><div class="th-acc">${Object.entries(A).map(([k, a]) => `<button class="${t.accent === k ? 'on' : ''}" data-act="themeAccent" data-v="${k}" style="--a:${a[1]}" aria-pressed="${t.accent === k}"><i></i><span>${a[0]}</span></button>`).join('')}</div>`
@@ -5368,10 +5563,10 @@ const TUT = [
     ['📲', 'Tipp: In Safari über Teilen → „Zum Home-Bildschirm“ wird Overload zu einer richtigen App.'],
   ]],
   ['☀️', 'var(--amber)', 'Heute', 'Der erste Tab zeigt dir jeden Tag das Wichtigste auf einen Blick.', [
-    ['🏋️', 'Trainings der Woche, Kalorien und Makros, Gewicht, aktive Tage und eine Rezeptidee.'],
+    ['🗓️', 'Dein Tag als Zeitleiste: Erledigtes steht oben, darunter was als Nächstes ansteht (Training, Lauf) und was noch offen ist (Essen, Wasser, Schlaf). Darüber Schnellaktionen für Wasser, Essen, Gewicht und Aktivität.'],
     ['⭐', 'Ganz oben steht, was heute am wichtigsten ist, z. B. mehr trinken oder Elektrolyte nach dem Training.'],
     ['💧', 'Wasser und Schlaf trägst du hier mit einem Tipp ein, montags wartet ein Wochenbericht.'],
-    ['🎛️', 'Oben rechts auf „Anpassen“: Karten ein- und ausblenden, sortieren und zwischen Karten, Ringen und Kacheln wählen.'],
+    ['🎛️', 'Ganz unten auf „Heute anpassen“: ein- und ausblenden, was erscheint. Unter Einstellungen → Erscheinungsbild wechselst du jederzeit zwischen dem neuen und dem klassischen Stil.'],
   ]],
   ['🏋️', 'var(--lime)', 'Gym', 'Hier trainierst du. Beim ersten Öffnen baut dir der KI-Coach nach ein paar Fragen deinen Trainingsplan.', [
     ['▶️', 'Vorlage antippen, Übungen für heute auswählen und den Pausen-Timer einstellen. Dann Gewicht und Wiederholungen eintragen und Sätze abhaken.'],
@@ -6772,7 +6967,7 @@ const TOUR = [
   {v: 'today', sel: '[data-tab="today"]', t: 'Heute', x: 'Dein Startbildschirm. Jeden Tag siehst du hier das Wichtigste: Training, Kalorien, Wasser, Schlaf und was heute zählt.'},
   {v: 'today', need: () => adviceOn(), sel: '#app .focus', t: 'Heute wichtig', x: 'Ganz oben steht, was du heute am besten tun solltest, z. B. mehr trinken oder Elektrolyte nach dem Training.'},
   {v: 'today', sel: '#app [data-act="waterAdd"]', t: 'Wasser', x: 'Ein Tipp trägt ein Glas ein. An Trainingstagen steigt dein Ziel automatisch.'},
-  {v: 'today', sel: '#app [data-act="homeSettings"]', t: 'Anpassen', x: 'Karten ein- und ausblenden, sortieren und zwischen Karten, Ringen und Kacheln wählen.'},
+  {v: 'today', sel: '#app [data-act="homeSettings"]', t: 'Anpassen', x: 'Ein- und ausblenden, was auf Heute vorkommt. Im klassischen Stil (Einstellungen → Erscheinungsbild) wählst du zusätzlich zwischen Karten, Ringen und Kacheln.'},
   {v: 'home', sel: '[data-tab="home"]', t: 'Gym', x: 'Hier trainierst du. Beim ersten Öffnen fragt dich der KI-Coach kurz aus und baut dir deinen Plan.'},
   {v: 'home', need: () => !needGymSetup(), sel: '#app .locker', t: 'Spind', x: 'Merk dir deine Spindnummer. Sie steht auch oben im Training und verschwindet nach 12 Stunden.'},
   {v: 'home', need: () => !needGymSetup(), sel: '#app .next', t: 'Training starten', x: 'Vorlage starten, Übungen für heute abwählen und den Pausen-Timer wählen. Die App schätzt, wie lange das Training dauert, und schlägt dir für jede Übung vor, was du steigern kannst.'},
@@ -7593,6 +7788,7 @@ Object.assign(A, {
   tutGo: ({d}) => openTutorial(tutI + +d),
   themeMode: ({v}) => { db.settings.theme.mode = v; saveDB(); OVL_THEME.apply(db.settings.theme); openAppearance(true); },
   themeAccent: ({v}) => { db.settings.theme.accent = v; saveDB(); OVL_THEME.apply(db.settings.theme); render(); openAppearance(true); },
+  themeStyle: ({v}) => { db.settings.theme.style = v === 'classic' ? 'classic' : 'new'; saveDB(); OVL_THEME.apply(db.settings.theme); tabbarKey = null; render(); openAppearance(true); },
   quickMeal: () => openMeal(null, null, fq.slot),
   newFood: () => openNewFood(),
   saveFood: () => {
