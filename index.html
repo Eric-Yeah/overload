@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-OuzFYj/9p0Wrx+xyfHny0KZPPqPR74uHBEBwkAm7RRk=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-UNtq9PPaV9SaDSykoywfAMALmi3xn4WFZ/cbdfgzxB8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1270,6 +1270,13 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 
 /* ===== Neuer Stil (settings.theme.style = "new", Standard seit 12.10.2026). Der klassische Stil bleibt ohne diese Regeln unverändert. ===== */
 .sheet .choice{background:var(--surface-2)}
+/* Tab-Leiste bleibt wie im klassischen Stil fest unten, nur der aktive Tab klappt mit seinem Namen aus */
+:root[data-style="new"] .tabbar-inner{gap:2px;padding:8px 12px 6px;align-items:center}
+:root[data-style="new"] .tab{flex:none;width:52px;height:48px;padding:0;border-radius:24px;flex-direction:row;justify-content:center;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-2)}
+:root[data-style="new"] .tab span{display:none}
+:root[data-style="new"] .tab svg{width:24px;height:24px}
+:root[data-style="new"] .tab.on{flex:1;width:auto;background:var(--lime);color:var(--on-accent)}
+:root[data-style="new"] .tab.on span{display:inline;white-space:nowrap}
 /* Runde, ruhige Flächen */
 :root[data-style="new"] .group,:root[data-style="new"] .hc{border-radius:22px}
 :root[data-style="new"] .week,:root[data-style="new"] .goal,:root[data-style="new"] .wt-today,:root[data-style="new"] .hring,:root[data-style="new"] .verdict{border-radius:28px}
@@ -1339,6 +1346,40 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 .hz-stat b.sm{font-size:15px}
 .hz-stat small{display:block;font-size:12px;color:var(--text-2)}
 .hz-more{margin-top:12px}
+/* Laufen (neu): Wochenkarte, Zeilen, Letzte Läufe */
+.rw-tag{display:inline-block;margin:-6px 0 10px}
+.hz-card .kbar.sm{margin-top:0}
+.rw-list{margin-top:6px}
+.rw-list .row{padding-left:0;padding-right:0}
+.rw-list .row+.row::before{left:0}
+.hz-card .spark{background:none;border-radius:0}
+.hz-card .legend{margin:12px 0 0}
+.rw-pain .notice{margin-top:12px}
+.hz-row{display:flex;align-items:center;gap:14px;width:100%;margin-top:12px;padding:14px 16px;border-radius:22px;background:var(--surface);text-align:left}
+.hz-row:active{background:var(--surface-2)}
+.hz-ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--lime-dim);color:var(--lime)}
+.hz-ic svg{width:22px;height:22px}
+.hz-row .t{flex:1;min-width:0}
+.hz-row .t b{display:block;font-size:16px;font-weight:600}
+.hz-row .t>span{display:block;font-size:13px;color:var(--text-2)}
+.rl{padding-bottom:6px}
+.rl-row{display:flex;align-items:center;gap:14px;width:100%;min-height:62px;padding:8px 0;text-align:left;border-top:1px solid var(--sep)}
+.rl-row .t{flex:1;min-width:0}
+.rl-row .t b{display:block;font-size:16px;font-weight:600}
+.rl-row .t>span{display:block;font-size:13px;color:var(--text-2)}
+.rl-d{flex:none;width:44px}
+.rl-d small{display:block;font-size:12px;font-weight:600;color:var(--text-2)}
+.rl-d b{display:block;font-family:var(--num);font-size:18px}
+.rl-r{text-align:right;font-family:var(--num)}
+.rl-r b{display:block;font-size:16px}
+.rl-r small{font-size:13px;color:var(--text-2)}
+:root[data-style="new"] .rv,:root[data-style="new"] .rcoach,:root[data-style="new"] .perf{border-radius:28px;padding:18px 20px}
+:root[data-style="new"] .rv{background:var(--surface)}
+:root[data-style="new"] .rv-rate i.on{background:var(--lime)}
+:root[data-style="new"] .rv-rate span{color:var(--lime)}
+:root[data-style="new"] .demo-card{border:0;background:var(--surface);border-radius:24px}
+:root[data-style="new"] .two-btn{margin-top:0;margin-bottom:12px}
+:root[data-style="new"] .two-btn .btn-secondary{height:48px;border-radius:16px;font-size:14px;background:var(--surface)}
 </style>
 </head>
 <body>
@@ -1358,9 +1399,9 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.2';
+const APP_VERSION = '2026.10.12.3';
 const PATCH_NOTES = [
-  {v: '2026.10.12.2', date: 'Update vom 12. Oktober 2026', items: [
+  {v: '2026.10.12.3', date: 'Update vom 12. Oktober 2026', items: [
     ['✨', 'Neues Design', 'Overload sieht jetzt ruhiger und runder aus: Die Tab-Leiste bleibt wie gewohnt am unteren Rand. „Als Nächstes“ im Gym und im Laufen-Tab ist eine große Akzentkarte. Gefällt dir der alte Look besser, wechselst du unter Mehr → Erscheinungsbild → Stil jederzeit zurück zu „Klassisch“. Deine Daten bleiben davon unberührt.'],
     ['🗓️', 'Heute mit Tagesplan', 'Heute zeigt deinen Tag jetzt als Zeitleiste: was schon erledigt ist (Mahlzeiten, Training, Schlaf), was als Nächstes ansteht und was noch offen ist. Darüber sitzen Schnellaktionen für Wasser, Essen, Gewicht und Aktivität. Seltenere Karten wie Wochenbericht, Freunde und Rezeptidee sind weiter unten gebündelt.'],
   ]},
@@ -3150,14 +3191,14 @@ function runHero(P, wi) {
   if (!s) return '';
   const key = slotKey(P, wi, s.dow), day = s.dow === td ? 'Heute' : new Date(addDays(ws, s.dow)).toLocaleDateString('de-DE', {weekday: 'long'}), mins = sessMin(P, s);
   return `<section class="run-hero"><p class="rh-lbl">Nächster Lauf · ${esc(day)}</p><h2>${esc(RTYPE[s.type] || 'Lauf')}${mins ? `, ${mins} min` : ''}</h2><p class="rh-sub">${esc(s.text)}</p>`
-    + `<div class="rh-btns"><button class="btn-primary" data-act="logRun" data-slot="${key}">Lauf eintragen</button>${liveVisible() ? `<button class="btn-secondary" data-act="liveOpen">Live-Lauf</button>` : ''}</div></section>`;
+    + `<div class="rh-btns"><button class="btn-primary" data-act="logRun" data-slot="${key}">Lauf eintragen</button>${liveVisible() ? `<button class="btn-secondary" data-act="liveOpen">${lv ? 'Live-Lauf öffnen' : 'Live-Lauf'}</button>` : ''}</div></section>`;
 }
 function vRun() {
   const P = curPlan();
   if (!P || rob) return endSeg() + vRunOnboard();
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
   const wi = planWeekIndex(P, Date.now()), n = P.weeks.length, idx = wi < 0 ? 0 : wi, PHS = P.phases;
-  let h = endSeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Laufen</h1></header>` + (newStyle() ? runHero(P, wi) : '');
+  let h = endSeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Laufen</h1></header>` + (newStyle() ? runHero(P, wi) + shotRow('logRun', 'Freier Lauf', 'run') + wxChip() : '');
 
   const cells = P.weeks.map((w, i) => `<i style="--pc:${PHS[w.ph].c}" class="${i < wi ? 'past' : i === wi ? 'now' : ''}"></i>`).join('');
   const cap = wi < 0 ? `Dein Plan startet am ${esc(longDate(P.start))}` : wi >= n ? 'Plan abgeschlossen' : `Woche ${wi + 1} von ${n}, Phase ${PHS[P.weeks[wi].ph].n}`;
@@ -3180,14 +3221,19 @@ function vRun() {
   if (idx < n) {
     const W = P.weeks[idx], ws = planWeekStart(P, idx), runs = runsInWeek(ws);
     const doneMin = runs.reduce((a, r) => a + r.min, 0), pm = planMin(P, idx), k = weekKm(runs);
-    h += `<section class="sec"><div class="sec-row"><h3 class="sec-h">${wi < 0 ? 'Woche 1 ab Montag' : 'Diese Woche'}</h3>${W.deload ? '<i class="tag t-deload">Entlastungswoche</i>' : ''}</div>`
-      + `<div class="week">${ringHTML(pm ? doneMin / pm : 0, 116, 15, `<b>${doneMin}</b><small>von ${pm} min</small>`)}<div class="week-txt"><h2>${esc(PHS[W.ph].n)}</h2><p class="big">${doneMin >= pm ? 'Woche geschafft' : `Noch ${pm - doneMin} min`}</p><div class="stats"><div><span>Gelaufen</span><b>${k.approx ? '≈ ' : ''}${fmtKm(k.km)}</b></div><div><span>Geplant</span><b>≈ ${fmtKm(pm / db.run.pace)}</b></div></div></div></div>`;
-    h += `<div class="group mt">` + W.s.map(s => {
+    const rowsHTML = W.s.map(s => {
       const key = slotKey(P, idx, s.dow), r = db.runs.find(x => x.slot === key);
       return `<button class="row srow${r ? ' done' : ''}" data-act="${r ? 'editRun' : 'logRun'}" data-slot="${key}"${r ? ` data-id="${esc(r.id)}"` : ''}><span class="sday"><b>${WD[s.dow]}</b><span>${shortDate(addDays(ws, s.dow))}</span></span><span class="t"><i class="tag t-${s.type}">${RTYPE[s.type]}</i><b class="stext">${esc(s.text)}</b>${r ? `<span>${esc(runLine(r))}</span>` : ''}</span><span class="chk" aria-label="${r ? 'Erledigt' : 'Offen'}">${ICON.check}</span></button>`;
-    }).join('') + `</div>`;
-    h += shotRow('logRun', 'Freier Lauf', 'run');
-    if (liveVisible()) h += liveRow();
+    }).join('');
+    if (newStyle()) {
+      h += `<section class="hz-card rw"><div class="hz-card-h"><b>${wi < 0 ? 'Woche 1 ab Montag' : 'Diese Woche'}</b><span>${doneMin} / ${pm} min</span></div>${W.deload ? '<i class="tag t-deload rw-tag">Entlastungswoche</i>' : ''}<div class="kbar sm" aria-hidden="true"><i style="width:${(pm ? Math.min(100, doneMin / pm * 100) : 0).toFixed(0)}%"></i></div><div class="rw-list">${rowsHTML}</div></section><section class="rw-pain">`;
+    } else {
+      h += `<section class="sec"><div class="sec-row"><h3 class="sec-h">${wi < 0 ? 'Woche 1 ab Montag' : 'Diese Woche'}</h3>${W.deload ? '<i class="tag t-deload">Entlastungswoche</i>' : ''}</div>`
+        + `<div class="week">${ringHTML(pm ? doneMin / pm : 0, 116, 15, `<b>${doneMin}</b><small>von ${pm} min</small>`)}<div class="week-txt"><h2>${esc(PHS[W.ph].n)}</h2><p class="big">${doneMin >= pm ? 'Woche geschafft' : `Noch ${pm - doneMin} min`}</p><div class="stats"><div><span>Gelaufen</span><b>${k.approx ? '≈ ' : ''}${fmtKm(k.km)}</b></div><div><span>Geplant</span><b>≈ ${fmtKm(pm / db.run.pace)}</b></div></div></div></div>`
+        + `<div class="group mt">${rowsHTML}</div>`;
+      h += shotRow('logRun', 'Freier Lauf', 'run');
+      if (liveVisible()) h += liveRow();
+    }
     const painNow = Math.max(0, ...runs.map(r => r.pain || 0));
     const painPrev = Math.max(0, ...runsInWeek(addDays(ws, -7)).map(r => r.pain || 0));
     const pn = esc(P.area || 'Schmerz');
@@ -3200,14 +3246,20 @@ function vRun() {
 
   h += stravaCheckNote(db.runs, 'editRun');
   h += runPerfCard();
-  h += coachCard('run', 'Lauf-Coach', 'Beschwerden, Tempo, Puls und Tipps. Er kennt deinen Plan und deine Läufe und kann den Plan auf Wunsch anpassen.', COACH_TIPS.run);
   const usedPh = PHS.filter((_, i) => P.weeks.some(w => w.ph === i));
+  if (newStyle()) {
+    h += `<section class="hz-card"><div class="hz-card-h"><b>Wochenumfang</b><span>Minuten pro Woche</span></div>${runChart(P, wi)}<div class="legend chart-leg"><span style="--k:#636366"><i></i>geplant</span><span style="--k:var(--lime)"><i></i>gelaufen</span>${usedPh.map(p => `<span style="--k:${p.c}"><i class="sq"></i>${p.n}</span>`).join('')}</div></section>`
+      + `<button class="hz-row" data-act="coachOpen" data-m="run"><span class="hz-ic">${ICON.spark}</span><span class="t"><b>Lauf-Coach</b><span>Fragen zu Tempo, Beschwerden und Plan</span></span><span class="chev">${ICON.chev}</span></button>`;
+  } else {
+  h += coachCard('run', 'Lauf-Coach', 'Beschwerden, Tempo, Puls und Tipps. Er kennt deinen Plan und deine Läufe und kann den Plan auf Wunsch anpassen.', COACH_TIPS.run);
   h += `<section class="sec"><h3 class="sec-h">Wochenumfang</h3>${runChart(P, wi)}<div class="legend chart-leg"><span style="--k:#636366"><i></i>geplant</span><span style="--k:var(--lime)"><i></i>gelaufen</span>${usedPh.map(p => `<span style="--k:${p.c}"><i class="sq"></i>${p.n}</span>`).join('')}</div></section>`;
+  }
 
   h += planSection(P, wi, idx);
 
   const recent = [...db.runs].sort((a, b) => b.date - a.date).slice(0, 6);
-  if (recent.length) h += `<section class="sec"><h3 class="sec-h">Letzte Läufe</h3><div class="group">${recent.map(r => `<button class="row" data-act="editRun" data-id="${esc(r.id)}"><span class="t"><b>${esc(new Date(r.date).toLocaleDateString('de-DE', {weekday: 'short', day: 'numeric', month: 'short'}))}</b><span>${esc(runLine(r) + stravaMark(r))}</span></span><i class="tag t-${r.type || 'easy'}">${RTYPE[r.type] || 'Lauf'}</i></button>`).join('')}</div></section>`;
+  if (recent.length && newStyle()) h += `<section class="hz-card rl"><div class="hz-card-h"><b>Letzte Läufe</b></div>${recent.map(r => { const d = new Date(r.date); return `<button class="rl-row" data-act="editRun" data-id="${esc(r.id)}"><span class="rl-d"><small>${esc(d.toLocaleDateString('de-DE', {weekday: 'short'}).replace('.', '').toUpperCase())}</small><b>${d.getDate()}.</b></span><span class="t"><b>${esc(RTYPE[r.type] || 'Lauf')}</b><span>${esc([r.min && r.km ? fmtPace(r.min / r.km) + ' /km' : '', r.pain ? 'Schmerz ' + r.pain : ''].filter(Boolean).join(' · ') + stravaMark(r))}</span></span><span class="rl-r"><b>${r.km != null ? esc(fmtKm(r.km)) : r.min + ' min'}</b>${r.km != null ? `<small>${r.min} min</small>` : ''}</span></button>`; }).join('')}</section>`;
+  else if (recent.length) h += `<section class="sec"><h3 class="sec-h">Letzte Läufe</h3><div class="group">${recent.map(r => `<button class="row" data-act="editRun" data-id="${esc(r.id)}"><span class="t"><b>${esc(new Date(r.date).toLocaleDateString('de-DE', {weekday: 'short', day: 'numeric', month: 'short'}))}</b><span>${esc(runLine(r) + stravaMark(r))}</span></span><i class="tag t-${r.type || 'easy'}">${RTYPE[r.type] || 'Lauf'}</i></button>`).join('')}</div></section>`;
 
   h += `<section class="sec"><h3 class="sec-h">Spielregeln</h3><div class="group">`
     + `<div class="row"><span class="t"><b>Zone 2: ${db.run.z2lo}–${db.run.z2hi} bpm</b><span>So locker, dass du noch reden könntest</span></span></div>`
@@ -3216,6 +3268,11 @@ function vRun() {
     + `<div class="row"><span class="t"><b>Pace für km-Schätzung</b><span>Gilt, wenn du keine Distanz einträgst</span></span>${stepper('paceStep', fmtPace(db.run.pace))}</div>`
     + (P.legacy ? '' : `<button class="row" data-act="robRestart"><span class="t"><b>Plan neu erstellen</b><span>Fragebogen noch mal ausfüllen</span></span><span class="chev">${ICON.chev}</span></button>`)
     + `</div></section>`;
+  if (newStyle()) {
+    const rr = db.runs.length ? runRecords() : null;
+    h += `<button class="hz-row" data-act="awardsOpen" data-from="run"><span class="hz-ic">${ICON.trophy}</span><span class="t"><b>Rekorde und Erfolge</b><span>${rr ? `Längster Lauf ${rr.long.min} min` : 'Deine Bestwerte und Abzeichen'}</span></span><span class="chev">${ICON.chev}</span></button>`
+      + `<button class="btn-text muted wide mt" data-act="pauseSheet">Pause, krank oder Urlaub melden</button>`;
+  }
   return h;
 }
 
@@ -5810,7 +5867,7 @@ function checkAwards(still) {
 let awardsBack = 'home';
 function vAwards() {
   const S = awardStats(), recs = gymRecords(), rr = runOn() ? runRecords() : null, A2 = AWARDS.filter(awardOn), got = A2.filter(a => db.awards[a[0]]).length;
-  let h = `<header class="lt"><button class="back-link" data-act="tab" data-v="${awardsBack}">${ICON.back}<span>${awardsBack === 'more' ? 'Einstellungen' : 'Gym'}</span></button><h1>Rekorde und Erfolge</h1></header>`;
+  let h = `<header class="lt"><button class="back-link" data-act="tab" data-v="${awardsBack}">${ICON.back}<span>${awardsBack === 'more' ? 'Einstellungen' : awardsBack === 'run' ? 'Laufen' : 'Gym'}</span></button><h1>Rekorde und Erfolge</h1></header>`;
   h += `<section class="sec first"><div class="sec-row"><h3 class="sec-h">Abzeichen</h3><span class="goal-sub">${got} von ${A2.length}</span></div><div class="aw-grid">${A2.map(a => {
     const on = !!db.awards[a[0]], p = Math.min(1, (S[a[4]] || 0) / a[5]);
     return `<div class="aw${on ? ' on' : ''}"><span class="aw-e">${a[1]}</span><b>${esc(a[2])}</b><small>${on ? esc(new Date(db.awards[a[0]]).toLocaleDateString('de-DE', {day: 'numeric', month: 'short', year: '2-digit'})) : esc(a[3])}</small>${on ? '' : `<i class="aw-bar"><i style="width:${(p * 100).toFixed(0)}%"></i></i>`}</div>`;
