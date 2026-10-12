@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-b0C1JDIcrUopLJTsV/MhHXwyR2dhaA2NjiXM+mjdFYM=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-XiipDHZ/j3BYVjXll+iFtuJvxQopVmIKgLww7SEMuFA=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1286,11 +1286,12 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 .sheet .choice{background:var(--surface-2)}
 /* Tab-Leiste bleibt wie im klassischen Stil fest unten, nur der aktive Tab klappt mit seinem Namen aus */
 :root[data-style="new"] .tabbar-inner{gap:2px;padding:8px 12px 6px;align-items:center}
-:root[data-style="new"] .tab{flex:none;width:52px;height:48px;padding:0;border-radius:24px;flex-direction:row;justify-content:center;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-2)}
-:root[data-style="new"] .tab span{display:none}
-:root[data-style="new"] .tab svg{width:24px;height:24px}
-:root[data-style="new"] .tab.on{flex:1;width:auto;background:var(--surface-2);color:var(--lime)}
-:root[data-style="new"] .tab.on span{display:inline;white-space:nowrap}
+:root[data-style="new"] .tab{flex:0 0 52px;width:auto;height:48px;padding:0;border-radius:24px;flex-direction:row;justify-content:center;align-items:center;gap:0;overflow:hidden;font-size:13px;font-weight:700;color:var(--text-2);transition:flex-grow .45s cubic-bezier(.32,.72,0,1),background-color .35s ease,color .35s ease}
+:root[data-style="new"] .tab svg{flex:none;width:24px;height:24px}
+:root[data-style="new"] .tab span{display:block;max-width:0;margin-left:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .45s cubic-bezier(.32,.72,0,1),margin-left .45s cubic-bezier(.32,.72,0,1),opacity .2s ease}
+:root[data-style="new"] .tab.on{flex-grow:1;background:var(--surface-2);color:var(--lime)}
+:root[data-style="new"] .tab.on span{max-width:110px;margin-left:7px;opacity:1;transition:max-width .45s cubic-bezier(.32,.72,0,1),margin-left .45s cubic-bezier(.32,.72,0,1),opacity .3s ease .12s}
+@media (prefers-reduced-motion:reduce){:root[data-style="new"] .tab,:root[data-style="new"] .tab span{transition:none}}
 /* Runde, ruhige Flächen */
 :root[data-style="new"] .group,:root[data-style="new"] .hc{border-radius:22px}
 :root[data-style="new"] .week,:root[data-style="new"] .goal,:root[data-style="new"] .wt-today,:root[data-style="new"] .hring,:root[data-style="new"] .verdict{border-radius:28px}
@@ -1404,8 +1405,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.9';
+const APP_VERSION = '2026.10.12.10';
 const PATCH_NOTES = [
+  {v: '2026.10.12.10', date: 'Update vom 12. Oktober 2026, Teil 8', items: [
+    ['🌊', 'Sanfter Tab-Wechsel', 'Beim Wechsel zwischen den Tabs gleitet die Markierung jetzt weich hinüber: Der Name klappt langsam aus, der vorherige zieht sich ebenso sanft zurück. Wer Bewegungen reduziert hat, sieht es ohne Animation.'],
+  ]},
   {v: '2026.10.12.9', date: 'Update vom 12. Oktober 2026, Teil 7', items: [
     ['🌿', 'Ruhigere Karten und Tab-Leiste', '„Als Nächstes“ im Gym und „Nächster Lauf“ sind keine knallgrünen Flächen mehr, sondern dunkle Karten mit einem Hauch Akzent im Hintergrund und am Rand; Empfehlungen und Knöpfe haben wieder ihre gewohnten Farben. In der Tab-Leiste ist der aktive Tab nur noch dezent grau hinterlegt, Symbol und Name leuchten in der Akzentfarbe.'],
   ]},
