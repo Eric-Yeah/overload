@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/fx0lVxUhCx+AnjuBOZEAENHu4Gs5JfG7JDUwmXS5OQ=' 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-OuzFYj/9p0Wrx+xyfHny0KZPPqPR74uHBEBwkAm7RRk=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1270,16 +1270,6 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 
 /* ===== Neuer Stil (settings.theme.style = "new", Standard seit 12.10.2026). Der klassische Stil bleibt ohne diese Regeln unverändert. ===== */
 .sheet .choice{background:var(--surface-2)}
-/* Schwebende Tab-Leiste: runde Pille, aktiver Tab klappt mit Namen aus */
-:root[data-style="new"] #app{padding-bottom:132px}
-:root[data-style="new"] body.wk #app,:root[data-style="new"] body.chat #app{padding-bottom:48px}
-:root[data-style="new"] .tabbar{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:536px;margin:0 auto;padding:0;border:1px solid var(--sep);border-radius:32px;background:color-mix(in srgb,var(--surface) 92%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.45)}
-:root[data-style="new"] .tabbar-inner{max-width:none;gap:2px;padding:6px;align-items:center}
-:root[data-style="new"] .tab{flex:none;width:52px;height:52px;padding:0;border-radius:26px;flex-direction:row;justify-content:center;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-2)}
-:root[data-style="new"] .tab span{display:none}
-:root[data-style="new"] .tab svg{width:24px;height:24px}
-:root[data-style="new"] .tab.on{flex:1;width:auto;background:var(--lime);color:var(--on-accent)}
-:root[data-style="new"] .tab.on span{display:inline;white-space:nowrap}
 /* Runde, ruhige Flächen */
 :root[data-style="new"] .group,:root[data-style="new"] .hc{border-radius:22px}
 :root[data-style="new"] .week,:root[data-style="new"] .goal,:root[data-style="new"] .wt-today,:root[data-style="new"] .hring,:root[data-style="new"] .verdict{border-radius:28px}
@@ -1368,10 +1358,10 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.1';
+const APP_VERSION = '2026.10.12.2';
 const PATCH_NOTES = [
-  {v: '2026.10.12.1', date: 'Update vom 12. Oktober 2026', items: [
-    ['✨', 'Neues Design', 'Overload sieht jetzt ruhiger und runder aus: Die Tab-Leiste schwebt als Pille am unteren Rand, der aktive Tab klappt mit seinem Namen aus. „Als Nächstes“ im Gym und im Laufen-Tab ist eine große Akzentkarte. Gefällt dir der alte Look besser, wechselst du unter Mehr → Erscheinungsbild → Stil jederzeit zurück zu „Klassisch“. Deine Daten bleiben davon unberührt.'],
+  {v: '2026.10.12.2', date: 'Update vom 12. Oktober 2026', items: [
+    ['✨', 'Neues Design', 'Overload sieht jetzt ruhiger und runder aus: Die Tab-Leiste bleibt wie gewohnt am unteren Rand. „Als Nächstes“ im Gym und im Laufen-Tab ist eine große Akzentkarte. Gefällt dir der alte Look besser, wechselst du unter Mehr → Erscheinungsbild → Stil jederzeit zurück zu „Klassisch“. Deine Daten bleiben davon unberührt.'],
     ['🗓️', 'Heute mit Tagesplan', 'Heute zeigt deinen Tag jetzt als Zeitleiste: was schon erledigt ist (Mahlzeiten, Training, Schlaf), was als Nächstes ansteht und was noch offen ist. Darüber sitzen Schnellaktionen für Wasser, Essen, Gewicht und Aktivität. Seltenere Karten wie Wochenbericht, Freunde und Rezeptidee sind weiter unten gebündelt.'],
   ]},
   {v: '2026.10.09.2', date: 'Update vom 9. Oktober 2026, Teil 2', items: [
@@ -5079,7 +5069,7 @@ function openAppearance(keep) {
   const cur = t.style === 'classic' ? 'classic' : 'new';
   const stl = (v, n, s) => `<button class="choice${cur === v ? ' on' : ''}" data-act="themeStyle" data-v="${v}" aria-pressed="${cur === v}"><b>${n}</b><span>${s}</span></button>`;
   openSheet(`<div class="sheet-h"><span></span><h2>Erscheinungsbild</h2><button class="btn-text strong" data-act="closeSheet">Fertig</button></div>`
-    + `<label class="lbl">Stil</label>${stl('new', 'Neu', 'Schwebende Tab-Leiste, Tagesplan auf Heute, große runde Karten')}${stl('classic', 'Klassisch', 'Der bisherige Look mit Karten, Ringen und Kacheln auf Heute')}`
+    + `<label class="lbl">Stil</label>${stl('new', 'Neu', 'Tagesplan auf Heute, große runde Karten, Akzentkarten fürs Nächste')}${stl('classic', 'Klassisch', 'Der bisherige Look mit Karten, Ringen und Kacheln auf Heute')}`
     + `<label class="lbl">Modus</label><div class="th-grid">${THEME_MODES.map(tile).join('')}</div>`
     + `<p class="hint">${t.mode === 'auto' ? 'Folgt der Einstellung deines iPhones: tagsüber hell, nachts dunkel, wenn du das so eingestellt hast.' : t.mode === 'graphite' ? 'Dunkel, aber etwas weicher als reines Schwarz.' : t.mode === 'light' ? 'Hell wie die Einstellungen-App.' : 'Tiefschwarz, spart auf OLED-Displays Akku.'}</p>`
     + `<label class="lbl">Akzentfarbe</label><div class="th-acc">${Object.entries(A).map(([k, a]) => `<button class="${t.accent === k ? 'on' : ''}" data-act="themeAccent" data-v="${k}" style="--a:${a[1]}" aria-pressed="${t.accent === k}"><i></i><span>${a[0]}</span></button>`).join('')}</div>`
