@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-IHPQjM5Zr9Xa79rIztQGlXdYEtpE9s/2dMtvnq69g9k=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-o4Y4RITuasRF7Zd5kkR8A69uZdwitxuw6MrQ5nBma3U=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.6';
+const APP_VERSION = '2026.10.12.7';
 const PATCH_NOTES = [
+  {v: '2026.10.12.7', date: 'Update vom 12. Oktober 2026, Teil 5', items: [
+    ['🎨', 'Wochenumfang ohne Grau', 'Beim Laufen sind die geplanten Minuten jetzt blass in der Farbe ihrer Phase (Comeback, Grundlage, Aufbau, Tapern in Lila) statt grau, die gelaufenen Minuten leuchten in voller Akzentfarbe darüber.'],
+  ]},
   {v: '2026.10.12.6', date: 'Update vom 12. Oktober 2026, Teil 4', items: [
     ['👆', 'Diagramme zum Antippen', 'Tippe oder wische über Gewichtsverlauf, Wochenumfang beim Laufen, den Verlauf einer Übung und die Belastung pro Woche: Eine Markierung zeigt dir Datum und Wert, zum Beispiel Gewicht mit Wochenschnitt oder gelaufene gegen geplante Minuten. Beim Start ist immer der neueste Punkt gewählt.'],
     ['🔎', 'Zeitraum wählen', 'Beim Gewicht stellst du 4 Wochen, 8 Wochen, 6 Monate oder alles ein, beim Verlauf einer Übung die letzten 6, 12, 24 oder alle Trainings.'],
@@ -3333,11 +3336,11 @@ function vRun() {
   h += runPerfCard();
   const usedPh = PHS.filter((_, i) => P.weeks.some(w => w.ph === i));
   if (newStyle()) {
-    h += `<section class="hz-card"><div class="hz-card-h"><b>Wochenumfang</b><span>Minuten pro Woche</span></div>${runChart(P, wi)}<div class="legend chart-leg"><span style="--k:#636366"><i></i>geplant</span><span style="--k:var(--lime)"><i></i>gelaufen</span>${usedPh.map(p => `<span style="--k:${p.c}"><i class="sq"></i>${p.n}</span>`).join('')}</div></section>`
+    h += `<section class="hz-card"><div class="hz-card-h"><b>Wochenumfang</b><span>Minuten pro Woche</span></div>${runChart(P, wi)}<div class="legend chart-leg"><span>blass = geplant</span><span style="--k:var(--lime)"><i></i>gelaufen</span>${usedPh.map(p => `<span style="--k:${phC(p.c)}"><i class="sq"></i>${p.n}</span>`).join('')}</div></section>`
       + `<button class="hz-row" data-act="coachOpen" data-m="run"><span class="hz-ic">${ICON.spark}</span><span class="t"><b>Lauf-Coach</b><span>Fragen zu Tempo, Beschwerden und Plan</span></span><span class="chev">${ICON.chev}</span></button>`;
   } else {
   h += coachCard('run', 'Lauf-Coach', 'Beschwerden, Tempo, Puls und Tipps. Er kennt deinen Plan und deine Läufe und kann den Plan auf Wunsch anpassen.', COACH_TIPS.run);
-  h += `<section class="sec"><h3 class="sec-h">Wochenumfang</h3>${runChart(P, wi)}<div class="legend chart-leg"><span style="--k:#636366"><i></i>geplant</span><span style="--k:var(--lime)"><i></i>gelaufen</span>${usedPh.map(p => `<span style="--k:${p.c}"><i class="sq"></i>${p.n}</span>`).join('')}</div></section>`;
+  h += `<section class="sec"><h3 class="sec-h">Wochenumfang</h3>${runChart(P, wi)}<div class="legend chart-leg"><span>blass = geplant</span><span style="--k:var(--lime)"><i></i>gelaufen</span>${usedPh.map(p => `<span style="--k:${phC(p.c)}"><i class="sq"></i>${p.n}</span>`).join('')}</div></section>`;
   }
 
   h += planSection(P, wi, idx);
@@ -3443,6 +3446,7 @@ function chIndex(box, ev) {
   ['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, () => { act = null; }));
 }
 const chRangeBar = (c, opts, cur) => `<div class="seg ch-rng">${opts.map(([v, n]) => `<button class="${cur === v ? 'on' : ''}" data-act="chRange" data-c="${c}" data-v="${v}">${n}</button>`).join('')}</div>`;
+const phC = c => c === '#D1D1D6' ? '#BF5AF2' : c;   // Tapern/Abschluss im Wochenumfang lila statt hellgrau
 function runChart(Pl, cur) {
   const n = Pl.weeks.length, W = 340, H = 134, P = 6, top = 18, base = H - 22;
   const act = Pl.weeks.map((_, i) => runsInWeek(planWeekStart(Pl, i)).reduce((a, r) => a + r.min, 0));
@@ -3453,9 +3457,9 @@ function runChart(Pl, cur) {
   Pl.weeks.forEach((w, i) => {
     const x = P + i * bw, bx = x + bw * 0.14, bwid = bw * 0.72;
     const hp = pl[i] / max * (base - top), ha = act[i] / max * (base - top);
-    s += `<rect x="${bx.toFixed(1)}" y="${(base - hp).toFixed(1)}" width="${bwid.toFixed(1)}" height="${hp.toFixed(1)}" rx="2" fill="#48484A"/>`;
+    s += `<rect x="${bx.toFixed(1)}" y="${(base - hp).toFixed(1)}" width="${bwid.toFixed(1)}" height="${hp.toFixed(1)}" rx="2" fill="${phC(Pl.phases[w.ph].c)}" fill-opacity=".42"/>`;
     if (ha > 0) s += `<rect x="${bx.toFixed(1)}" y="${(base - ha).toFixed(1)}" width="${bwid.toFixed(1)}" height="${ha.toFixed(1)}" rx="2" fill="#A7F432"/>`;
-    s += `<rect x="${(x + 0.5).toFixed(1)}" y="${base + 5}" width="${(bw - 1).toFixed(1)}" height="4" rx="1" fill="${Pl.phases[w.ph].c}"/>`;
+    s += `<rect x="${(x + 0.5).toFixed(1)}" y="${base + 5}" width="${(bw - 1).toFixed(1)}" height="4" rx="1" fill="${phC(Pl.phases[w.ph].c)}"/>`;
     if (i === cur) s += `<path d="M${(x + bw / 2).toFixed(1)} ${base + 12} l4 7 h-8 z" fill="#fff"/>`;
   });
   const now = Date.now();
