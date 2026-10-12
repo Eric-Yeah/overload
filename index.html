@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-UNtq9PPaV9SaDSykoywfAMALmi3xn4WFZ/cbdfgzxB8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-HyZvxXGHKoVdihicLf1Bwf7AwqYjf2z7pZFdLzI/knA=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -156,6 +156,9 @@ button.row:active{background:var(--surface-2)}
 .btn-danger{background:rgba(255,69,58,.16);color:var(--red)}
 .btn-primary:active,.btn-secondary:active,.btn-danger:active{opacity:.75}
 .btn-text{padding:8px 2px;color:var(--lime);font-size:17px}
+.skip-line{display:block;margin:8px auto 0;font-size:15px}
+#sheet .days button{background:var(--surface-2)}
+#sheet .days button.on{background:var(--lime-dim)}
 .btn-text.strong{font-weight:700}
 .btn-text.sm{font-size:15px}
 .btn-text.danger{color:var(--red)}
@@ -1399,8 +1402,12 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.3';
+const APP_VERSION = '2026.10.12.4';
 const PATCH_NOTES = [
+  {v: '2026.10.12.4', date: 'Update vom 12. Oktober 2026, Teil 2', items: [
+    ['🗓️', 'Gym-Wochenplan', 'Unter Einstellungen → Übungen und Vorlagen (und im Gym-Tab) legst du jetzt fest, was du an welchem Tag trainierst, zum Beispiel Dienstag Oberkörper, Mittwoch Beine. Tipp auf einen Wochentag, dann Vorlage wählen oder Ruhetag. Auch in jeder Vorlage kannst du ihre Trainingstage antippen. „Als Nächstes“ folgt danach deinem Plan.'],
+    ['⏭️', 'Einheit auslassen', 'Keine Lust oder keine Zeit? Unter „Als Nächstes“ lässt du die Einheit mit einem Tipp aus, der Plan springt zur nächsten. Im Wochenplan kannst du es jederzeit zurücknehmen. Nächste Woche ist die Einheit ganz normal wieder dabei, deine Daten und der Verlauf bleiben unberührt.'],
+  ]},
   {v: '2026.10.12.3', date: 'Update vom 12. Oktober 2026', items: [
     ['✨', 'Neues Design', 'Overload sieht jetzt ruhiger und runder aus: Die Tab-Leiste bleibt wie gewohnt am unteren Rand. „Als Nächstes“ im Gym und im Laufen-Tab ist eine große Akzentkarte. Gefällt dir der alte Look besser, wechselst du unter Mehr → Erscheinungsbild → Stil jederzeit zurück zu „Klassisch“. Deine Daten bleiben davon unberührt.'],
     ['🗓️', 'Heute mit Tagesplan', 'Heute zeigt deinen Tag jetzt als Zeitleiste: was schon erledigt ist (Mahlzeiten, Training, Schlaf), was als Nächstes ansteht und was noch offen ist. Darüber sitzen Schnellaktionen für Wasser, Essen, Gewicht und Aktivität. Seltenere Karten wie Wochenbericht, Freunde und Rezeptidee sind weiter unten gebündelt.'],
@@ -1806,6 +1813,11 @@ function migrate(d, fresh) {
   if (!Array.isArray(d.settings.shareSeen)) d.settings.shareSeen = [];
   { const F = d.settings.feed && typeof d.settings.feed === 'object' ? d.settings.feed : {}; d.settings.feed = {on: !!F.on, types: Object.assign({gym: true, run: true, tri: true, xa: true}, F.types), f: Object.assign({km: true, pace: true, title: true, ex: true}, F.f), hide: Array.isArray(F.hide) ? F.hide : []}; }
   if (!d.settings.advDone || typeof d.settings.advDone !== 'object' || !Array.isArray(d.settings.advDone.k)) d.settings.advDone = {d: '', k: []};
+  // Gym-Wochenplan (Tag → Vorlage) und ausgelassene Termine
+  { const isO = x => x && typeof x === 'object' && !Array.isArray(x), cut = dateKey(Date.now() - 120 * 864e5);
+    d.settings.gymWeek = isO(d.settings.gymWeek) ? d.settings.gymWeek : {};
+    d.settings.gymSkip = isO(d.settings.gymSkip) ? d.settings.gymSkip : {};
+    Object.keys(d.settings.gymSkip).forEach(k => { if (k < cut) delete d.settings.gymSkip[k]; }); }
   d.settings.hints = Object.assign({advice: true, report: true, review: true, load: true}, d.settings.hints && typeof d.settings.hints === 'object' ? d.settings.hints : {});
   // Strava (Beta): verbundenes Gerät und übernommene Aktivitäten, Freischaltung durch den Admin
   if (d.settings.strava === undefined) d.settings.strava = null;
@@ -1889,9 +1901,28 @@ function bestWeight(exId) {
   db.sessions.forEach(s => s.entries.forEach(e => { if (e.exId === exId) e.sets.forEach(x => { if (b == null || x.w > b) b = x.w; }); }));
   return b;
 }
+/* Wochenplan: settings.gymWeek = {Wochentag 0 (Mo) bis 6 (So): Vorlagen-ID}, settings.gymSkip = {Datum: 1} für ausgelassene Termine */
+const WDL = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+const dowOf = ts => (new Date(ts).getDay() + 6) % 7;
+function gymDayTpl(dow) { const id = (db.settings.gymWeek || {})[dow]; return id ? db.templates.find(t => t.id === id) || null : null; }
+const gymSched = () => [0, 1, 2, 3, 4, 5, 6].some(d => gymDayTpl(d));
+const gymSkipped = ts => !!(db.settings.gymSkip || {})[dateKey(ts)];
+const trainedOn = ts => db.sessions.some(s => !s.demo && dateKey(s.date) === dateKey(ts));
+/* nächster Plantermin ab heute, ohne ausgelassene; {t: Vorlage, ts: Tag, i: Tage ab heute} */
+function nextPlanned() {
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  for (let i = 0; i < 14; i++) {
+    const ts = addDays(t0.getTime(), i), t = gymDayTpl(dowOf(ts));
+    if (!t || gymSkipped(ts) || (i === 0 && trainedOn(ts))) continue;
+    return {t, ts, i};
+  }
+  return null;
+}
+const planDay = np => np.i === 0 ? 'heute' : np.i === 1 ? 'morgen' : 'am ' + WDL[dowOf(np.ts)] + (np.i >= 7 ? ', ' + new Date(np.ts).toLocaleDateString('de-DE', {day: 'numeric', month: 'numeric'}) : '');
 function nextTemplate() {
   const T = db.templates;
   if (!T.length) return null;
+  if (gymSched()) { const np = nextPlanned(); if (np) return np.t; }
   for (let i = db.sessions.length - 1; i >= 0; i--) {
     const idx = T.findIndex(t => t.id === db.sessions[i].templateId);
     if (idx >= 0) return T[(idx + 1) % T.length];
@@ -2032,7 +2063,7 @@ function homeData(id) {
     if (pauseOn('gym')) return {id, title: 'Gym', ic: ICON.train, c: 'var(--lime)', val: '–', unit: '', p: null, sub: `Pausiert: ${PAUSE_TYPES.find(x => x[0] === db.settings.pause.type)[2]}`, go: 'home', extra: `<button class="btn-chip" data-act="pauseSheet">Pause ansehen</button>`};
     if (needGymSetup()) return {id, title: 'Gym', ic: ICON.train, c: 'var(--lime)', val: '–', unit: '', p: null, sub: 'Erstell deinen Trainingsplan', go: 'home', extra: `<button class="btn-chip" data-act="tab" data-v="home">${ICON.spark}Plan erstellen</button>`};
     return {id, title: 'Gym', ic: ICON.train, c: 'var(--lime)', val: n, unit: `von ${goal} Trainings`, p: n / goal,
-      sub: db.active ? `${db.active.title} läuft gerade` : n >= goal ? 'Wochenziel erreicht' : nx ? `Als Nächstes: ${nx.name}` : 'Diese Woche',
+      sub: db.active ? `${db.active.title} läuft gerade` : n >= goal ? 'Wochenziel erreicht' : nx ? `Als Nächstes${(np => np ? ' ' + planDay(np) : '')(gymSched() ? nextPlanned() : null)}: ${nx.name}` : 'Diese Woche',
       go: db.active ? 'workout' : 'home',
       extra: db.active ? `<button class="btn-chip" data-act="tab" data-v="workout">Training fortsetzen</button>` : nx ? `<button class="btn-chip" data-act="start" data-t="${esc(nx.id)}">${ICON.plus}${esc(nx.name)} starten</button>` : ''};
   }
@@ -2106,8 +2137,8 @@ function dayTimeline(cfg) {
     const S = db.sessions.filter(s => !s.demo && inDay(s.date, t0));
     S.forEach(s => done.push({ts: s.date, t: s.title || 'Training', s: `${sessSets(s)} Sätze`, r: s.end ? `${Math.max(1, Math.round((s.end - s.date) / 60000))}` : '', rs: s.end ? 'min' : '', sub2: clock(s.date)}));
     if (!db.active && !S.length && !needGymSetup() && !pauseOn('gym')) {
-      const nx = nextTemplate();
-      if (nx) heroes.push({lbl: 'Als Nächstes · Gym', t: nx.name, s: `${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ca. ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min`, btn: 'Training starten', act: `data-act="start" data-t="${esc(nx.id)}"`});
+      const nx = nextTemplate(), np = nx && gymSched() ? nextPlanned() : null;
+      if (nx) heroes.push({lbl: 'Als Nächstes · Gym' + (np ? ' · ' + planDay(np) : ''), t: nx.name, s: `${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ca. ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min`, btn: 'Training starten', act: `data-act="start" data-t="${esc(nx.id)}"`});
     }
   }
   if (on('run') && !pauseOn('run')) {
@@ -2592,6 +2623,29 @@ function applyPlan(P) {
   return {undo, goalChanged};
 }
 
+/* Wochenplan: Zeilen Mo–So dieser Woche, Tipp öffnet das Blatt für den Tag */
+function gymWeekSection(first) {
+  if (!db.templates.length) return '';
+  const ws = weekStart(), today = dateKey(Date.now());
+  const rows = WDL.map((n, i) => {
+    const ts = addDays(ws, i), k = dateKey(ts), t = gymDayTpl(i), done = trainedOn(ts);
+    const st = done ? 'erledigt' : !t ? '' : gymSkipped(ts) ? 'ausgelassen' : k === today ? 'heute' : k < today ? 'nicht gemacht' : '';
+    return `<button class="row" data-act="gymDay" data-dow="${i}"><span class="t"><b>${n}</b><span>${t ? esc(t.name) : 'Ruhetag'}</span></span><span class="r${st === 'heute' ? ' lime-t' : ''}">${st}</span><span class="chev">${ICON.chev}</span></button>`;
+  }).join('');
+  return `<section class="sec${first ? ' first' : ''}"><h3 class="sec-h">Wochenplan</h3><div class="group">${rows}</div><p class="foot">Lege fest, was du an welchem Tag trainierst. „Als Nächstes“ folgt diesem Plan. Eine Einheit kannst du auslassen, nächste Woche ist sie wieder dabei.</p></section>`;
+}
+let gd = null;
+function renderGymDay(keep) {
+  const i = gd.dow, ts = addDays(weekStart(), i), k = dateKey(ts), t = gymDayTpl(i), past = k < dateKey(Date.now()), done = trainedOn(ts), sk = gymSkipped(ts);
+  let h = `<div class="sheet-h"><span></span><h2 id="gymDaySheet">${WDL[i]}</h2><button class="btn-text strong" data-act="closeSheet">Fertig</button></div>`
+    + `<label class="lbl">Jeden ${WDL[i]}</label><div class="group">`
+    + db.templates.map(x => `<button class="row" data-act="gymPick" data-dow="${i}" data-t="${esc(x.id)}"><span class="t"><b>${esc(x.name)}</b></span><span class="r lime-t">${t && t.id === x.id ? '✓' : ''}</span></button>`).join('')
+    + `<button class="row" data-act="gymPick" data-dow="${i}" data-t=""><span class="t"><b>Ruhetag</b></span><span class="r lime-t">${t ? '' : '✓'}</span></button></div>`;
+  if (t && !past && !done) h += `<label class="lbl">Diese Woche</label><div class="group"><button class="row toggle-row" data-act="gymDaySkip" data-ts="${ts}" role="switch" aria-checked="${sk}"><span class="t"><b>Einheit auslassen</b><span>Nur am ${esc(new Date(ts).toLocaleDateString('de-DE', {day: 'numeric', month: 'long'}))}, danach ist sie wieder im Plan</span></span><span class="switch${sk ? ' on' : ''}"></span></button></div>`;
+  if (t && k === dateKey(Date.now()) && !done && !sk) h += `<button class="btn-primary mt" data-act="start" data-t="${esc(t.id)}">${esc(t.name)} starten</button>`;
+  openSheet(h, keep);
+}
+
 function vHome() {
   if (needGymSetup()) return vGymOnboard();
   const ws = weekStart(), wk = db.sessions.filter(s => s.date >= ws), goal = db.settings.weeklyGoal || 4;
@@ -2607,7 +2661,7 @@ function vHome() {
   if (db.sessions.length) h += `<div class="group mt"><button class="row" data-act="awardsOpen" data-from="home"><span class="ic-box">${ICON.trophy}</span><span class="t"><b>Rekorde und Erfolge</b><span>${Object.keys(db.awards).length} Abzeichen, deine Bestwerte</span></span><span class="chev">${ICON.chev}</span></button></div>`;
   if (!db.sessions.length && !db.active) h += `<section class="demo-card"><p>Nach deinem ersten Training schlägt dir die App für jede Übung vor, was du beim nächsten Mal steigern kannst. Mit Beispieldaten siehst du das sofort.</p><button class="btn-secondary" data-act="demo">Beispieldaten laden</button></section>`;
 
-  const nx = nextTemplate();
+  const nx = nextTemplate(), np = nx && gymSched() ? nextPlanned() : null;
   if (nx) {
     const last = lastTplDate(nx.id), kinds = new Set();
     const items = nx.exIds.map(id => {
@@ -2616,9 +2670,10 @@ function vHome() {
       return `<li><span>${esc(ex.name)}</span>${sg ? `<span class="chip k-${sg.kind}">${fmtSet(sg.sets[0])}</span>` : `<span class="chip k-none">${ex.start ? fmtN(ex.start) + ' kg' : 'neu'}</span>`}</li>`;
     }).join('');
     const legend = kinds.size ? `<div class="legend">${['up', 'reps', 'hold', 'down'].filter(k => kinds.has(k)).map(k => `<span class="k-${k}"><i></i>${KLABEL[k]}</span>`).join('')}</div>` : '';
-    h += `<section class="sec"><h3 class="sec-h">Als Nächstes</h3><div class="next"><h2>${esc(nx.name)}</h2><p class="muted">${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ≈ ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min · ${last ? `zuletzt ${relDay(last)}` : 'noch nie trainiert'}</p><ul class="plan">${items}</ul>${legend}<button class="btn-primary" data-act="start" data-t="${esc(nx.id)}">${esc(nx.name)} starten</button></div></section>`;
+    h += `<section class="sec"><h3 class="sec-h">Als Nächstes${np ? ` · ${esc(planDay(np))}` : ''}</h3><div class="next"><h2>${esc(nx.name)}</h2><p class="muted">${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ≈ ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min · ${last ? `zuletzt ${relDay(last)}` : 'noch nie trainiert'}</p><ul class="plan">${items}</ul>${legend}<button class="btn-primary" data-act="start" data-t="${esc(nx.id)}">${esc(nx.name)} starten</button></div>${np && np.t.id === nx.id ? `<button class="btn-text sm skip-line" data-act="gymDaySkip" data-ts="${np.ts}">Einheit ${esc(planDay(np))} auslassen</button>` : ''}</section>`;
   }
 
+  h += gymWeekSection();
   if (db.templates.length) h += coachCard('edit', 'KI-Coach', 'Plan ändern: Sätze, Wiederholungen, Übungen tauschen oder neue Vorlagen. Er kennt deinen Plan und deine letzten Gewichte.', COACH_TIPS.edit);
   h += `<section class="sec"><div class="sec-row"><h3 class="sec-h">Vorlagen</h3><button class="btn-text sm" data-act="tab" data-v="library">Bearbeiten</button></div><div class="group">`;
   h += db.templates.map(t => {
@@ -2688,9 +2743,10 @@ function stepper(act, val, f = '') {
 function vLibrary() {
   const exs = Object.values(db.exercises).sort(byName);
   let h = `<header class="lt">${backLink()}<h1>Übungen</h1></header>`;
-  h += `<section class="sec first"><h3 class="sec-h">Vorlagen</h3><div class="group">` + db.templates.map(t => {
-    const names = t.exIds.map(id => db.exercises[id]?.name).filter(Boolean);
-    return `<button class="row" data-act="editTpl" data-id="${esc(t.id)}"><span class="t"><b>${esc(t.name)}</b><span>${names.length ? esc(names.slice(0, 3).join(', ')) + (names.length > 3 ? ` und ${names.length - 3} weitere` : '') : 'Noch leer'}</span></span><span class="chev">${ICON.chev}</span></button>`;
+  h += gymWeekSection(true);
+  h += `<section class="sec${db.templates.length ? '' : ' first'}"><h3 class="sec-h">Vorlagen</h3><div class="group">` + db.templates.map(t => {
+    const names = t.exIds.map(id => db.exercises[id]?.name).filter(Boolean), ds = WD.filter((w, i) => (db.settings.gymWeek || {})[i] === t.id).join(', ');
+    return `<button class="row" data-act="editTpl" data-id="${esc(t.id)}"><span class="t"><b>${esc(t.name)}</b><span>${ds ? esc(ds) + ' · ' : ''}${names.length ? esc(names.slice(0, 3).join(', ')) + (names.length > 3 ? ` und ${names.length - 3} weitere` : '') : 'Noch leer'}</span></span><span class="chev">${ICON.chev}</span></button>`;
   }).join('') + `<button class="row" data-act="newTpl"><span class="plus-ic">${ICON.plus}</span><span class="t"><b class="lime-t">Neue Vorlage</b></span></button></div></section>`;
 
   h += `<section class="sec"><h3 class="sec-h">Alle Übungen</h3><div class="group">` + exs.map(x =>
@@ -5620,6 +5676,7 @@ const TUT = [
     ['🏆', 'Unter „Rekorde und Erfolge“ findest du deine Bestwerte und Abzeichen.'],
     ['📈', 'Die App merkt sich alles und schlägt beim nächsten Mal vor, wann du mehr Gewicht oder mehr Wiederholungen machst.'],
     ['⏱️', 'Vor dem Start siehst du, wie lange das Training ungefähr dauert. Am Ende kannst du eine Notiz schreiben, die KI liest sie auf Wunsch mit.'],
+    ['🗓️', 'Wochenplan: lege fest, was du an welchem Tag trainierst (Einstellungen → Übungen und Vorlagen). Eine Einheit kannst du bei „Als Nächstes“ auslassen.'],
     ['🔐', 'Spindnummer merken: oben im Gym-Tab, sie steht dann auch im Training.'],
     ['💬', 'Plan ändern: einfach den KI-Coach im Gym-Tab fragen, z. B. „4 statt 3 Sätze beim Bankdrücken“.'],
   ]],
@@ -6458,12 +6515,13 @@ function exProgress(id) {
 let td = null;
 function openTplEditor(id) {
   const t = id ? db.templates.find(x => x.id === id) : null;
-  td = t ? {id: t.id, name: t.name, exIds: [...t.exIds]} : {id: null, name: '', exIds: []};
+  td = t ? {id: t.id, name: t.name, exIds: [...t.exIds], days: [0, 1, 2, 3, 4, 5, 6].filter(i => (db.settings.gymWeek || {})[i] === t.id)} : {id: null, name: '', exIds: [], days: []};
   renderTplEditor();
 }
 function renderTplEditor(keep) {
   let h = `<div class="sheet-h"><button class="btn-text" data-act="closeSheet">Abbrechen</button><h2>${td.id ? 'Vorlage' : 'Neue Vorlage'}</h2><button class="btn-text strong" data-act="saveTpl">Speichern</button></div>`
     + `<label class="lbl" for="tplName">Name</label><input id="tplName" class="field" data-in="tplName" value="${esc(td.name)}" placeholder="z. B. Upper A" autocomplete="off">`
+    + `<label class="lbl">Trainingstage</label><div class="days">${WD.map((w, i) => `<button class="${td.days.includes(i) ? 'on' : ''}" data-act="tplDay" data-v="${i}" aria-pressed="${td.days.includes(i)}" aria-label="${WDL[i]}">${w}</button>`).join('')}</div>`
     + `<label class="lbl">Übungen in dieser Reihenfolge</label>`;
   h += td.exIds.length
     ? `<div class="group">${td.exIds.map((id, i) => `<div class="row"><span class="t"><b>${esc(db.exercises[id]?.name || 'Gelöschte Übung')}</b></span><span class="row-tools"><button class="mini" data-act="tplMove" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICON.up}</button><button class="mini" data-act="tplMove" data-i="${i}" data-d="1" ${i === td.exIds.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICON.down}</button><button class="mini danger" data-act="tplRm" data-i="${i}" aria-label="Entfernen">${ICON.x}</button></span></div>`).join('')}</div>`
@@ -7290,11 +7348,27 @@ const A = {
   tplMove: ({i, d}) => { i = +i; const j = i + +d; [td.exIds[i], td.exIds[j]] = [td.exIds[j], td.exIds[i]]; renderTplEditor(true); },
   tplRm: ({i}) => { td.exIds.splice(+i, 1); renderTplEditor(true); },
   tplAddEx: () => openPicker({exclude: td.exIds, onPick: id => { td.exIds.push(id); renderTplEditor(); }, onCancel: () => renderTplEditor()}),
+  tplDay: ({v}) => { v = +v; td.days = td.days.includes(v) ? td.days.filter(x => x !== v) : [...td.days, v].sort((a, b) => a - b); renderTplEditor(true); },
+  gymDay: ({dow}) => { gd = {dow: +dow}; renderGymDay(); },
+  gymPick: ({dow, t}) => {
+    const W = db.settings.gymWeek = db.settings.gymWeek || {};
+    if (t) W[+dow] = t; else delete W[+dow];
+    saveDB(); render(); renderGymDay(true);
+  },
+  gymDaySkip: ({ts}) => {
+    const S = db.settings.gymSkip = db.settings.gymSkip || {}, k = dateKey(+ts);
+    if (S[k]) { delete S[k]; toast('Einheit ist wieder im Plan'); } else { S[k] = 1; toast('Einheit ausgelassen'); }
+    saveDB(); render();
+    if ($('#sheet.show #gymDaySheet')) renderGymDay(true);
+  },
   saveTpl: () => {
     const name = td.name.trim();
     if (!name) { toast('Gib der Vorlage einen Namen'); $('#tplName')?.focus(); return; }
+    let tid = td.id;
     if (td.id) Object.assign(db.templates.find(t => t.id === td.id), {name, exIds: td.exIds});
-    else db.templates.push({id: uid(), name, exIds: td.exIds});
+    else { tid = uid(); db.templates.push({id: tid, name, exIds: td.exIds}); }
+    const W = db.settings.gymWeek = db.settings.gymWeek || {};
+    for (let i = 0; i < 7; i++) { if (td.days.includes(i)) W[i] = tid; else if (W[i] === tid) delete W[i]; }
     saveDB(); closeSheet(); render(); toast('Vorlage gespeichert');
   },
   delTpl: async () => {
