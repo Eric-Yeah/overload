@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-o4Y4RITuasRF7Zd5kkR8A69uZdwitxuw6MrQ5nBma3U=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-WBl9rHR57uUH3XaHxCkz9R08vWE5woWL4dKSLevVHfk=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -291,6 +291,7 @@ button.row:active{background:var(--surface-2)}
 .ch-info b{font-size:15px;font-weight:700;color:var(--text)}
 .ch-info span{font-family:var(--num);font-size:14px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
 .ch-col{fill:var(--text);opacity:.12}
+.ch-sel{fill:none;stroke:var(--text);stroke-width:1.6}
 .ch-ln{stroke:var(--text-2);stroke-width:1;stroke-dasharray:3 3}
 .ch-dot{fill:var(--surface-2);stroke:var(--text);stroke-width:2.2}
 .ch-rng{margin-bottom:10px}
@@ -1424,8 +1425,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.7';
+const APP_VERSION = '2026.10.12.8';
 const PATCH_NOTES = [
+  {v: '2026.10.12.8', date: 'Update vom 12. Oktober 2026, Teil 6', items: [
+    ['✨', 'Wochenumfang: dezente Markierung', 'Beim Antippen einer Woche wird nicht mehr die ganze Spalte grau hinterlegt, sondern nur der Balken selbst bekommt einen dünnen hellen Rahmen.'],
+  ]},
   {v: '2026.10.12.7', date: 'Update vom 12. Oktober 2026, Teil 5', items: [
     ['🎨', 'Wochenumfang ohne Grau', 'Beim Laufen sind die geplanten Minuten jetzt blass in der Farbe ihrer Phase (Comeback, Grundlage, Aufbau, Tapern in Lila) statt grau, die gelaufenen Minuten leuchten in voller Akzentfarbe darüber.'],
   ]},
@@ -3405,6 +3409,7 @@ function planWeekCard(P, i, wi, maxM, K = PLAN_KIND.run) {
 const CH = {}, chR = {wt: 8, ex: 12};
 const chInfo = p => `<b>${esc(p.t)}</b><span>${esc(p.v)}</span>`;
 function chMark(c, p) {
+  if (p.box) return `<rect class="ch-sel" x="${(p.box[0] - 1.5).toFixed(1)}" y="${(p.box[1] - 1.5).toFixed(1)}" width="${(p.box[2] + 3).toFixed(1)}" height="${(p.box[3] + 3).toFixed(1)}" rx="3.5"/>`;
   if (p.w) return `<rect class="ch-col" x="${(p.x - p.w / 2).toFixed(1)}" y="0" width="${p.w.toFixed(1)}" height="${c.H}" rx="3"/>`;
   return `<line class="ch-ln" x1="${p.x.toFixed(1)}" x2="${p.x.toFixed(1)}" y1="${c.top}" y2="${c.bot}"/>` + (p.y != null ? `<circle class="ch-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5"/>` : '');
 }
@@ -3465,7 +3470,8 @@ function runChart(Pl, cur) {
   const now = Date.now();
   const pts = Pl.weeks.map((w, i) => {
     const ws = planWeekStart(Pl, i), ph = Pl.phases[w.ph];
-    return {x: P + i * bw + bw / 2, w: bw, t: `Woche ${i + 1} · ${shortDate(ws)}–${shortDate(addDays(ws, 6))}`,
+    const bx = P + i * bw + bw * 0.14, bh = Math.max(3, Math.max(pl[i], act[i]) / max * (base - top));
+    return {x: P + i * bw + bw / 2, w: bw, box: [bx, base - bh, bw * 0.72, bh], t: `Woche ${i + 1} · ${shortDate(ws)}–${shortDate(addDays(ws, 6))}`,
       v: `${ws > now ? 'geplant' : act[i] + ' von'} ${pl[i]} min${ph ? ' · ' + ph.n : ''}${w.deload ? ' · Entlastung' : ''}`};
   });
   return chBox('run', `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Geplante und gelaufene Minuten pro Woche, antippen für Werte">${s}</svg>`, {W, H, pts}, Math.max(0, Math.min(n - 1, cur)));
