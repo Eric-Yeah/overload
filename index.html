@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-JwLOAvt9GKCVi8p6oQkLpRL+/cixnZfpWM3MFM4s9oI=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-IHPQjM5Zr9Xa79rIztQGlXdYEtpE9s/2dMtvnq69g9k=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -286,6 +286,16 @@ button.row:active{background:var(--surface-2)}
 .prog-stats span{display:block;font-size:12px;color:var(--text-2)}
 .prog-stats b{font-family:var(--num);font-size:19px}
 .spark{display:block;width:100%;height:auto;border-radius:14px;background:var(--surface-2)}
+.ch{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ch-info{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 12px;min-height:22px;margin:0 2px 8px}
+.ch-info b{font-size:15px;font-weight:700;color:var(--text)}
+.ch-info span{font-family:var(--num);font-size:14px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
+.ch-col{fill:var(--text);opacity:.12}
+.ch-ln{stroke:var(--text-2);stroke-width:1;stroke-dasharray:3 3}
+.ch-dot{fill:var(--surface-2);stroke:var(--text);stroke-width:2.2}
+.ch-rng{margin-bottom:10px}
+.ld-w.sel .ld-bars i:not(.plan){outline:2px solid var(--text);outline-offset:1px}
+.ld-w.sel span{color:var(--text)}
 
 .toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:80;transform:translate(-50%,-150%);padding:10px 18px;border-radius:999px;background:var(--surface-3);font-size:15px;font-weight:600;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s cubic-bezier(.2,.85,.25,1)}
 .toast.show{transform:translate(-50%,0)}
@@ -1414,8 +1424,12 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.5';
+const APP_VERSION = '2026.10.12.6';
 const PATCH_NOTES = [
+  {v: '2026.10.12.6', date: 'Update vom 12. Oktober 2026, Teil 4', items: [
+    ['👆', 'Diagramme zum Antippen', 'Tippe oder wische über Gewichtsverlauf, Wochenumfang beim Laufen, den Verlauf einer Übung und die Belastung pro Woche: Eine Markierung zeigt dir Datum und Wert, zum Beispiel Gewicht mit Wochenschnitt oder gelaufene gegen geplante Minuten. Beim Start ist immer der neueste Punkt gewählt.'],
+    ['🔎', 'Zeitraum wählen', 'Beim Gewicht stellst du 4 Wochen, 8 Wochen, 6 Monate oder alles ein, beim Verlauf einer Übung die letzten 6, 12, 24 oder alle Trainings.'],
+  ]},
   {v: '2026.10.12.5', date: 'Update vom 12. Oktober 2026, Teil 3', items: [
     ['🎨', 'Empfehlungen wieder farbig', 'Bei „Als Nächstes“ sieht man jetzt wieder auf einen Blick, was jede Übung braucht: ▲ mehr Gewicht (dunkel mit Lime), + mehr Wiederholungen (cyan), halten (blass), ▼ leichter (orange). Die Legende darunter zeigt dieselben Farben.'],
   ]},
@@ -3384,6 +3398,51 @@ function planWeekCard(P, i, wi, maxM, K = PLAN_KIND.run) {
     }).join('')}</ul></div></div>`;
 }
 
+/* Interaktive Diagramme: Tippen oder Wischen zeigt den Wert, `CH[id]` hält die Punkte des zuletzt gezeichneten Diagramms */
+const CH = {}, chR = {wt: 8, ex: 12};
+const chInfo = p => `<b>${esc(p.t)}</b><span>${esc(p.v)}</span>`;
+function chMark(c, p) {
+  if (p.w) return `<rect class="ch-col" x="${(p.x - p.w / 2).toFixed(1)}" y="0" width="${p.w.toFixed(1)}" height="${c.H}" rx="3"/>`;
+  return `<line class="ch-ln" x1="${p.x.toFixed(1)}" x2="${p.x.toFixed(1)}" y1="${c.top}" y2="${c.bot}"/>` + (p.y != null ? `<circle class="ch-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5"/>` : '');
+}
+function chBox(id, svg, c, sel) {
+  CH[id] = c; c.sel = sel; c.top = c.top ?? 0; c.bot = c.bot ?? c.H;
+  const p = c.pts[sel];
+  return `<div class="ch" data-ch="${id}"><div class="ch-info">${p ? chInfo(p) : ''}</div>${svg.replace(/<\/svg>$/, `<g class="ch-mk" pointer-events="none">${p ? chMark(c, p) : ''}</g></svg>`)}</div>`;
+}
+function chShow(box, i) {
+  const c = CH[box.dataset.ch], p = c && c.pts[i];
+  if (!p || c.sel === i) return;
+  c.sel = i;
+  const inf = box.querySelector('.ch-info'), g = box.querySelector('.ch-mk');
+  if (inf) inf.innerHTML = chInfo(p);
+  if (g) g.innerHTML = chMark(c, p);
+  box.querySelectorAll('[data-i]').forEach(e => e.classList.toggle('sel', +e.dataset.i === i));
+}
+function chIndex(box, ev) {
+  const c = CH[box.dataset.ch];
+  if (!c) return -1;
+  if (c.html) { const el = document.elementFromPoint(ev.clientX, ev.clientY), q = el && el.closest && el.closest('[data-i]'); return q && box.contains(q) ? +q.dataset.i : -1; }
+  const svg = box.querySelector('svg'), r = svg.getBoundingClientRect();
+  if (!r.width) return -1;
+  const x = (ev.clientX - r.left) / r.width * c.W;
+  let bi = -1, bd = Infinity;
+  c.pts.forEach((p, i) => { const d = Math.abs(p.x - x); if (d < bd) { bd = d; bi = i; } });
+  return bi;
+}
+{
+  let act = null;
+  const boxOf = ev => ev.target.closest && ev.target.closest('.ch[data-ch]');
+  document.addEventListener('pointerdown', ev => { const b = boxOf(ev); if (!b) return; act = b; const i = chIndex(b, ev); if (i >= 0) chShow(b, i); });
+  document.addEventListener('pointermove', ev => {
+    const b = ev.pointerType === 'mouse' ? boxOf(ev) : act;
+    if (!b) return;
+    const i = chIndex(b, ev);
+    if (i >= 0) chShow(b, i);
+  });
+  ['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, () => { act = null; }));
+}
+const chRangeBar = (c, opts, cur) => `<div class="seg ch-rng">${opts.map(([v, n]) => `<button class="${cur === v ? 'on' : ''}" data-act="chRange" data-c="${c}" data-v="${v}">${n}</button>`).join('')}</div>`;
 function runChart(Pl, cur) {
   const n = Pl.weeks.length, W = 340, H = 134, P = 6, top = 18, base = H - 22;
   const act = Pl.weeks.map((_, i) => runsInWeek(planWeekStart(Pl, i)).reduce((a, r) => a + r.min, 0));
@@ -3399,7 +3458,13 @@ function runChart(Pl, cur) {
     s += `<rect x="${(x + 0.5).toFixed(1)}" y="${base + 5}" width="${(bw - 1).toFixed(1)}" height="4" rx="1" fill="${Pl.phases[w.ph].c}"/>`;
     if (i === cur) s += `<path d="M${(x + bw / 2).toFixed(1)} ${base + 12} l4 7 h-8 z" fill="#fff"/>`;
   });
-  return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Geplante und gelaufene Minuten pro Woche">${s}</svg>`;
+  const now = Date.now();
+  const pts = Pl.weeks.map((w, i) => {
+    const ws = planWeekStart(Pl, i), ph = Pl.phases[w.ph];
+    return {x: P + i * bw + bw / 2, w: bw, t: `Woche ${i + 1} · ${shortDate(ws)}–${shortDate(addDays(ws, 6))}`,
+      v: `${ws > now ? 'geplant' : act[i] + ' von'} ${pl[i]} min${ph ? ' · ' + ph.n : ''}${w.deload ? ' · Entlastung' : ''}`};
+  });
+  return chBox('run', `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Geplante und gelaufene Minuten pro Woche, antippen für Werte">${s}</svg>`, {W, H, pts}, Math.max(0, Math.min(n - 1, cur)));
 }
 
 /* Lauf eintragen */
@@ -3513,24 +3578,36 @@ function vWeight() {
 }
 
 function weightChart() {
-  const cws = weekStartOf(Date.now()), t0 = addDays(cws, -49), t1 = addDays(cws, 7);
-  const pts = Object.entries(db.weights).map(([k, v]) => ({t: keyToTs(k), v})).filter(p => p.t >= t0).sort((a, b) => a.t - b.t);
-  if (pts.length < 2) return '';
-  const ww = weightWeeks().filter(w => w.ws >= t0);
+  const cws = weekStartOf(Date.now());
+  const all = Object.entries(db.weights).map(([k, v]) => ({t: keyToTs(k), v})).sort((a, b) => a.t - b.t);
+  if (all.length < 2) return '';
+  const wkN = chR.wt || Math.max(4, Math.round((cws - weekStartOf(all[0].t)) / (7 * 864e5)) + 1);
+  const t0 = addDays(cws, -(wkN - 1) * 7), t1 = addDays(cws, 7);
+  const rng = chRangeBar('wt', [[4, '4 Wochen'], [8, '8 Wochen'], [26, '6 Monate'], [0, 'Alles']], chR.wt);
+  const pts = all.filter(p => p.t >= t0);
+  if (pts.length < 2) return rng + `<p class="hint">In diesem Zeitraum gibt es zu wenige Messungen.</p>`;
+  const wwAll = weightWeeks(), ww = wwAll.filter(w => w.ws >= t0);
   let mn = Math.min(...pts.map(p => p.v)), mx = Math.max(...pts.map(p => p.v));
   const g = db.weightGoal ? db.weightGoal.target : null;
   const showG = g != null && g >= mn - 1.5 && g <= mx + 1.5;
   if (showG) { mn = Math.min(mn, g); mx = Math.max(mx, g); }
   if (mx - mn < 1) { const c = (mx + mn) / 2; mn = c - 0.5; mx = c + 0.5; }
-  const W = 340, H = 150, L = 36, R = 10, T = 12, B = 12;
+  const W = 340, H = 154, L = 36, R = 10, T = 12, B = 16;
   const X = t => L + (t - t0) / (t1 - t0) * (W - L - R), Y = v => T + (mx - v) / (mx - mn) * (H - T - B);
+  const dense = pts.length > 60, rd = dense ? 1.6 : 2.6, rw = ww.length > 14 ? 2.6 : 3.8;
   let s = '';
   [mx, (mx + mn) / 2, mn].forEach(v => { s += `<line x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#3A3A3C" stroke-width=".6"/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" font-size="10" fill="#8E8E93" text-anchor="end">${fmtN(Math.round(v * 10) / 10)}</text>`; });
+  s += `<text x="${L}" y="${H - 3}" font-size="10" fill="#8E8E93">${shortDate(t0)}</text><text x="${W - R}" y="${H - 3}" font-size="10" fill="#8E8E93" text-anchor="end">${shortDate(addDays(cws, 6))}</text>`;
   if (showG) s += `<line x1="${L}" x2="${W - R}" y1="${Y(g).toFixed(1)}" y2="${Y(g).toFixed(1)}" stroke="#3DDCEB" stroke-width="1.5" stroke-dasharray="4 4"/>`;
-  pts.forEach(p => { s += `<circle cx="${X(p.t).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="2.6" fill="#8E8E93"/>`; });
+  pts.forEach(p => { s += `<circle cx="${X(p.t).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="${rd}" fill="#8E8E93"/>`; });
   const mid = w => X(addDays(w.ws, 3) + 12 * 3600e3).toFixed(1);
-  if (ww.length) s += `<polyline points="${ww.map(w => `${mid(w)},${Y(w.avg).toFixed(1)}`).join(' ')}" fill="none" stroke="#A7F432" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>` + ww.map(w => `<circle cx="${mid(w)}" cy="${Y(w.avg).toFixed(1)}" r="3.8" fill="#A7F432"/>`).join('');
-  return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gewichtsverlauf der letzten acht Wochen">${s}</svg><div class="legend chart-leg"><span style="--k:#8E8E93"><i></i>Tageswerte</span><span style="--k:var(--lime)"><i></i>Wochenschnitt</span>${showG ? '<span style="--k:var(--cyan)"><i></i>Ziel</span>' : ''}</div>`;
+  if (ww.length) s += `<polyline points="${ww.map(w => `${mid(w)},${Y(w.avg).toFixed(1)}`).join(' ')}" fill="none" stroke="#A7F432" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>` + ww.map(w => `<circle cx="${mid(w)}" cy="${Y(w.avg).toFixed(1)}" r="${rw}" fill="#A7F432"/>`).join('');
+  const cp = pts.map(p => {
+    const wk = wwAll.find(w => w.ws === weekStartOf(p.t));
+    return {x: X(p.t), y: Y(p.v), t: new Date(p.t).toLocaleDateString('de-DE', {weekday: 'short', day: 'numeric', month: 'short'}), v: fmtKg(p.v) + (wk ? ` · Ø Woche ${fmtKg(wk.avg)}` : '')};
+  });
+  return rng + chBox('wt', `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gewichtsverlauf, antippen für Werte">${s}</svg>`, {W, H, top: T, bot: H - B, pts: cp}, cp.length - 1)
+    + `<div class="legend chart-leg"><span style="--k:#8E8E93"><i></i>Tageswerte</span><span style="--k:var(--lime)"><i></i>Wochenschnitt</span>${showG ? '<span style="--k:var(--cyan)"><i></i>Ziel</span>' : ''}</div>`;
 }
 
 let wk = null;
@@ -6508,8 +6585,9 @@ function renderExEditor(keep) {
   openSheet(h, keep);
 }
 function exProgress(id) {
-  const h = history(id, 12).reverse();
+  const total = history(id, 1e9).length, h = history(id, chR.ex || 1e9).reverse();
   if (!h.length) return `<div class="prog"><p class="hint">Noch keine Trainings mit dieser Übung.</p></div>`;
+  const rng = total > 6 ? chRangeBar('ex', [[6, '6'], [12, '12'], [24, '24'], [0, 'Alle']].filter(([v]) => !v || v < total || v === chR.ex), chR.ex) : '';
   const bw = h.every(x => x.sets.every(s => !s.w));
   const score = s => bw ? s.r : s.w * (1 + s.r / 30);
   let best = null;
@@ -6521,9 +6599,16 @@ function exProgress(id) {
     const pts = vals.map((v, i) => [P + i * (W - 2 * P) / (vals.length - 1), H - P - ((v - mn) / span) * (H - 2 * P)]);
     const line = pts.map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
     const lp = pts[pts.length - 1];
-    chart = `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Verlauf der letzten ${vals.length} Trainings"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A7F432" stop-opacity=".35"/><stop offset="1" stop-color="#A7F432" stop-opacity="0"/></linearGradient></defs><path d="M${pts[0][0].toFixed(1)},${H} L${line.split(' ').join(' L')} L${lp[0].toFixed(1)},${H} Z" fill="url(#sg)"/><polyline points="${line}" fill="none" stroke="#A7F432" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lp[0].toFixed(1)}" cy="${lp[1].toFixed(1)}" r="4.5" fill="#A7F432"/></svg>`;
+    const svg = `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Verlauf der letzten ${vals.length} Trainings, antippen für Werte"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A7F432" stop-opacity=".35"/><stop offset="1" stop-color="#A7F432" stop-opacity="0"/></linearGradient></defs><path d="M${pts[0][0].toFixed(1)},${H} L${line.split(' ').join(' L')} L${lp[0].toFixed(1)},${H} Z" fill="url(#sg)"/><polyline points="${line}" fill="none" stroke="#A7F432" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lp[0].toFixed(1)}" cy="${lp[1].toFixed(1)}" r="4.5" fill="#A7F432"/>${pts.length <= 40 ? pts.slice(0, -1).map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="#A7F432"/>`).join('') : ''}</svg>`;
+    const yr = new Date(h[0].session.date).getFullYear() !== new Date().getFullYear() || new Date(h[h.length - 1].session.date).getFullYear() !== new Date().getFullYear();
+    const cp = h.map((x, i) => {
+      const b = x.sets.reduce((m, st) => score(st) > score(m) ? st : m, x.sets[0]), d = i ? Math.round((vals[i] - vals[i - 1]) * 10) / 10 : 0;
+      return {x: pts[i][0], y: pts[i][1], t: new Date(x.session.date).toLocaleDateString('de-DE', yr ? {day: 'numeric', month: 'short', year: '2-digit'} : {day: 'numeric', month: 'short'}),
+        v: fmtSet(b) + (bw ? '' : ` · ≈ ${fmtN(Math.round(score(b) * 10) / 10)} kg`) + (d ? ` (${d > 0 ? '+' : '−'}${fmtN(Math.abs(d))})` : '')};
+    });
+    chart = chBox('ex', svg, {W, H, pts: cp}, cp.length - 1);
   }
-  return `<div class="prog"><div class="prog-stats"><div><span>Bester Satz</span><b>${fmtSet(best)}</b></div><div><span>${bw ? 'Max. Wiederholungen' : '1RM geschätzt'}</span><b>${bw ? best.r : fmtN(Math.round(score(best) * 10) / 10) + ' kg'}</b></div></div>${chart}<p class="hint">${bw ? 'Beste Wiederholungszahl' : 'Geschätztes Maximalgewicht'} pro Training${vals.length >= 2 ? `, letzte ${vals.length} Trainings` : ''}.</p></div>`;
+  return `<div class="prog"><div class="prog-stats"><div><span>Bester Satz</span><b>${fmtSet(best)}</b></div><div><span>${bw ? 'Max. Wiederholungen' : '1RM geschätzt'}</span><b>${bw ? best.r : fmtN(Math.round(score(best) * 10) / 10) + ' kg'}</b></div></div>${rng}${chart}<p class="hint">${bw ? 'Beste Wiederholungszahl' : 'Geschätztes Maximalgewicht'} pro Training${vals.length >= 2 ? `, letzte ${vals.length} Trainings` : ''}.</p></div>`;
 }
 
 /* Vorlage bearbeiten */
@@ -8214,6 +8299,9 @@ Object.assign(A, {
   },
 });
 
+Object.assign(A, {
+  chRange: ({c, v}) => { chR[c] = +v; if (c === 'ex') renderExEditor(true); else render(); },
+});
 document.addEventListener('click', ev => {
   const el = ev.target.closest('[data-act]');
   if (!el) return;
@@ -8389,7 +8477,9 @@ function openLoadSheet() {
   // Wochen-Balken (8 Wochen)
   const ws = weekStartOf(Date.now()), weeks = Array.from({length: 8}, (_, i) => { const a = addDays(ws, (i - 7) * 7); let s = 0; for (let d = 0; d < 7; d++) s += L.day[dateKey(addDays(a, d))] || 0; return {a, s}; });
   const mx = Math.max(1, ...weeks.map(w => w.s), PL ? PL.pts : 0);
-  h += `<label class="lbl mt">Belastung pro Woche</label><div class="ld-weeks">${weeks.map((w, i) => `<div class="ld-w"><div class="ld-bars"><i style="height:${Math.max(3, Math.round(w.s / mx * 90))}px;${i === 7 ? 'background:var(--lime)' : ''}"></i>${i === 7 && PL && PL.pts > w.s ? `<i class="plan" style="height:${Math.round((PL.pts - w.s) / mx * 90)}px"></i>` : ''}</div><span>${shortDate(w.a).replace(/\.$/, '')}</span></div>`).join('')}</div>`
+  const ldPts = weeks.map((w, i) => { const pv = i ? weeks[i - 1].s : 0; return {t: 'Woche ab ' + shortDate(w.a), v: `${fmtInt(w.s)} Punkte` + (i === 7 ? ' · läuft noch' : pv ? ` · ${fmtPct((w.s - pv) / pv * 100)}` : '') + (i === 7 && PL && PL.pts > w.s ? ` · geplant ${fmtInt(PL.pts)}` : '')}; });
+  CH.ld = {html: true, pts: ldPts, sel: 7};
+  h += `<label class="lbl mt">Belastung pro Woche</label><div class="ch" data-ch="ld"><div class="ch-info">${chInfo(ldPts[7])}</div><div class="ld-weeks">${weeks.map((w, i) => `<div class="ld-w${i === 7 ? ' sel' : ''}" data-i="${i}"><div class="ld-bars"><i style="height:${Math.max(3, Math.round(w.s / mx * 90))}px;${i === 7 ? 'background:var(--lime)' : ''}"></i>${i === 7 && PL && PL.pts > w.s ? `<i class="plan" style="height:${Math.round((PL.pts - w.s) / mx * 90)}px"></i>` : ''}</div><span>${shortDate(w.a).replace(/\.$/, '')}</span></div>`).join('')}</div></div>`
     + (PL ? `<p class="hint">Diese Woche geplant: etwa ${fmtInt(PL.pts)} Punkte aus dem Plan (${PL.done} von ${PL.n} Einheiten erledigt, Gym nicht eingerechnet).${weeks[6].s && PL.pts > weeks[6].s * 1.3 ? ' Das ist deutlich mehr als letzte Woche, steigere nur, wenn du dich gut erholt fühlst.' : ''}</p>` : '');
   h += `<label class="lbl mt">Erholung: ${LD_REC[R.level]}</label><div class="group tips">` + (R.f.length ? R.f.map(x => `<div class="row"><span class="ic-box">${x.emo}</span><span class="t"><span class="wrap-t">${esc(x.t)}</span></span><span class="r">${x.lvl === 'good' ? '✅' : x.lvl === 'warn' ? '🟡' : '🔴'}</span></div>`).join('') : `<div class="row"><span class="t"><span class="wrap-t">Trag Schlaf und Essen ein, dann fließt die Erholung hier mit ein.</span></span></div>`) + `</div>`;
   const rec = L.items.slice(-6).reverse();
