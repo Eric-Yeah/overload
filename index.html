@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-WBl9rHR57uUH3XaHxCkz9R08vWE5woWL4dKSLevVHfk=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-b0C1JDIcrUopLJTsV/MhHXwyR2dhaA2NjiXM+mjdFYM=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1289,7 +1289,7 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 :root[data-style="new"] .tab{flex:none;width:52px;height:48px;padding:0;border-radius:24px;flex-direction:row;justify-content:center;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-2)}
 :root[data-style="new"] .tab span{display:none}
 :root[data-style="new"] .tab svg{width:24px;height:24px}
-:root[data-style="new"] .tab.on{flex:1;width:auto;background:var(--lime);color:var(--on-accent)}
+:root[data-style="new"] .tab.on{flex:1;width:auto;background:var(--surface-2);color:var(--lime)}
 :root[data-style="new"] .tab.on span{display:inline;white-space:nowrap}
 /* Runde, ruhige Flächen */
 :root[data-style="new"] .group,:root[data-style="new"] .hc{border-radius:22px}
@@ -1300,35 +1300,14 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 :root[data-style="new"] .btn-primary,:root[data-style="new"] .btn-secondary,:root[data-style="new"] .btn-danger{border-radius:18px}
 :root[data-style="new"] .field{border-radius:14px}
 :root[data-style="new"] .lt h1{font-weight:700;letter-spacing:-.02em}
-/* Gym: „Als Nächstes“ als große Akzentkarte */
-:root[data-style="new"] .next{background:var(--lime);color:var(--on-accent);border-radius:28px;padding:22px 20px 20px}
-:root[data-style="new"] .next h2{color:var(--on-accent)}
-:root[data-style="new"] .next .muted{color:color-mix(in srgb,var(--on-accent) 70%,transparent)}
-:root[data-style="new"] .next .plan li{border-top-color:color-mix(in srgb,var(--on-accent) 18%,transparent)}
-:root[data-style="new"] .next .chip{background:color-mix(in srgb,var(--on-accent) 12%,transparent);color:var(--on-accent)}
-:root[data-style="new"] .next .legend span{color:color-mix(in srgb,var(--on-accent) 70%,transparent)}
-:root[data-style="new"] .next .legend i{background:var(--on-accent)}
-/* Empfehlung pro Übung auf der Akzentkarte: Farbe + Symbol (mehr Gewicht / mehr Wdh. / halten / leichter) */
-:root[data-style="new"] .next .k-up{--cb:var(--on-accent);--ct:var(--lime)}
-:root[data-style="new"] .next .k-reps{--cb:var(--surface);--ct:var(--cyan)}
-:root[data-style="new"] .next .k-hold{--cb:color-mix(in srgb,var(--on-accent) 12%,transparent);--ct:var(--on-accent)}
-:root[data-style="new"] .next .k-down{--cb:var(--surface);--ct:var(--amber)}
-:root[data-style="new"] .next .chip.k-up,:root[data-style="new"] .next .chip.k-reps,:root[data-style="new"] .next .chip.k-hold,:root[data-style="new"] .next .chip.k-down{background:var(--cb);color:var(--ct)}
-:root[data-style="new"] .next .chip.k-up::before,:root[data-style="new"] .next .chip.k-reps::before,:root[data-style="new"] .next .chip.k-down::before{margin-right:5px;font-size:12px}
-:root[data-style="new"] .next .chip.k-up::before{content:"▲"}
-:root[data-style="new"] .next .chip.k-reps::before{content:"+"}
-:root[data-style="new"] .next .chip.k-down::before{content:"▼"}
-:root[data-style="new"] .next .legend span.k-up i,:root[data-style="new"] .next .legend span.k-reps i,:root[data-style="new"] .next .legend span.k-hold i,:root[data-style="new"] .next .legend span.k-down i{width:14px;height:14px;background:radial-gradient(circle,var(--ct) 0 38%,var(--cb) 42%)}
-:root[data-style="new"] .next .legend span{color:color-mix(in srgb,var(--on-accent) 80%,transparent)}
-:root[data-style="new"] .next .btn-primary{background:var(--on-accent);color:var(--lime)}
+/* Gym: „Als Nächstes“ als große, ruhige Karte: klassische Flächen- und Chip-Farben, nur ein Hauch Akzent im Hintergrund und am Rand */
+:root[data-style="new"] .next{background:linear-gradient(160deg,color-mix(in srgb,var(--lime) 7%,var(--surface)),var(--surface) 60%);border:1px solid color-mix(in srgb,var(--lime) 16%,transparent);border-radius:28px;padding:22px 20px 20px}
 /* Laufen: nächster Lauf als Akzentkarte */
-.run-hero{margin-bottom:12px;padding:20px;border-radius:28px;background:var(--lime);color:var(--on-accent)}
-.run-hero .rh-lbl{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.7}
+.run-hero{margin-bottom:12px;padding:20px;border-radius:28px;background:linear-gradient(160deg,color-mix(in srgb,var(--lime) 7%,var(--surface)),var(--surface) 60%);border:1px solid color-mix(in srgb,var(--lime) 16%,transparent);color:var(--text)}
+.run-hero .rh-lbl{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--lime)}
 .run-hero h2{margin-top:3px;font-size:28px;font-weight:700;letter-spacing:-.02em}
-.run-hero .rh-sub{margin-top:2px;font-size:15px;opacity:.78}
+.run-hero .rh-sub{margin-top:2px;font-size:15px;color:var(--text-2)}
 .rh-btns{display:flex;gap:10px;margin-top:14px}
-.rh-btns .btn-primary{background:var(--on-accent);color:var(--lime)}
-.rh-btns .btn-secondary{background:color-mix(in srgb,var(--on-accent) 14%,transparent);color:var(--on-accent)}
 /* Heute (neu): Schnellaktionen, Zeitleiste „Dein Tag“, Kennzahlen */
 .hz-lt .sec-row{align-items:center}
 .hz-streak{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;background:var(--surface);font-family:var(--num);font-size:15px;font-weight:700}
@@ -1425,8 +1404,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.8';
+const APP_VERSION = '2026.10.12.9';
 const PATCH_NOTES = [
+  {v: '2026.10.12.9', date: 'Update vom 12. Oktober 2026, Teil 7', items: [
+    ['🌿', 'Ruhigere Karten und Tab-Leiste', '„Als Nächstes“ im Gym und „Nächster Lauf“ sind keine knallgrünen Flächen mehr, sondern dunkle Karten mit einem Hauch Akzent im Hintergrund und am Rand; Empfehlungen und Knöpfe haben wieder ihre gewohnten Farben. In der Tab-Leiste ist der aktive Tab nur noch dezent grau hinterlegt, Symbol und Name leuchten in der Akzentfarbe.'],
+  ]},
   {v: '2026.10.12.8', date: 'Update vom 12. Oktober 2026, Teil 6', items: [
     ['✨', 'Wochenumfang: dezente Markierung', 'Beim Antippen einer Woche wird nicht mehr die ganze Spalte grau hinterlegt, sondern nur der Balken selbst bekommt einen dünnen hellen Rahmen.'],
   ]},
