@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-XiipDHZ/j3BYVjXll+iFtuJvxQopVmIKgLww7SEMuFA=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-aGtAtYe1aLY7qlGZ8bsQui6u6KyroYctWlRm4gN4wrg=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1004,6 +1004,9 @@ body.chat .chat{flex:1 0 auto;min-height:0}
 :root[data-theme="light"] .streak{background:linear-gradient(135deg,rgba(255,149,0,.2),rgba(255,55,95,.08))}
 :root[data-theme="light"] .sheet{box-shadow:0 -8px 30px rgba(0,0,0,.08)}
 :root[data-theme="light"] .meal-add,:root[data-theme="light"] .fchip[style].on,:root[data-theme="light"] .seg.pain button.on.hi{color:#fff}
+:root[data-theme="light"] .hc-h,:root[data-theme="light"] .hc-ic,:root[data-theme="light"] .hc-x .btn-chip,:root[data-theme="light"] .hr-t,:root[data-theme="light"] .tl-h{color:color-mix(in srgb,var(--c) 58%,#000)}   /* klassische Karten im hellen Modus: die festen Kartenfarben (Cyan, Orange) sind auf Weiß kaum lesbar */
+:root[data-theme="light"] .t-deload{color:var(--text-2)}
+:root[data-theme="light"] .verdict p,:root[data-theme="light"] .notice p,:root[data-theme="light"] .sug-note{color:var(--text)}   /* Wochenbilanz, Hinweiskarten und Vorschlags-Text im Training: der Text war fest hellgrau, im hellen Modus unsichtbar */
 /* Neuigkeiten und Tutorial */
 .ld-gauge{position:relative;height:10px;border-radius:6px;background:var(--surface-3);margin:14px 0 6px}
 .ld-gauge .z{position:absolute;top:0;bottom:0;opacity:.9}
@@ -1386,6 +1389,22 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 :root[data-style="new"] .demo-card{border:0;background:var(--surface);border-radius:24px}
 :root[data-style="new"] .two-btn{margin-top:0;margin-bottom:12px}
 :root[data-style="new"] .two-btn .btn-secondary{height:48px;border-radius:16px;font-size:14px;background:var(--surface)}
+/* Alltag (neuer Stil, 21.10.2026): „Jetzt“-Karte oben auf Heute, Neuigkeiten-Hinweis statt Pop-up, größere Tippflächen */
+.hz-now{margin:0 0 12px;padding:18px 18px 16px;border-radius:28px;background:linear-gradient(160deg,color-mix(in srgb,var(--lime) 7%,var(--surface)),var(--surface) 60%);border:1px solid color-mix(in srgb,var(--lime) 16%,transparent)}
+.hz-now h3{margin-top:2px;font-size:24px;font-weight:700;letter-spacing:-.015em}
+.hz-now .hz-btns{margin-top:14px}
+.news-bar{display:flex;align-items:center;margin:0 0 12px;border-radius:20px;background:var(--surface)}
+.nb-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:12px 4px 12px 14px;text-align:left}
+.nb-e{flex:none;font-size:22px}
+.nb-t{min-width:0}
+.nb-t b{display:block;font-size:15px;font-weight:600}
+.nb-t small{display:block;font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-x{flex:none;width:48px;height:48px;font-size:24px;line-height:1;color:var(--text-2)}
+:root[data-style="new"] .next>.btn-primary{margin:0 0 6px}
+:root[data-style="new"] .next>.skip-line{margin:0 auto 14px}
+:root[data-style="new"] .chk,:root[data-style="new"] .fi-ok,:root[data-style="new"] .fadd,:root[data-style="new"] .meal-add,:root[data-style="new"] .btn-chip,:root[data-style="new"] .icon-btn,:root[data-style="new"] .mini,:root[data-style="new"] .stepper button{position:relative}
+:root[data-style="new"] .chk::after,:root[data-style="new"] .fi-ok::after,:root[data-style="new"] .fadd::after,:root[data-style="new"] .meal-add::after,:root[data-style="new"] .btn-chip::after,:root[data-style="new"] .icon-btn::after,:root[data-style="new"] .mini::after,:root[data-style="new"] .stepper button::after{content:"";position:absolute;inset:-6px}
+:root[data-style="new"] .ex{scroll-margin-top:78px}
 </style>
 </head>
 <body>
@@ -1405,8 +1424,24 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.12.10';
+const APP_VERSION = '2026.10.21.2';
 const PATCH_NOTES = [
+  {v: '2026.10.21.2', date: 'Update vom 21. Oktober 2026', items: [
+    ['👆', 'Doppeltippen ohne Doppeleinträge', 'Tippst du zweimal schnell auf „Speichern“ oder „Hinzufügen“ (Mahlzeit, Lauf, Übung, Vorlage), wird nur einmal gespeichert. In den Fragebögen springt ein Doppeltipp nicht mehr eine Frage weiter, und Return speichert den Namen.'],
+    ['☀️', 'Heller Modus wieder gut lesbar', 'Wochenbilanz, Hinweiskarten, der Vorschlags-Text im Training und die Karten im klassischen Stil waren im hellen Modus kaum zu lesen.'],
+    ['🏋️', 'Entlastung bei leichten Gewichten', 'Bei kleinen Gewichten (z. B. 10 kg mit 2,5-kg-Schritten) blieb „−10 %“ und die Entlastungswoche oft beim alten Gewicht. Jetzt geht es mindestens einen Schritt runter. Beispiel-Trainings zählen nicht mehr als Rekord.'],
+    ['🔄', 'Pause und Gewicht', 'Eine Pause „bis“ endet jetzt auch, wenn du die App nur wieder öffnest (nicht erst nach einem Neustart). Die Wochenbilanz vergleicht nur direkt aufeinanderfolgende Wochen. Die Belastung rechnet nach dem Bearbeiten einer Einheit sofort neu.'],
+    ['🛟', 'Sicherer mit deinen Daten', '„Alle Daten löschen“ nennt genau, was gelöscht wird. Ist der Gerätespeicher voll, warnt dich die App, statt still nicht zu speichern, und ein unlesbarer Stand wird vor dem Neustart zur Seite gelegt.'],
+  ]},
+  {v: '2026.10.21.1', date: 'Update vom 21. Oktober 2026', items: [
+    ['⚡', 'Alltag schneller', 'Heute zeigt ganz oben, was jetzt dran ist (z. B. „Training starten“), darunter Wasser, Essen, Gewicht und Aktivität. „Training starten“ legt sofort los, ohne extra Fenster; Übungen auslassen oder den Timer wählen geht über „Optionen“. Wer das Fenster vor jedem Training will, schaltet es unter Einstellungen → Training ein.'],
+    ['🏋️', 'Gym und Essen: Wichtiges zuerst', 'Im neuen Stil steht im Gym-Tab „Als Nächstes“ mit dem Start-Knopf ganz oben, im Ernährungs-Tab die Mahlzeiten mit dem Plus direkt unter den Kalorien. Im Training rollt die Ansicht nach dem letzten Satz einer Übung sanft zur nächsten.'],
+    ['🔄', 'Heute immer aktuell', 'Öffnest du die App nach einigen Stunden oder am nächsten Tag wieder, zeichnet sich Heute von selbst neu, statt noch den alten Stand zu zeigen.'],
+    ['⚖️', 'Gewicht in einem Schritt', 'Der Knopf „Gewicht“ auf Heute öffnet die Eingabe mit Tastatur, nach dem Speichern bist du wieder auf Heute.'],
+    ['🔕', 'Weniger Unterbrechungen', 'Neuigkeiten erscheinen im neuen Stil als kleine Karte oben auf Heute statt als Fenster. Abzeichen für Essen, Wasser oder Gewicht melden sich nur kurz unten, ein großes Fenster gibt es nur nach Gym und Laufen. Der Start ist etwas schneller, und „Wetter einrichten“ steht nicht mehr dauerhaft auf Heute (Einstellungen → Wetter).'],
+    ['⏱️', 'Pausen-Timer: Vollbild oder Leiste', 'Neu bei den Timer-Optionen: „Nur Leiste“ lässt die Sätze sichtbar, der Timer bleibt klein unten. Standard bleibt Vollbild.'],
+    ['👆', 'Größere Tippflächen', 'Haken, Plus-Knöpfe und Chips lassen sich im neuen Stil leichter treffen, ohne dass sich etwas verschiebt.'],
+  ]},
   {v: '2026.10.12.10', date: 'Update vom 12. Oktober 2026, Teil 8', items: [
     ['🌊', 'Sanfter Tab-Wechsel', 'Beim Wechsel zwischen den Tabs gleitet die Markierung jetzt weich hinüber: Der Name klappt langsam aus, der vorherige zieht sich ebenso sanft zurück. Wer Bewegungen reduziert hat, sieht es ohne Animation.'],
   ]},
@@ -1746,11 +1781,20 @@ function readEmbeddedDB() {
 function loadDB() {
   try {
     const raw = localStorage.getItem(STORE);
-    if (raw) { const d = JSON.parse(raw); if (validDB(d)) return d; }
+    if (raw) {
+      let d = null;
+      try { d = JSON.parse(raw); } catch (e) {}
+      if (validDB(d)) return d;
+      try { localStorage.setItem(STORE + '-defekt', raw); } catch (e) {}   // unlesbarer Stand: vor dem Neustart sichern, statt ihn gleich zu überschreiben
+    }
   } catch (e) {}
   return null;
 }
-function localSave() { try { localStorage.setItem(STORE, JSON.stringify(db)); } catch (e) {} }
+let saveWarned = false;
+function localSave() {
+  try { localStorage.setItem(STORE, JSON.stringify(db)); }
+  catch (e) { if (!saveWarned) { saveWarned = true; try { toast('Speichern fehlgeschlagen: Speicher voll oder gesperrt. Exportier bitte ein Backup.'); } catch (x) {} } }   // sonst gehen Eingaben still verloren
+}
 
 /* Die Seite selbst ist der Datensatz: jede Änderung wird als neue Version
    dieser Artifact-Seite gespeichert (serverseitig), damit nichts vom
@@ -1819,7 +1863,8 @@ function migrate(d, fresh) {
   if (!d.settings.home.order.includes('report')) d.settings.home.order.unshift('report');   // Wochenbericht oben
   // Pausen-Timer (letzte Wahl), Entlastungswoche, Abzeichen, Wasser/Schlaf, Wochenberichte
   const rs0 = d.settings.rest && typeof d.settings.rest === 'object' ? d.settings.rest : {};
-  d.settings.rest = {on: rs0.on === undefined ? true : !!rs0.on, sec: clamp(+rs0.sec || 120, 15, 600), mode: ['set', 'exercise', 'manual'].includes(rs0.mode) ? rs0.mode : 'set'};
+  d.settings.rest = {on: rs0.on === undefined ? true : !!rs0.on, sec: clamp(+rs0.sec || 120, 15, 600), mode: ['set', 'exercise', 'manual'].includes(rs0.mode) ? rs0.mode : 'set', full: rs0.full === undefined ? true : !!rs0.full};
+  if (d.settings.startAsk === undefined) d.settings.startAsk = false;   // Start-Fenster vor jedem Training (aus: „Als Nächstes“ startet sofort)
   d.settings.deload = Object.assign({until: null, last: null, snooze: null}, d.settings.deload || {});
   if (d.settings.awardsInit === undefined) d.settings.awardsInit = false;
   if (d.settings.waterGoal === undefined) d.settings.waterGoal = 2500;
@@ -1911,7 +1956,7 @@ function suggest(ex) {
   if (h[1] && top > 0) {
     const p = h[1].sets;
     if (Math.max(...p.map(s => s.w)) === top && !p.every(s => s.r >= ex.repMin))
-      return {kind: 'down', title: '−10 %', note: `Zweimal unter ${ex.repMin} Wdh. Kurz leichter werden und neu aufbauen.`, sets: sets.map(s => ({w: Math.max(0, r2(Math.round(s.w * 0.9 / ex.inc) * ex.inc)), r: ex.repMin}))};
+      return {kind: 'down', title: '−10 %', note: `Zweimal unter ${ex.repMin} Wdh. Kurz leichter werden und neu aufbauen.`, sets: sets.map(s => { const w10 = Math.max(0, r2(Math.round(s.w * 0.9 / ex.inc) * ex.inc)); return {w: s.w > 0 && w10 >= s.w ? Math.max(0, r2(s.w - ex.inc)) : w10, r: ex.repMin}; })};   // bei leichten Gewichten rundet −10 % sonst auf das alte Gewicht zurück: dann einen Schritt runter
   }
   return {kind: 'hold', title: 'Halten', note: `Gewicht halten, bis jeder Satz ${ex.repMin} Wdh. erreicht.`, sets: sets.map(s => ({w: s.w, r: cap(s.r)}))};
 }
@@ -1920,7 +1965,7 @@ const sugFor = (sug, j) => sug ? (sug.sets[j] || sug.sets[sug.sets.length - 1]) 
 const startSet = ex => ex && ex.start ? {w: ex.start, r: ex.repMin} : null;
 function bestWeight(exId) {
   let b = null;
-  db.sessions.forEach(s => s.entries.forEach(e => { if (e.exId === exId) e.sets.forEach(x => { if (b == null || x.w > b) b = x.w; }); }));
+  db.sessions.forEach(s => { if (s.demo || s.deload) return; s.entries.forEach(e => { if (e.exId === exId) e.sets.forEach(x => { if (b == null || x.w > b) b = x.w; }); }); });   // Beispiel- und Entlastungs-Trainings zählen nicht für Rekorde (wie in gymRecords)
   return b;
 }
 /* Wochenplan: settings.gymWeek = {Wochentag 0 (Mo) bis 6 (So): Vorlagen-ID}, settings.gymSkip = {Datum: 1} für ausgelassene Termine */
@@ -1995,7 +2040,8 @@ try {
   const r = JSON.parse(sessionStorage.getItem('ovl-view') || localStorage.getItem('ovl-view') || 'null');
   if (r && Date.now() - r.t < 60000 && ['today', 'home', 'run', 'tri', 'weight', 'food', 'recipes', 'dishes', 'more', 'history', 'library', 'workout'].includes(r.v) && (r.v !== 'workout' || db.active)) { view = r.v; restoreY = r.y || 0; }
 } catch (e) {}
-function go(v) { view = v; render(); window.scrollTo(0, 0); rememberView(); }
+let wtFrom = null;   // Gewicht wurde über die Schnellaktion auf Heute geöffnet: nach dem Speichern zurück
+function go(v) { wtFrom = null; view = v; render(); window.scrollTo(0, 0); rememberView(); }
 
 /* Tabbar: Heute, Gym, Laufen, Ernährung (Essen/Rezepte/Gewicht), Einstellungen (mit Verlauf und Übungen) */
 const TAB_OF = {feed: 'today', shared: 'more', tri: 'run', ideas: 'more', awards: 'home', admin: 'more', dishes: 'body', today: 'today', home: 'home', workout: 'home', gymob: 'home', coach: 'more', run: 'run', food: 'body', recipes: 'body', weight: 'body', more: 'more', history: 'more', library: 'more'};
@@ -2019,7 +2065,19 @@ function bodySeg() {
 }
 const backLink = () => `<button class="back-link" data-act="tab" data-v="more">${ICON.back}<span>Einstellungen</span></button>`;
 
+let renderAt = Date.now(), renderDay = dateKey(Date.now());
+/* Kommt man nach Stunden oder am nächsten Tag zurück in die App, zeigt die Ansicht sonst noch den alten Stand (gestern, „Guten Abend“). Dann neu zeichnen, aber nie mitten in einer Eingabe, bei offenem Blatt, im Training oder Live-Lauf. */
+function refreshIfStale() {
+  if (document.visibilityState !== 'visible') return;
+  const day = dateKey(Date.now());
+  if (day === renderDay && Date.now() - renderAt < 20 * 60e3) return;
+  const ae = document.activeElement;
+  if ($('#sheet.show') || tour || ['workout', 'coach'].includes(view) || (typeof lv !== 'undefined' && lv) || (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))) return;
+  const y = day === renderDay ? window.scrollY : 0;
+  render(); window.scrollTo(0, y);
+}
 function render() {
+  renderAt = Date.now(); renderDay = dateKey(renderAt);
   if (view === 'workout' && !db.active) view = 'home';
   if (view === 'coach' && !coach) view = 'library';
   if (view === 'gymob' && !gob) view = 'home';
@@ -2157,10 +2215,10 @@ function dayTimeline(cfg) {
   const goal = db.settings.kcalGoal, mg = db.settings.macroGoal;
   if (on('gym')) {
     const S = db.sessions.filter(s => !s.demo && inDay(s.date, t0));
-    S.forEach(s => done.push({ts: s.date, t: s.title || 'Training', s: `${sessSets(s)} Sätze`, r: s.end ? `${Math.max(1, Math.round((s.end - s.date) / 60000))}` : '', rs: s.end ? 'min' : '', sub2: clock(s.date)}));
+    S.forEach(s => done.push({ts: s.date, t: s.title || 'Training', s: `${sessSets(s)} ${sessSets(s) === 1 ? 'Satz' : 'Sätze'}`, r: s.end ? `${Math.max(1, Math.round((s.end - s.date) / 60000))}` : '', rs: s.end ? 'min' : '', sub2: clock(s.date)}));
     if (!db.active && !S.length && !needGymSetup() && !pauseOn('gym')) {
       const nx = nextTemplate(), np = nx && gymSched() ? nextPlanned() : null;
-      if (nx) heroes.push({lbl: 'Als Nächstes · Gym' + (np ? ' · ' + planDay(np) : ''), t: nx.name, s: `${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ca. ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min`, btn: 'Training starten', act: `data-act="start" data-t="${esc(nx.id)}"`});
+      if (nx) heroes.push({lbl: 'Als Nächstes · Gym' + (np ? ' · ' + planDay(np) : ''), t: nx.name, s: `${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ca. ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min`, btn: 'Training starten', act: `data-act="start" data-t="${esc(nx.id)}" data-quick="1"`, btn2: {n: 'Optionen', act: `data-act="start" data-t="${esc(nx.id)}"`}});
     }
   }
   if (on('run') && !pauseOn('run')) {
@@ -2207,19 +2265,21 @@ function vTodayNew() {
   const st = foodOn() ? foodStreak().cur : 0, open = d => d.act || `data-act="tab" data-v="${d.go}"`;
   let h = `<header class="lt hz-lt"><div class="sec-row"><p class="date">${todayLine()}</p>${st > 1 ? `<span class="hz-streak">${ICON.flame}${st}</span>` : ''}</div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
   if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
-  h += movedBanner() + wxChip();
+  h += movedBanner() + newsBanner() + wxChip(true);
+  const T = dayTimeline(cfg);
+  h += T.heroes.slice(0, 1).map(it => `<section class="hz-now"><p class="hz-lbl">${esc(it.lbl)}</p><h3>${esc(it.t)}</h3><p class="hz-sub">${esc(it.s)}</p><div class="hz-btns"><button class="btn-primary" ${it.act}>${esc(it.btn)}</button>${it.btn2 ? `<button class="btn-secondary" ${it.btn2.act}>${esc(it.btn2.n)}</button>` : ''}</div></section>`).join('');
   h += `<div class="hz-qa">`
     + `<button data-act="waterAdd" data-ml="250">${ICON.drop}<span>+250 ml</span></button>`
     + (foodOn() ? `<button data-act="addFood" data-slot="${nextMealSlot()}">${ICON.food}<span>Essen</span></button>` : '')
-    + `<button data-act="tab" data-v="weight">${ICON.scale}<span>Gewicht</span></button>`
+    + `<button data-act="weightQuick">${ICON.scale}<span>Gewicht</span></button>`
     + `<button data-act="xaOpen">${ICON.plus}<span>Aktivität</span></button></div>`;
   h += adviceHTML(dayAdvice(), 1);
-  const T = dayTimeline(cfg), n = T.done.length + T.heroes.length + T.todo.length;
-  if (n) {
+  const n = T.done.length + T.heroes.length + T.todo.length;
+  if (T.done.length + Math.max(0, T.heroes.length - 1) + T.todo.length) {
     const dot = ICON.check, rhs = it => it.r ? `<div class="hz-r">${esc(it.r)}${it.rs ? `<small>${esc(it.rs)}</small>` : ''}</div>` : '';
     h += `<section class="hz-card"><div class="hz-card-h"><b>Dein Tag</b><span>${T.done.length} von ${n} erledigt</span></div><div class="hz-tl">`
       + T.done.map(it => `<div class="hz-it done"><span class="hz-dot">${dot}</span><div class="hz-t"><b>${esc(it.t)}</b><span>${esc(it.s)}${it.sub2 ? ` · ${it.sub2}` : ''}</span></div>${rhs(it)}</div>`).join('')
-      + T.heroes.map(it => `<div class="hz-it nxt"><span class="hz-dot"><i></i></span><div class="hz-nx"><p class="hz-lbl">${esc(it.lbl)}</p><h3>${esc(it.t)}</h3><p class="hz-sub">${esc(it.s)}</p><div class="hz-btns"><button class="btn-primary" ${it.act}>${esc(it.btn)}</button>${it.btn2 ? `<button class="btn-secondary" ${it.btn2.act}>${esc(it.btn2.n)}</button>` : ''}</div></div></div>`).join('')
+      + T.heroes.slice(1).map(it => `<div class="hz-it nxt"><span class="hz-dot"><i></i></span><div class="hz-nx"><p class="hz-lbl">${esc(it.lbl)}</p><h3>${esc(it.t)}</h3><p class="hz-sub">${esc(it.s)}</p><div class="hz-btns"><button class="btn-primary" ${it.act}>${esc(it.btn)}</button>${it.btn2 ? `<button class="btn-secondary" ${it.btn2.act}>${esc(it.btn2.n)}</button>` : ''}</div></div></div>`).join('')
       + T.todo.map(it => `<div class="hz-it"><span class="hz-dot"></span><div class="hz-t"><b>${esc(it.t)}</b><span>${esc(it.s)}</span>${it.p != null ? `<div class="kbar sm"><i style="width:${(it.p * 100).toFixed(0)}%"></i></div>` : ''}</div><button class="hz-add" ${it.add} aria-label="${esc(it.lbl)}">${ICON.plus}</button></div>`).join('')
       + `</div></section>`;
   }
@@ -2272,7 +2332,7 @@ function openHomeSettings(keep) {
       : `<label class="lbl">Darstellung</label><div class="seg">${HOME_STYLES.map(([v, n]) => `<button class="${cfg.style === v ? 'on' : ''}" data-act="homeStyle" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${st[2]}</p>`)
     + `<label class="lbl">Karten und Reihenfolge</label><div class="group">${cfg.order.map((id, i) => {
       const on = !cfg.hidden.includes(id), av = homeAvail(id);
-      return `<div class="row"><span class="t"><b>${HOME_CARDS[id]}</b>${av ? '' : `<span>Bereich ${id === 'run' ? 'Laufen' : 'Kalorien'} ist ausgeschaltet</span>`}</span><span class="row-tools"><button class="mini" data-act="homeMove" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICON.up}</button><button class="mini" data-act="homeMove" data-i="${i}" data-d="1" ${i === cfg.order.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICON.down}</button><button class="sw-btn" data-act="homeToggle" data-id="${esc(id)}" role="switch" aria-checked="${on}" aria-label="${HOME_CARDS[id]} anzeigen"><span class="switch${on ? ' on' : ''}"></span></button></span></div>`;
+      return `<div class="row"><span class="t"><b>${HOME_CARDS[id]}</b>${av ? '' : `<span>Bereich ${id === 'run' ? 'Laufen' : id === 'feed' ? 'Freunde' : 'Kalorien'} ist ausgeschaltet</span>`}</span><span class="row-tools"><button class="mini" data-act="homeMove" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICON.up}</button><button class="mini" data-act="homeMove" data-i="${i}" data-d="1" ${i === cfg.order.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICON.down}</button><button class="sw-btn" data-act="homeToggle" data-id="${esc(id)}" role="switch" aria-checked="${on}" aria-label="${HOME_CARDS[id]} anzeigen"><span class="switch${on ? ' on' : ''}"></span></button></span></div>`;
     }).join('')}</div><p class="hint">Karten für Laufen und Kalorien erscheinen nur, wenn der Bereich eingeschaltet ist.</p>`
     + `<label class="lbl mt">Hinweise und Berichte</label>${hintRows()}<p class="hint">Ausgeschaltete Berichte werden auch nicht mehr von der KI erstellt.</p>`, keep);
 }
@@ -2673,28 +2733,32 @@ function vHome() {
   const ws = weekStart(), wk = db.sessions.filter(s => s.date >= ws), goal = db.settings.weeklyGoal || 4;
   const vol = wk.reduce((a, s) => a + sessVol(s), 0), sets = wk.reduce((a, s) => a + sessSets(s), 0);
   const left = goal - wk.length;
-  let h = `<header class="lt"><p class="date">${esc(new Date().toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long'}))}</p><h1>Gym</h1></header>` + lockerChip();
-
-  if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
-
-  h += `<section class="week">${ringHTML(wk.length / goal, 116, 15, `<b>${wk.length}</b><small>von ${goal}</small>`)}<div class="week-txt"><h2>Diese Woche</h2><p class="big">${left <= 0 ? 'Wochenziel erreicht' : `Noch ${left} bis zum Ziel`}</p><div class="stats"><div><span>Volumen</span><b>${fmtInt(vol)} kg</b></div><div><span>Sätze</span><b>${sets}</b></div></div></div></section>`;
-
-  h += pauseBanner('gym') + (pauseOn('gym') ? '' : deloadCard());
-  if (db.sessions.length) h += `<div class="group mt"><button class="row" data-act="awardsOpen" data-from="home"><span class="ic-box">${ICON.trophy}</span><span class="t"><b>Rekorde und Erfolge</b><span>${Object.keys(db.awards).length} Abzeichen, deine Bestwerte</span></span><span class="chev">${ICON.chev}</span></button></div>`;
-  if (!db.sessions.length && !db.active) h += `<section class="demo-card"><p>Nach deinem ersten Training schlägt dir die App für jede Übung vor, was du beim nächsten Mal steigern kannst. Mit Beispieldaten siehst du das sofort.</p><button class="btn-secondary" data-act="demo">Beispieldaten laden</button></section>`;
-
   const nx = nextTemplate(), np = nx && gymSched() ? nextPlanned() : null;
+  let nxH = '';
   if (nx) {
-    const last = lastTplDate(nx.id), kinds = new Set();
+    const last = lastTplDate(nx.id), kinds = new Set(), nStyle = newStyle();
+    const sBtn = `<button class="btn-primary" data-act="start" data-t="${esc(nx.id)}"${nStyle ? ' data-quick="1"' : ''}>${esc(nx.name)} starten</button>${nStyle ? `<button class="btn-text sm skip-line" data-act="start" data-t="${esc(nx.id)}">Optionen vor dem Start</button>` : ''}`;
     const items = nx.exIds.map(id => {
       const ex = db.exercises[id]; if (!ex) return '';
       const sg = suggest(ex); if (sg) kinds.add(sg.kind);
       return `<li><span>${esc(ex.name)}</span>${sg ? `<span class="chip k-${sg.kind}">${fmtSet(sg.sets[0])}</span>` : `<span class="chip k-none">${ex.start ? fmtN(ex.start) + ' kg' : 'neu'}</span>`}</li>`;
     }).join('');
     const legend = kinds.size ? `<div class="legend">${['up', 'reps', 'hold', 'down'].filter(k => kinds.has(k)).map(k => `<span class="k-${k}"><i></i>${KLABEL[k]}</span>`).join('')}</div>` : '';
-    h += `<section class="sec"><h3 class="sec-h">Als Nächstes${np ? ` · ${esc(planDay(np))}` : ''}</h3><div class="next"><h2>${esc(nx.name)}</h2><p class="muted">${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ≈ ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min · ${last ? `zuletzt ${relDay(last)}` : 'noch nie trainiert'}</p><ul class="plan">${items}</ul>${legend}<button class="btn-primary" data-act="start" data-t="${esc(nx.id)}">${esc(nx.name)} starten</button></div>${np && np.t.id === nx.id ? `<button class="btn-text sm skip-line" data-act="gymDaySkip" data-ts="${np.ts}">Einheit ${esc(planDay(np))} auslassen</button>` : ''}</section>`;
+    nxH = `<section class="sec"><h3 class="sec-h">Als Nächstes${np ? ` · ${esc(planDay(np))}` : ''}</h3><div class="next"><h2>${esc(nx.name)}</h2><p class="muted">${nx.exIds.length} ${nx.exIds.length === 1 ? 'Übung' : 'Übungen'} · ≈ ${estMinutes(nx.exIds.map(id => db.exercises[id] ? db.exercises[id].sets || 3 : 0), db.settings.rest, nx.id)} min · ${last ? `zuletzt ${relDay(last)}` : 'noch nie trainiert'}</p>${nStyle ? sBtn : ''}<ul class="plan">${items}</ul>${legend}${nStyle ? '' : sBtn}</div>${np && np.t.id === nx.id ? `<button class="btn-text sm skip-line" data-act="gymDaySkip" data-ts="${np.ts}">Einheit ${esc(planDay(np))} auslassen</button>` : ''}</section>`;
   }
 
+  let h = `<header class="lt"><p class="date">${esc(new Date().toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long'}))}</p><h1>Gym</h1></header>` + (newStyle() ? '' : lockerChip());
+
+  if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
+
+  if (newStyle()) h += nxH + lockerChip();
+  h += `<section class="week">${ringHTML(wk.length / goal, 116, 15, `<b>${wk.length}</b><small>von ${goal}</small>`)}<div class="week-txt"><h2>Diese Woche</h2><p class="big">${left <= 0 ? 'Wochenziel erreicht' : `Noch ${left} bis zum Ziel`}</p><div class="stats"><div><span>Volumen</span><b>${fmtInt(vol)} kg</b></div><div><span>Sätze</span><b>${sets}</b></div></div></div></section>`;
+
+  h += pauseBanner('gym') + (pauseOn('gym') ? '' : deloadCard());
+  if (db.sessions.length) h += `<div class="group mt"><button class="row" data-act="awardsOpen" data-from="home"><span class="ic-box">${ICON.trophy}</span><span class="t"><b>Rekorde und Erfolge</b><span>${Object.keys(db.awards).length} Abzeichen, deine Bestwerte</span></span><span class="chev">${ICON.chev}</span></button></div>`;
+  if (!db.sessions.length && !db.active) h += `<section class="demo-card"><p>Nach deinem ersten Training schlägt dir die App für jede Übung vor, was du beim nächsten Mal steigern kannst. Mit Beispieldaten siehst du das sofort.</p><button class="btn-secondary" data-act="demo">Beispieldaten laden</button></section>`;
+
+  if (!newStyle()) h += nxH;
   h += gymWeekSection();
   if (db.templates.length) h += coachCard('edit', 'KI-Coach', 'Plan ändern: Sätze, Wiederholungen, Übungen tauschen oder neue Vorlagen. Er kennt deinen Plan und deine letzten Gewichte.', COACH_TIPS.edit);
   h += `<section class="sec"><div class="sec-row"><h3 class="sec-h">Vorlagen</h3><button class="btn-text sm" data-act="tab" data-v="library">Bearbeiten</button></div><div class="group">`;
@@ -2813,7 +2877,8 @@ function vMore() {
   h += `<section class="sec"><h3 class="sec-h">Erscheinungsbild</h3><div class="group"><button class="row" data-act="appearance"><span class="ic-box">${ICON.sun}</span><span class="t"><b>Stil, Modus und Farbe</b><span>${th.style === 'classic' ? 'Klassisch' : 'Neu'}, ${THEME_MODES.find(m => m[0] === th.mode)[1]}, Akzent ${OVL_THEME.ACC[th.accent][0]}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
   const PZ = db.settings.pause;
   h += `<section class="sec"><h3 class="sec-h">Pause</h3><div class="group"><button class="row" data-act="pauseSheet"><span class="ic-box">${PZ ? PAUSE_TYPES.find(x => x[0] === PZ.type)[1] : '⏸️'}</span><span class="t"><b>Krank, verletzt, Urlaub</b><span>${PZ ? `Aktiv seit ${esc(shortDate(PZ.from))}` : comebackActive() ? 'Wiedereinstieg läuft' : (a => (a.length > 1 ? a.slice(0, -1).join(', ') + ' und ' + a[a.length - 1] : a[0]) + ' pausieren')(['Gym', ...(runOn() ? ['Laufen'] : []), ...(triOn() ? ['Triathlon'] : [])])}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
-  h += `<section class="sec"><h3 class="sec-h">Wochenziel</h3><div class="group"><div class="row"><span class="t"><b>Trainings pro Woche</b><span>Füllt den Wochenring im Gym</span></span>${stepper('goalStep', db.settings.weeklyGoal)}</div></div></section>`;
+  h += `<section class="sec"><h3 class="sec-h">Training</h3><div class="group"><div class="row"><span class="t"><b>Trainings pro Woche</b><span>Füllt den Wochenring im Gym</span></span>${stepper('goalStep', db.settings.weeklyGoal)}</div>`
+    + `<button class="row wrap" data-act="startAskToggle" role="switch" aria-checked="${!!db.settings.startAsk}"><span class="t"><b>Start-Fenster vor dem Training</b><span>Aus: „Training starten“ unter „Als Nächstes“ legt sofort los. Übungen auslassen und Timer wählst du dann über „Optionen“ oder im Training.</span></span><span class="r">${db.settings.startAsk ? 'An' : 'Aus'}</span></button></div></section>`;
 
   const legacy = db.runPlan && db.runPlan.legacy;
   h += `<section class="sec"><h3 class="sec-h">Bereiche</h3><div class="group"><button class="row" data-act="toggleRun"><span class="t"><b>Laufplan anzeigen</b><span>${legacy ? 'Halbmarathon-Plan im Tab „Laufen“' : 'Persönlicher Trainingsplan im Tab „Laufen“'}</span></span><span class="r">${ulR ? (db.settings.showRun ? 'An' : 'Aus') : locked}</span></button><button class="row" data-act="toggleFood"><span class="t"><b>Ernährung</b><span>Mahlzeiten, Rezepte, Gerichte, Kalorien und Makros</span></span><span class="r">${db.settings.showFood ? 'An' : 'Aus'}</span></button><button class="row" data-act="toggleTri"><span class="t"><b>Triathlon</b><span>Plan für Schwimmen, Rad und Laufen</span></span><span class="r">${db.settings.unlockTri ? (db.settings.showTri ? 'An' : 'Aus') : locked}</span></button></div>`
@@ -3528,7 +3593,7 @@ function vWeight() {
   const tk = dateKey(Date.now()), tv = db.weights[tk];
   const keys = Object.keys(db.weights).sort(), lastV = keys.length ? db.weights[keys[keys.length - 1]] : null;
   const ww = weightWeeks(), cws = weekStartOf(Date.now());
-  const done = ww.filter(w => w.ws < cws), last = done[done.length - 1], prev = done[done.length - 2], cur = ww.find(w => w.ws === cws);
+  const done = ww.filter(w => w.ws < cws), last = done[done.length - 1], prev0 = done[done.length - 2], prev = prev0 && last && prev0.ws === addDays(last.ws, -7) ? prev0 : undefined, cur = ww.find(w => w.ws === cws);   // Vorwoche nur, wenn sie wirklich direkt davor liegt (sonst fehlen Messungen und der Vergleich wäre schief)
   const dir = weightDir(), g = db.weightGoal;
   let h = bodySeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Gewicht</h1></header>`;
 
@@ -4859,7 +4924,7 @@ function nextSetInfo() {
 }
 function restFullHTML() {
   const a = db.active;
-  if (!a || !a.restEnd || a.restMin) return '';
+  if (!a || !a.restEnd || a.restMin || (a.rest && a.rest.full === false)) return '';
   const left = Math.max(0, Math.ceil((a.restEnd - Date.now()) / 1000));
   return `<div class="rest-full" id="restFull"><div class="rf-grab"></div><button class="rf-min" data-act="restMin">${ICON.down}<span>Kleiner</span></button>`
     + `<p class="rf-lbl">Pause</p><div class="rf-ring">${ringHTML(left / (a.restTotal || 1), 260, 16, `<b id="rfTime">${fmtSec(left)}</b><small>von ${fmtSec(a.restTotal)}</small>`)}</div>`
@@ -5062,12 +5127,14 @@ function vFood() {
   const tk = dateKey(Date.now()), today = db.meals.filter(m => dateKey(m.date) === tk), s = mealSum(today), goal = db.settings.kcalGoal, mg = db.settings.macroGoal;
   let h = bodySeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Essen</h1></header>`;
   h += kcalCard(s, goal, mg);
+  const mealsH = `<div class="meals">${SLOTS.map(([k, n]) => mealCard(k, n, today.filter(m => m.slot === k), goal)).join('')}</div>`;
+  if (newStyle()) h += mealsH;   // neuer Stil: Mahlzeiten (Plus zum Eintragen) direkt unter den Kalorien, Score und Tipps danach
 
   const SC = foodScore(today), N0 = dayNutri(today), W0 = waterStatus(tk);
   h += SC ? `<button class="scard" data-act="scoreOpen" data-k="${tk}" style="--c:${scoreLabel(SC.val)[1]}">${ringHTML(SC.val / 100, 58, 7, `<b>${SC.val}</b>`)}<span class="sc-t"><b>Essens-Score: ${scoreLabel(SC.val)[0]}</b><span>Ballaststoffe ${fmtInt(N0.mi.fib)} g · Salz ${fmt1(N0.mi.salt)} g · Wasser aus Essen ${fmtInt(W0.food)} ml</span></span><span class="chev">${ICON.chev}</span></button>`
     : (today.length ? `<button class="scard" data-act="scoreOpen" data-k="${tk}" style="--c:var(--text-3)" disabled><span class="sc-t"><b>Essens-Score</b><span>Ab 300 kcal bekommst du eine Bewertung von 1 bis 100.</span></span></button>` : '');
   h += adviceHTML(dayAdvice().filter(a => !['😴'].includes(a.emo)), 2);
-  h += `<div class="meals">${SLOTS.map(([k, n]) => mealCard(k, n, today.filter(m => m.slot === k), goal)).join('')}</div>`;
+  if (!newStyle()) h += mealsH;
   h += coachCard('food', 'Ernährungs-Coach', 'Kennt deine Ziele, was du heute gegessen hast, Mikros, Wasser und Training. Kann deine Kalorien- und Makroziele anpassen.', COACH_TIPS.food);
 
   h += foodHistory(goal);
@@ -5754,13 +5821,13 @@ const TUT = [
     ['📲', 'Tipp: In Safari über Teilen → „Zum Home-Bildschirm“ wird Overload zu einer richtigen App.'],
   ]],
   ['☀️', 'var(--amber)', 'Heute', 'Der erste Tab zeigt dir jeden Tag das Wichtigste auf einen Blick.', [
-    ['🗓️', 'Dein Tag als Zeitleiste: Erledigtes steht oben, darunter was als Nächstes ansteht (Training, Lauf) und was noch offen ist (Essen, Wasser, Schlaf). Darüber Schnellaktionen für Wasser, Essen, Gewicht und Aktivität.'],
+    ['🗓️', 'Ganz oben steht, was jetzt dran ist (z. B. „Training starten“), darunter Schnellaktionen für Wasser, Essen, Gewicht und Aktivität. Dein Tag als Zeitleiste zeigt Erledigtes und was noch offen ist (Essen, Wasser, Schlaf).'],
     ['⭐', 'Ganz oben steht, was heute am wichtigsten ist, z. B. mehr trinken oder Elektrolyte nach dem Training.'],
     ['💧', 'Wasser und Schlaf trägst du hier mit einem Tipp ein, montags wartet ein Wochenbericht.'],
     ['🎛️', 'Ganz unten auf „Heute anpassen“: ein- und ausblenden, was erscheint. Unter Einstellungen → Erscheinungsbild wechselst du jederzeit zwischen dem neuen und dem klassischen Stil.'],
   ]],
   ['🏋️', 'var(--lime)', 'Gym', 'Hier trainierst du. Beim ersten Öffnen baut dir der KI-Coach nach ein paar Fragen deinen Trainingsplan.', [
-    ['▶️', 'Vorlage antippen, Übungen für heute auswählen und den Pausen-Timer einstellen. Dann Gewicht und Wiederholungen eintragen und Sätze abhaken.'],
+    ['▶️', 'Bei „Als Nächstes“ auf „Training starten“ tippen, dann Gewicht und Wiederholungen eintragen und Sätze abhaken. Über „Optionen“ lässt du vorher Übungen aus oder stellst den Pausen-Timer ein.'],
     ['🏆', 'Unter „Rekorde und Erfolge“ findest du deine Bestwerte und Abzeichen.'],
     ['📈', 'Die App merkt sich alles und schlägt beim nächsten Mal vor, wann du mehr Gewicht oder mehr Wiederholungen machst.'],
     ['⏱️', 'Vor dem Start siehst du, wie lange das Training ungefähr dauert. Am Ende kannst du eine Notiz schreiben, die KI liest sie auf Wunsch mit.'],
@@ -5834,7 +5901,13 @@ function startupSheets() {
 }
 function startupSheets2() {
   if (!db.settings.tutorialDone) openTutorial(0);
-  else if (db.settings.seenVersion !== APP_VERSION && PATCH_NOTES[0].v === APP_VERSION) openPatchNotes();
+  else if (db.settings.seenVersion !== APP_VERSION && PATCH_NOTES[0].v === APP_VERSION && !newStyle()) openPatchNotes();   // neuer Stil: Hinweiskarte auf Heute (newsBanner)
+}
+/* Neuer Stil: Neuigkeiten blockieren den Start nicht mehr, sondern stehen als kleine Karte oben auf Heute (Tippen = lesen, × = ausblenden) */
+function newsBanner() {
+  const s = db.settings;
+  if (!newStyle() || !s.tutorialDone || s.seenVersion === APP_VERSION || PATCH_NOTES[0].v !== APP_VERSION) return '';
+  return `<div class="news-bar"><button class="nb-main" data-act="newsOpen"><span class="nb-e">🎉</span><span class="nb-t"><b>Neu in Overload</b><small>${esc(PATCH_NOTES[0].items.slice(0, 2).map(i => i[1]).join(' · '))}</small></span></button><button class="nb-x" data-act="newsDismiss" aria-label="Neuigkeiten ausblenden">×</button></div>`;
 }
 
 /* ---------- Training starten: Übungen abwählen und Pausen-Timer ----------
@@ -5847,6 +5920,7 @@ function restOpts(r, act) {
   return `<div class="seg">${[[false, 'Aus'], [true, 'An']].map(([v, n]) => `<button class="${r.on === v ? 'on' : ''}" data-act="${act}" data-k="on" data-v="${v}">${n}</button>`).join('')}</div>`
     + (r.on ? `<label class="lbl mt">Pausenlänge</label><div class="rt-dur">${[60, 90, 120, 180].map(v => `<button class="btn-chip${r.sec === v ? ' on' : ''}" data-act="${act}" data-k="sec" data-v="${v}">${fmtSec(v)}</button>`).join('')}</div>`
       + `<div class="rd-por"><div><b>Eigene Länge</b><span>in 15-Sekunden-Schritten</span></div>${stepper(act + 'Step', fmtSec(r.sec))}</div>`
+      + `<label class="lbl">Anzeige</label><div class="seg">${[[true, 'Vollbild'], [false, 'Nur Leiste']].map(([v, n]) => `<button class="${(r.full !== false) === v ? 'on' : ''}" data-act="${act}" data-k="full" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${r.full !== false ? 'Nach jedem Satz füllt der Timer den Bildschirm, nach unten wischen macht ihn klein.' : 'Der Timer bleibt klein unten, die Sätze bleiben sichtbar. Ein Tipp darauf macht ihn groß.'}</p>`
       + `<label class="lbl">Wann startet die Pause?</label><div class="seg rt-mode">${REST_MODES.map(([v, n]) => `<button class="${r.mode === v ? 'on' : ''}" data-act="${act}" data-k="mode" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${REST_MODES.find(m => m[0] === r.mode)[2]}</p>` : '<p class="hint">Ohne Timer. Du kannst ihn während des Trainings oben über die Uhr einschalten.</p>');
 }
 function openStartSheet(tid) {
@@ -5928,7 +6002,7 @@ function deloadCheck() {
   });
   return flat.length >= 3 && flat.length >= checked / 2 ? flat : null;
 }
-const deloadSet = (p, ex) => { if (!p || !lightActive()) return p; const f = deloadActive() ? 0.9 : cbF(); return {w: p.w ? Math.max(0, r2(Math.round(p.w * f / (ex.inc || 2.5)) * (ex.inc || 2.5))) : p.w, r: p.r}; };
+const deloadSet = (p, ex) => { if (!p || !lightActive()) return p; const f = deloadActive() ? 0.9 : cbF(), inc = ex.inc || 2.5, w = p.w ? Math.max(0, r2(Math.round(p.w * f / inc) * inc)) : p.w; return {w: p.w > 0 && f < 1 && w >= p.w ? Math.max(0, r2(p.w - inc)) : w, r: p.r}; };   // leichte Gewichte: mindestens einen Schritt runter, sonst bleibt die Entlastung wirkungslos
 function deloadCard() {
   const dl = db.settings.deload;
   if (deloadActive()) return `<section class="notice k-hold dl-card"><b>Entlastungswoche bis ${esc(longDate(dl.until - DAY))}</b><p>Die Vorschläge sind 10 % leichter und mit einem Satz weniger. Danach geht es mit deinen normalen Gewichten weiter, meist stärker als vorher.</p><button class="btn-chip" data-act="deloadEnd">Vorzeitig beenden</button></section>`;
@@ -6005,7 +6079,9 @@ function checkAwards(still) {
   const S = awardStats(), neu = [];
   AWARDS.forEach(a => { if (!db.awards[a[0]] && S[a[4]] >= a[5]) { db.awards[a[0]] = Date.now(); neu.push(a); } });
   if (neu.length) { saveDB(); if (!still) render(); }   // Zähler auf der Seite sofort aktualisieren
-  if (neu.length && !still) setTimeout(() => openSheet(`<div class="pn-hero"><span>${neu[0][1]}</span><b>${neu.length === 1 ? 'Neues Abzeichen!' : `${neu.length} neue Abzeichen!`}</b><small>Stark, weiter so.</small></div>`
+  if (neu.length && !still && !(neu.some(a => a[6] === 'gym' || a[6] === 'run') && !$('#sheet.show'))) {   // mitten im Ablauf nicht unterbrechen: nur eine Meldung
+    setTimeout(() => toast(neu.length === 1 ? `🏆 Neues Abzeichen: ${neu[0][2]}` : `🏆 ${neu.length} neue Abzeichen`), 1700);
+  } else if (neu.length && !still) setTimeout(() => openSheet(`<div class="pn-hero"><span>${neu[0][1]}</span><b>${neu.length === 1 ? 'Neues Abzeichen!' : `${neu.length} neue Abzeichen!`}</b><small>Stark, weiter so.</small></div>`
     + neu.map(a => `<div class="pn-item"><span class="pn-ic">${a[1]}</span><div><b>${esc(a[2])}</b><p>${esc(a[3])}</p></div></div>`).join('')
     + `<button class="btn-primary" data-act="closeSheet">Weiter</button><button class="btn-text wide" data-act="awardsOpen">Alle Erfolge ansehen</button>`), 450);
 }
@@ -7171,7 +7247,7 @@ const TOUR = [
   {v: 'today', sel: '#app [data-act="homeSettings"]', t: 'Anpassen', x: 'Ein- und ausblenden, was auf Heute vorkommt. Im klassischen Stil (Einstellungen → Erscheinungsbild) wählst du zusätzlich zwischen Karten, Ringen und Kacheln.'},
   {v: 'home', sel: '[data-tab="home"]', t: 'Gym', x: 'Hier trainierst du. Beim ersten Öffnen fragt dich der KI-Coach kurz aus und baut dir deinen Plan.'},
   {v: 'home', need: () => !needGymSetup(), sel: '#app .locker', t: 'Spind', x: 'Merk dir deine Spindnummer. Sie steht auch oben im Training und verschwindet nach 12 Stunden.'},
-  {v: 'home', need: () => !needGymSetup(), sel: '#app .next', t: 'Training starten', x: 'Vorlage starten, Übungen für heute abwählen und den Pausen-Timer wählen. Die App schätzt, wie lange das Training dauert, und schlägt dir für jede Übung vor, was du steigern kannst.'},
+  {v: 'home', need: () => !needGymSetup(), sel: '#app .next', t: 'Training starten', x: 'Ein Tipp startet die Vorlage sofort. Über „Optionen“ wählst du vorher Übungen ab und den Pausen-Timer. Die App schätzt, wie lange das Training dauert, und schlägt dir für jede Übung vor, was du steigern kannst.'},
   {v: 'home', need: () => !needGymSetup(), sel: '#app [data-act="coachOpen"][data-m="edit"]', t: 'KI-Coach', x: 'Schreib einfach, was du ändern willst, z. B. „mehr Fokus auf Arme“ oder „4 statt 3 Sätze beim Bankdrücken“. Der Coach passt deinen Plan an.'},
   {v: 'run', need: () => runOn(), sel: '[data-tab="run"]', t: 'Laufen', x: 'Dein Laufplan mit Countdown, dieser Woche und allen Phasen. Läufe hakst du mit einem Tipp ab.'},
   {v: 'run', need: () => runOn(), sel: '#app .ph-strip', t: 'Trainingsplan', x: 'Die Phasen deines Plans mit Fortschritt, darunter jede Woche als Zeitleiste.'},
@@ -7337,6 +7413,13 @@ async function adminUpgrade() {
 }
 
 /* ---------- Aktionen ---------- */
+/* Neuer Stil: ist der letzte Satz einer Übung abgehakt, rollt die Ansicht sanft zur nächsten Übung, damit man nicht suchen muss */
+function scrollNextEx(i, entry) {
+  if (!newStyle() || !entry.sets.every(x => x.done)) return;
+  const nx = [...document.querySelectorAll('#app .ex')][i + 1];
+  if (nx && !matchMedia('(prefers-reduced-motion: reduce)').matches) setTimeout(() => { if (view === 'workout') nx.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 250);
+  else if (nx) nx.scrollIntoView({block: 'start'});
+}
 const A = {
   tab: ({v}) => go(v),
   demo: () => { loadDemo(); render(); toast('Beispieldaten geladen'); },
@@ -7347,14 +7430,16 @@ const A = {
     closeSheet(); if (r) r(v);
   },
 
-  start: async ({t}) => {
+  start: async ({t, quick}) => {
     if (db.active) {
       const v = await askChoice({title: 'Es läuft schon ein Training', text: `„${db.active.title}“ ist noch offen.`, choices: [{label: 'Offenes Training fortsetzen', value: 'resume', style: 'primary'}, {label: 'Verwerfen und neu starten', value: 'new', style: 'danger'}]});
       if (v === 'resume') { go('workout'); return; }
       if (v !== 'new') return;
     }
+    if (quick && !db.settings.startAsk) { startWorkout(t || null, Object.assign({}, db.settings.rest)); return; }
     openStartSheet(t || null);
   },
+  startAskToggle: () => { db.settings.startAsk = !db.settings.startAsk; saveDB(); render(); },
 
   check: ({e, s}) => {
     const entry = db.active.entries[+e], set = entry.sets[+s];
@@ -7372,9 +7457,9 @@ const A = {
       set.done = true;
       unlockAudio();
       const r = db.active.rest;
-      if (r && r.on && (r.mode === 'set' || (r.mode === 'exercise' && entry.sets.every(x => x.done)))) { saveDB(); render(); startRest(r.sec); return; }
+      if (r && r.on && (r.mode === 'set' || (r.mode === 'exercise' && entry.sets.every(x => x.done)))) { saveDB(); render(); startRest(r.sec); scrollNextEx(+e, entry); return; }
     }
-    saveDB(); render();
+    saveDB(); render(); scrollNextEx(+e, entry);
   },
   addSet: ({e}) => { db.active.entries[+e].sets.push({w: null, r: null, done: false}); saveDB(); render(); },
   rmSet: ({e}) => { const x = db.active.entries[+e]; if (x.sets.length > 1) x.sets.pop(); saveDB(); render(); },
@@ -7427,6 +7512,7 @@ const A = {
   toggleAddTpl: () => { fin.note = $('#finNote')?.value ?? fin.note; fin.addToTpl = !fin.addToTpl; renderFinish(); },
   saveWorkout: () => {
     const a = db.active;
+    if (!a || !fin) return;   // Doppeltippen auf „Training speichern“
     const note = String($('#finNote')?.value ?? fin.note ?? '').trim().slice(0, 1000);
     db.sessions.push({id: a.id, date: a.startedAt, end: Date.now(), templateId: a.templateId, title: a.title, entries: fin.entries, ...(a.deload ? {deload: true} : {}), ...(fin.rpe ? {rpe: fin.rpe} : {}), ...(note ? {note, noteAI: fin.noteAI} : {})});
     db.sessions.sort((x, y) => x.date - y.date);
@@ -7607,7 +7693,7 @@ const A = {
   },
   removeDemo: () => { db.sessions = db.sessions.filter(s => !s.demo); saveDB(); render(); toast('Beispieldaten entfernt'); },
   reset: async () => {
-    const v = await askChoice({title: 'Alle Daten löschen?', text: 'Trainings, Übungen und Vorlagen werden auf den Startzustand zurückgesetzt.', choices: [{label: 'Alles löschen', value: 1, style: 'danger'}]});
+    const v = await askChoice({title: 'Alle Daten löschen?', text: 'Trainings, Läufe, Mahlzeiten, Gewicht, Ziele, Übungen und Vorlagen werden gelöscht und auf den Startzustand zurückgesetzt. Exportier vorher ein Backup, wenn du etwas behalten willst.', choices: [{label: 'Alles löschen', value: 1, style: 'danger'}]});
     if (v) { resetAllData(); go('home'); toast('Alles zurückgesetzt'); }
   },
 };
@@ -7678,8 +7764,11 @@ Object.assign(A, {
     const v = parseNum($('#wtIn')?.value ?? '');
     if (v == null || v < 30 || v > 300) { toast('Gewicht in kg eintragen'); $('#wtIn')?.focus(); return; }
     db.weights[dateKey(Date.now())] = Math.round(v * 10) / 10;
-    saveDB(); render(); toast('Gewicht gespeichert'); checkAwards();
+    saveDB();
+    if (wtFrom) { const b = wtFrom; wtFrom = null; go(b); } else render();
+    toast('Gewicht gespeichert'); checkAwards();
   },
+  weightQuick: () => { go('weight'); wtFrom = 'today'; const el = $('#wtIn'); if (el) { el.focus(); el.select(); } },
   editWeight: ({k}) => openWeightEdit(k),
   saveWeightEdit: () => {
     const v = parseNum($('#weIn')?.value ?? '');
@@ -7900,10 +7989,10 @@ Object.assign(A, {
   },
   pauseEnd: () => { closeSheet(); endPause(false); render(); toast('Willkommen zurück'); },
   stToggle: ({id}) => { const i = st.skip.indexOf(id); if (i >= 0) st.skip.splice(i, 1); else st.skip.push(id); openStartSheet(st.tid); },
-  stRest: ({k, v}) => { st.rest[k] = k === 'on' ? v === 'true' : k === 'sec' ? +v : v; openStartSheet(st.tid); },
+  stRest: ({k, v}) => { st.rest[k] = k === 'on' || k === 'full' ? v === 'true' : k === 'sec' ? +v : v; openStartSheet(st.tid); },
   stRestStep: ({d}) => { st.rest.sec = clamp(st.rest.sec + +d * 15, 15, 600); openStartSheet(st.tid); },
   startGo: () => { const x = st; if (!x) return; db.settings.rest = Object.assign({}, x.rest); st = null; closeSheet(); startWorkout(x.tid, Object.assign({}, x.rest), x.skip); },
-  wkRest: ({k, v}) => { const r = db.active.rest; r[k] = k === 'on' ? v === 'true' : k === 'sec' ? +v : v; if (!r.on) db.active.restEnd = null; db.settings.rest = Object.assign({}, r); saveDB(); render(); openRestSheet(); },
+  wkRest: ({k, v}) => { const r = db.active.rest; r[k] = k === 'on' || k === 'full' ? v === 'true' : k === 'sec' ? +v : v; if (!r.on) db.active.restEnd = null; db.settings.rest = Object.assign({}, r); saveDB(); render(); openRestSheet(); },
   wkRestStep: ({d}) => { const r = db.active.rest; r.sec = clamp(r.sec + +d * 15, 15, 600); db.settings.rest = Object.assign({}, r); saveDB(); render(); openRestSheet(); },
   restSheet: () => openRestSheet(),
   restStart: () => { closeSheet(); startRest(db.active.rest.sec); },
@@ -8001,6 +8090,8 @@ Object.assign(A, {
     closeSheet(); render(); toast('Wiederhergestellt');
   },
   patchNotes: () => openPatchNotes(true),
+  newsOpen: () => { openPatchNotes(); render(); },
+  newsDismiss: () => { db.settings.seenVersion = APP_VERSION; saveDB(); render(); },
   tutorial: () => openTutorial(0),
   tutGo: ({d}) => openTutorial(tutI + +d),
   themeMode: ({v}) => { db.settings.theme.mode = v; saveDB(); OVL_THEME.apply(db.settings.theme); openAppearance(true); },
@@ -8056,7 +8147,7 @@ Object.assign(A, {
     if (k === 'goal' && ob.a.goal !== val) ob.a.pace = null;
     ob.a[k] = val;
     render();
-    setTimeout(() => { if (ob) { ob.step++; render(); window.scrollTo(0, 0); } }, 180);
+    { const s0 = ob.step; setTimeout(() => { if (ob && ob.step === s0) { ob.step++; render(); window.scrollTo(0, 0); } }, 180); }   // Doppeltippen darf keinen Schritt überspringen
   },
   obBack: () => { ob.step = Math.max(0, ob.step - 1); render(); window.scrollTo(0, 0); },
   obSkip: () => {
@@ -8156,7 +8247,7 @@ Object.assign(A, {
     if (k === 'inj' && val === 'none') rob.a.area = null;
     rob.a[k] = val;
     render();
-    setTimeout(() => { if (rob) { rob.step++; render(); window.scrollTo(0, 0); } }, 180);
+    { const s0 = rob.step; setTimeout(() => { if (rob && rob.step === s0) { rob.step++; render(); window.scrollTo(0, 0); } }, 180); }   // Doppeltippen darf keinen Schritt überspringen
   },
   robDay: ({v}) => {
     const d = rob.a.days, i = +v;
@@ -8248,7 +8339,7 @@ Object.assign(A, {
   tobNoRace: () => { tob.a.raceDate = ''; tob.step++; render(); window.scrollTo(0, 0); },
   tobPick: ({k, v}) => {
     tob.a[k] = k === 'hours' ? +v : v; render();
-    setTimeout(() => { if (tob) { tob.step++; render(); window.scrollTo(0, 0); } }, 180);
+    { const s0 = tob.step; setTimeout(() => { if (tob && tob.step === s0) { tob.step++; render(); window.scrollTo(0, 0); } }, 180); }   // Doppeltippen darf keinen Schritt überspringen
   },
   tobDay: ({v}) => { const d = tob.a.days, i = +v; tob.a.days = d.includes(i) ? d.filter(x => x !== i) : [...d, i].sort((x, y) => x - y); render(); },
   tobBack: () => { tob.step = Math.max(0, tob.step - 1); render(); window.scrollTo(0, 0); },
@@ -8298,11 +8389,18 @@ Object.assign(A, {
 Object.assign(A, {
   chRange: ({c, v}) => { chR[c] = +v; if (c === 'ex') renderExEditor(true); else render(); },
 });
+/* Speichern-Knöpfe: ein zweites Tippen innerhalb von 0,7 s zählt nicht (das Blatt braucht einen Moment zum Schließen, sonst entstehen doppelte Einträge) */
+const SAVE_ACT = /^(save[A-Z]|xaSave$|rtSave$|obSave$)/;
+let lastSave = {n: '', t: 0};
 document.addEventListener('click', ev => {
   const el = ev.target.closest('[data-act]');
   if (!el) return;
   const fn = A[el.dataset.act];
-  if (fn) { ev.preventDefault(); fn({...el.dataset}, el); }
+  if (fn) {
+    ev.preventDefault();
+    if (SAVE_ACT.test(el.dataset.act)) { const now = Date.now(); if (lastSave.n === el.dataset.act && now - lastSave.t < 700) return; lastSave = {n: el.dataset.act, t: now}; }
+    fn({...el.dataset}, el);
+  }
 });
 document.addEventListener('input', ev => {
   const el = ev.target.closest('[data-in]');
@@ -8320,6 +8418,7 @@ document.addEventListener('keydown', ev => {
   if (ev.key === 'Enter' && (ev.target.id === 'fSearch' || ev.target.id === 'dSearch' || ev.target.classList?.contains('di-g'))) ev.target.blur();
   if (ev.key === 'Enter' && ev.target.id === 'bcIn') { ev.preventDefault(); lookupBarcode(ev.target.value); }
   if (ev.key === 'Enter' && ev.target.id === 'pwIn') { ev.preventDefault(); A.doUnlock(); }
+  if (ev.key === 'Enter' && ev.target.id === 'nameIn') { ev.preventDefault(); nameSave(); }   // Return auf der Tastatur speichert den Namen (das Feld sagt „Fertig“)
   if (ev.key === 'Enter' && ev.target.id === 'recQ') ev.target.blur();
   if (ev.key === 'Enter' && ev.target.id === 'admPw') { ev.preventDefault(); A.adminDoLogin(); }
   if (ev.key === 'Enter' && ev.target.id === 'devName') ev.target.blur();
@@ -8376,7 +8475,7 @@ function ldItems(days = 120) {
 }
 let ldMemo = null;
 function loadState() {
-  const stamp = db.xact.length + db.xact.map(s => (s.rpe || '') + (s.load === false ? 'x' : '') + s.min).join('') + ':' + db.sessions.length + ':' + db.runs.length + ':' + db.tri.length + ':' + dateKey(Date.now()) + ':' + db.sessions.map(s => s.rpe || '').join('') + db.runs.map(s => s.rpe || '').join('') + db.tri.map(s => s.rpe || '').join('') + (db.run.z2hi || '');
+  const stamp = db.xact.length + db.xact.map(s => [s.date, s.rpe, s.load === false ? 'x' : '', s.min, s.hr, s.dr].join()).join(';') + ':' + db.sessions.length + ':' + db.runs.length + ':' + db.tri.length + ':' + dateKey(Date.now()) + ':' + db.sessions.map(s => [s.date, s.end, s.rpe, s.demo, s.deload].join()).join(';') + db.runs.map(s => [s.date, s.min, s.hr, s.rpe, s.type, s.slot].join()).join(';') + db.tri.map(s => [s.date, s.min, s.hr, s.rpe, s.sport].join()).join(';') + (db.run.z2hi || '') + (db.runPlan && db.runPlan.a ? db.runPlan.a.hrmax + '/' + db.runPlan.a.age : '');   // alle Felder, die in die Rechnung eingehen (sonst bleibt nach dem Bearbeiten einer Einheit der alte Wert stehen)
   if (ldMemo && ldMemo.stamp === stamp) return ldMemo.v;
   const items = ldItems(), day = {};
   items.forEach(o => { const k = dateKey(o.ts); day[k] = (day[k] || 0) + o.pts; });
@@ -9217,11 +9316,11 @@ function wxWaterExtra(k) {
   return m >= 35 ? 750 : m >= 30 ? 500 : 0;
 }
 /* Kleine Zeile auf Heute */
-function wxChip() {
+function wxChip(quiet) {
   const c = wxCfg();
   if (c.mode === 'off') return '';
   const w = wxAt(Date.now()), d = wxData();
-  if (!d) return c.granted || c.lat != null ? '' : `<button class="wx-chip" data-act="wxSheet">☁️<span>Wetter einrichten</span></button>`;
+  if (!d) return quiet || c.granted || c.lat != null ? '' : `<button class="wx-chip" data-act="wxSheet">☁️<span>Wetter einrichten</span></button>`;
   if (!w) return '';
   return `<button class="wx-chip" data-act="wxSheet">${wxEmoji(w.c)}<span>${wxPlaceName(c) ? esc(wxPlaceName(c).split(',')[0]) + ' · ' : ''}${Math.round(w.t)}°${Math.round(w.a) !== Math.round(w.t) ? `, gefühlt ${Math.round(w.a)}°` : ''}${w.q != null ? ` · Luft ${wxAqi(w.q)}` : ''}</span></button>`;
 }
@@ -10422,7 +10521,7 @@ legacyPlanV2();
 checkAwards(!db.settings.awardsInit); if (!db.settings.awardsInit) { db.settings.awardsInit = true; saveDB(); }   // beim ersten Mal still eintragen
 render();
 if (restoreY) requestAnimationFrame(() => window.scrollTo(0, restoreY));
-{ const sp = $('#splash'), wait = Math.max(150, 700 - performance.now());
+{ const sp = $('#splash'), wait = Math.max(80, 250 - performance.now());
   setTimeout(() => { if (sp) { sp.classList.add('hide'); setTimeout(() => sp.remove(), 400); } setTimeout(startupSheets, 250); }, wait); }
 setTimeout(() => syncPing(), 2500);
 setTimeout(() => syncNow(), 1200);
@@ -10437,11 +10536,17 @@ window.addEventListener('resize', () => { if (tour) tourPlace(); });
 setInterval(() => { if (document.visibilityState === 'visible') syncNow(); }, 60e3);
 window.addEventListener('online', () => { syncNow(); studyPushSoon(); });
 if (db.settings.pause && db.settings.pause.until && Date.now() > db.settings.pause.until) endPause(true);
+/* Die App bleibt auf dem iPhone oft tagelang im Hintergrund: „Pause bis“ auch beim Zurückkehren prüfen, nicht nur beim Neustart (nie bei offenem Blatt, im Training oder im Chat) */
+function autoEndPause() {
+  const P = db.settings.pause;
+  if (!P || !P.until || Date.now() <= P.until || $('#sheet.show') || tour || ['workout', 'coach'].includes(view)) return;
+  endPause(true); render();
+}
 { let y0 = null;   // großen Timer nach unten wischen = klein
   document.addEventListener('touchstart', e => { y0 = e.target.closest && e.target.closest('#restFull') && !e.target.closest('button') ? e.touches[0].clientY : null; }, {passive: true});
   document.addEventListener('touchmove', e => { if (y0 == null) return; const dy = e.touches[0].clientY - y0, el = $('#restFull'); if (el && dy > 0) el.style.transform = `translateY(${dy}px)`; }, {passive: true});
   document.addEventListener('touchend', e => { if (y0 == null) return; const dy = e.changedTouches[0].clientY - y0, el = $('#restFull'); y0 = null; if (!el) return; if (dy > 90) A.restMin(); else el.style.transform = ''; }); }
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { syncPing(); syncNow(); checkUpdate(); setTimeout(() => stravaImport(), 3000); setTimeout(() => shareCheck(), 4000); setTimeout(() => pushSync(), 4500); setTimeout(() => wxFetch(), 3500); setTimeout(() => feedLoad(), 5200); setTimeout(() => studyPush(), 5000); } else syncNow(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { autoEndPause(); refreshIfStale(); syncPing(); syncNow(); checkUpdate(); setTimeout(() => stravaImport(), 3000); setTimeout(() => shareCheck(), 4000); setTimeout(() => pushSync(), 4500); setTimeout(() => wxFetch(), 3500); setTimeout(() => feedLoad(), 5200); setTimeout(() => studyPush(), 5000); } else syncNow(); });
 })();
 </script>
 </body>
