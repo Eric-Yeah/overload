@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-aGtAtYe1aLY7qlGZ8bsQui6u6KyroYctWlRm4gN4wrg=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-PMy9tzGhw1xwfBzjm4qXPWWrwxhmTPvMx2dEPCQ+dr8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.21.2';
+const APP_VERSION = '2026.10.28.1';
 const PATCH_NOTES = [
+  {v: '2026.10.28.1', date: 'Update vom 28. Oktober 2026', items: [
+    ['🌱', 'Leichter Wiedereinstieg nach einer Lücke', 'Auch ohne eingetragene Pause merkt die App, wenn deine letzte Einheit lange her ist. Bis 13 Tage passiert nichts, dann geht es normal weiter. Ab 14 Tagen schlägt sie eine lockere Woche vor (ab 3 Wochen zwei, ab 8 Wochen drei): im Gym etwas leichter mit einem Satz weniger, beim Laufen weniger Minuten in Zone 2. Du entscheidest mit „Locker einsteigen“ oder „Weiter wie vorher“.'],
+  ]},
   {v: '2026.10.21.2', date: 'Update vom 21. Oktober 2026', items: [
     ['👆', 'Doppeltippen ohne Doppeleinträge', 'Tippst du zweimal schnell auf „Speichern“ oder „Hinzufügen“ (Mahlzeit, Lauf, Übung, Vorlage), wird nur einmal gespeichert. In den Fragebögen springt ein Doppeltipp nicht mehr eine Frage weiter, und Return speichert den Namen.'],
     ['☀️', 'Heller Modus wieder gut lesbar', 'Wochenbilanz, Hinweiskarten, der Vorschlags-Text im Training und die Karten im klassischen Stil waren im hellen Modus kaum zu lesen.'],
@@ -1866,6 +1869,7 @@ function migrate(d, fresh) {
   d.settings.rest = {on: rs0.on === undefined ? true : !!rs0.on, sec: clamp(+rs0.sec || 120, 15, 600), mode: ['set', 'exercise', 'manual'].includes(rs0.mode) ? rs0.mode : 'set', full: rs0.full === undefined ? true : !!rs0.full};
   if (d.settings.startAsk === undefined) d.settings.startAsk = false;   // Start-Fenster vor jedem Training (aus: „Als Nächstes“ startet sofort)
   d.settings.deload = Object.assign({until: null, last: null, snooze: null}, d.settings.deload || {});
+  if (typeof d.settings.gapSeen !== 'number') d.settings.gapSeen = 0;   // Lücke ohne Pause: letzte Einheit, für die der Hinweis erledigt ist
   if (d.settings.awardsInit === undefined) d.settings.awardsInit = false;
   if (d.settings.waterGoal === undefined) d.settings.waterGoal = 2500;
   if (d.settings.sleepGoal === undefined) d.settings.sleepGoal = 8;
@@ -2266,6 +2270,7 @@ function vTodayNew() {
   let h = `<header class="lt hz-lt"><div class="sec-row"><p class="date">${todayLine()}</p>${st > 1 ? `<span class="hz-streak">${ICON.flame}${st}</span>` : ''}</div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
   if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
   h += movedBanner() + newsBanner() + wxChip(true);
+  h += gapCard();
   const T = dayTimeline(cfg);
   h += T.heroes.slice(0, 1).map(it => `<section class="hz-now"><p class="hz-lbl">${esc(it.lbl)}</p><h3>${esc(it.t)}</h3><p class="hz-sub">${esc(it.s)}</p><div class="hz-btns"><button class="btn-primary" ${it.act}>${esc(it.btn)}</button>${it.btn2 ? `<button class="btn-secondary" ${it.btn2.act}>${esc(it.btn2.n)}</button>` : ''}</div></section>`).join('');
   h += `<div class="hz-qa">`
@@ -2305,7 +2310,7 @@ function vToday() {
   const cfg = db.settings.home, ids =cfg.order.filter(id => !cfg.hidden.includes(id) && homeAvail(id)), D = ids.map(homeData).filter(Boolean);
   let h = `<header class="lt"><div class="sec-row"><p class="date">${todayLine()}</p><button class="btn-text sm" data-act="homeSettings">Anpassen</button></div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
   if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
-  h += movedBanner() + wxChip() + adviceHTML(dayAdvice(), 2);
+  h += movedBanner() + wxChip() + gapCard() + adviceHTML(dayAdvice(), 2);
   if (!D.length) return h + `<div class="empty"><p>Alle Karten sind ausgeblendet.</p><button class="btn-secondary" data-act="homeSettings">Startseite anpassen</button></div>`;
   const open = d => d.act || `data-act="tab" data-v="${d.go}"`;
   const val = d => `<span class="hv${d.text ? ' txt' : ''}">${esc(String(d.val))}</span>${d.unit ? `<span class="hu">${esc(d.unit)}</span>` : ''}`;
@@ -2754,7 +2759,7 @@ function vHome() {
   if (newStyle()) h += nxH + lockerChip();
   h += `<section class="week">${ringHTML(wk.length / goal, 116, 15, `<b>${wk.length}</b><small>von ${goal}</small>`)}<div class="week-txt"><h2>Diese Woche</h2><p class="big">${left <= 0 ? 'Wochenziel erreicht' : `Noch ${left} bis zum Ziel`}</p><div class="stats"><div><span>Volumen</span><b>${fmtInt(vol)} kg</b></div><div><span>Sätze</span><b>${sets}</b></div></div></div></section>`;
 
-  h += pauseBanner('gym') + (pauseOn('gym') ? '' : deloadCard());
+  h += pauseBanner('gym') + (pauseOn('gym') ? '' : gapCard() + deloadCard());
   if (db.sessions.length) h += `<div class="group mt"><button class="row" data-act="awardsOpen" data-from="home"><span class="ic-box">${ICON.trophy}</span><span class="t"><b>Rekorde und Erfolge</b><span>${Object.keys(db.awards).length} Abzeichen, deine Bestwerte</span></span><span class="chev">${ICON.chev}</span></button></div>`;
   if (!db.sessions.length && !db.active) h += `<section class="demo-card"><p>Nach deinem ersten Training schlägt dir die App für jede Übung vor, was du beim nächsten Mal steigern kannst. Mit Beispieldaten siehst du das sofort.</p><button class="btn-secondary" data-act="demo">Beispieldaten laden</button></section>`;
 
@@ -3359,7 +3364,7 @@ function vRun() {
   }
   h += `<div class="plan-bar" style="grid-template-columns:repeat(${n},1fr)" aria-hidden="true">${cells}</div><p class="plan-cap">${cap}</p>`
     + (P.next ? `<div class="goal-next"><span>Danach</span><b>${esc(P.next)}</b></div>` : '') + `</section>`;
-  h += pauseBanner('run') + runReviewCard();
+  h += pauseBanner('run') + gapCard() + runReviewCard();
 
   if (idx < n) {
     const W = P.weeks[idx], ws = planWeekStart(P, idx), runs = runsInWeek(ws);
@@ -4835,6 +4840,27 @@ const cbWeek = () => { const cb = db.settings.comeback; return cb && cb.from ? c
 const cbF = () => { const cb = db.settings.comeback; if (!cb) return 1; return Array.isArray(cb.gym) ? cb.gym[Math.min(cbWeek(), cb.gym.length - 1)] : cb.f; };
 const cbRun = () => { const cb = db.settings.comeback; return cb && Array.isArray(cb.run) ? cb.run[Math.min(cbWeek(), cb.run.length - 1)] : 0.6; };
 const pctL = f => Math.round((1 - f) * 100), pctR = f => Math.round(f * 100);
+/* Lücke ohne eingetragene Pause (seit 28.10.2026): Die App schaut selbst, wie lange die letzte Einheit (Gym, Lauf, Triathlon, Aktivität) her ist.
+   Bis 13 Tage passiert nichts: Kraft bleibt etwa 3 Wochen weitgehend erhalten, Ausdauer sinkt erst nach 2 Wochen spürbar (Mujika & Padilla 2000,
+   McMaster et al. 2013, Bosquet et al. 2013). Ab 14 Tagen nur eine Empfehlung („Locker einsteigen“ oder „Weiter wie vorher“), keine automatische Änderung.
+   Nur wenn vorher regelmäßig trainiert wurde (mindestens 6 Einheiten in den 12 Wochen davor), sonst gibt es nichts zu schonen. settings.gapSeen = letzte Einheit, für die entschieden wurde. */
+const GAP_MIN = 14;
+const lastTrain = () => [db.sessions.filter(s => !s.demo), db.runs, db.tri, db.xact].reduce((m, l) => l.reduce((a, x) => x.date > a ? x.date : a, m), 0);
+const gapPlan = days => days >= 56 ? {gym: [0.7, 0.8, 0.9], run: [0.4, 0.6, 0.8]} : days >= 21 ? {gym: [0.8, 0.9], run: [0.5, 0.75]} : days >= GAP_MIN ? {gym: [0.9], run: [0.65]} : null;
+function gapState() {
+  const S = db.settings, now = Date.now(), last = lastTrain();
+  if (S.pause || comebackActive() || deloadActive() || !last || S.gapSeen >= last) return null;
+  const days = Math.round((keyToTs(dateKey(now), 0) - keyToTs(dateKey(last), 0)) / DAY), plan = gapPlan(days);
+  if (!plan) return null;
+  const n = [db.sessions.filter(s => !s.demo), db.runs, db.tri, db.xact].reduce((a, l) => a + l.filter(x => x.date <= last && x.date > last - 84 * DAY).length, 0);
+  return n >= 6 ? {days, last, plan} : null;
+}
+function gapCard() {
+  const g = gapState();
+  if (!g) return '';
+  const w = g.plan.gym.length;
+  return `<section class="notice k-down dl-card"><b>${g.days} Tage ohne Training</b><p>${w > 1 ? `Nach so einer Pause hilft ein lockerer Wiedereinstieg über ${w} Wochen` : 'Nach so einer Pause hilft eine lockere Woche zum Wiedereinstieg'}: Im Gym etwa ${pctL(g.plan.gym[0])} % leichter mit einem Satz weniger${runOn() ? `, beim Laufen etwa ${pctR(g.plan.run[0])} % der geplanten Minuten in Zone 2` : ''}. Du kannst auch ganz normal weitermachen.</p><div class="bub-act"><button class="btn-chip" data-act="gapStart">Locker einsteigen</button><button class="btn-chip muted" data-act="gapSkip">Weiter wie vorher</button></div></section>`;
+}
 let pz = null;
 function openPauseSheet() {
   const P = db.settings.pause, T = t => PAUSE_TYPES.find(x => x[0] === t);
@@ -4867,13 +4893,17 @@ function endPause(auto) {
   const cbp = days >= 56 ? {gym: [0.7, 0.8, 0.9], run: [0.4, 0.6, 0.8]} : days >= 21 ? {gym: [0.8, 0.9], run: [0.5, 0.75]}
     : days >= 7 ? {gym: [hard ? 0.85 : 0.9], run: [hard ? 0.6 : 0.65]} : hard ? {gym: [0.9], run: [0.75]} : null;
   if (cbp) db.settings.comeback = {from: keyToTs(dateKey(Date.now()), 0), until: keyToTs(dateKey(addDays(Date.now(), 7 * cbp.gym.length)), 0), type: P.type, f: cbp.gym[0], gym: cbp.gym, run: cbp.run};
+  db.settings.gapSeen = Date.now();   // diese Lücke ist mit der Pause erledigt
   saveDB();
+  comebackSheet(auto ? 'Deine Pause ist vorbei. ' : '', hard, auto ? 900 : 100);
+}
+function comebackSheet(intro, hard, delay) {
   const cb = db.settings.comeback, nW = cb && cb.gym ? cb.gym.length : 1, steps = (a, fn) => a.length > 1 ? `, danach ${a.slice(1).map(fn).join(' und ')} %` : '';
-  if (cb && comebackActive()) setTimeout(() => openSheet(`<div class="pn-hero"><span>💪</span><b>Willkommen zurück!</b><small>${auto ? 'Deine Pause ist vorbei. ' : ''}${nW > 1 ? `Die nächsten ${nW} Wochen sind ein lockerer Wiedereinstieg, Woche für Woche etwas mehr:` : 'Die nächsten 7 Tage sind eine Comeback-Woche:'}</small></div>`
+  if (cb && comebackActive()) setTimeout(() => openSheet(`<div class="pn-hero"><span>💪</span><b>Willkommen zurück!</b><small>${intro}${nW > 1 ? `Die nächsten ${nW} Wochen sind ein lockerer Wiedereinstieg, Woche für Woche etwas mehr:` : 'Die nächsten 7 Tage sind eine Comeback-Woche:'}</small></div>`
     + `<div class="pn-item"><span class="pn-ic">🏋️</span><div><b>Gym</b><p>Vorschläge etwa ${pctL(cb.gym ? cb.gym[0] : cb.f)} % leichter${cb.gym ? steps(cb.gym, pctL) : ''}, dazu ein Satz weniger. Diese Trainings bremsen deine Steigerung nicht.</p></div></div>`
     + (runOn() ? `<div class="pn-item"><span class="pn-ic">🏃</span><div><b>Laufen</b><p>Etwa ${pctR(cb.run ? cb.run[0] : 0.6)} % der geplanten Minuten${cb.run ? steps(cb.run, pctR) : ''}, alles locker in Zone 2. Fühlt es sich schwer an, lieber kürzer.</p></div></div>` : '')
     + `<div class="pn-item"><span class="pn-ic">🍽️</span><div><b>Ernährung</b><p>Genug essen und trinken, Protein hoch halten. ${hard ? 'Nach einer Krankheit braucht der Körper Energie zum Aufbauen.' : ''}</p></div></div>`
-    + `<button class="btn-primary" data-act="closeSheet">Los geht’s</button>`), auto ? 900 : 100);
+    + `<button class="btn-primary" data-act="closeSheet">Los geht’s</button>`), delay);
 }
 function pauseBanner(area) {
   const P = db.settings.pause;
@@ -7987,6 +8017,13 @@ Object.assign(A, {
     db.settings.pause = {type: pz.type, from: Date.now(), until: pz.until ? keyToTs(pz.until, 23) : null, areas: pz.areas.slice()};
     db.settings.comeback = null; pz = null; saveDB(); closeSheet(); render(); toast('Pause eingetragen');
   },
+  gapStart: () => {
+    const g = gapState();
+    if (!g) { render(); return; }
+    db.settings.comeback = {from: keyToTs(dateKey(Date.now()), 0), until: keyToTs(dateKey(addDays(Date.now(), 7 * g.plan.gym.length)), 0), type: 'gap', f: g.plan.gym[0], gym: g.plan.gym, run: g.plan.run};
+    db.settings.gapSeen = Date.now(); saveDB(); render(); comebackSheet('', false, 100);
+  },
+  gapSkip: () => { db.settings.gapSeen = lastTrain(); saveDB(); render(); },
   pauseEnd: () => { closeSheet(); endPause(false); render(); toast('Willkommen zurück'); },
   stToggle: ({id}) => { const i = st.skip.indexOf(id); if (i >= 0) st.skip.splice(i, 1); else st.skip.push(id); openStartSheet(st.tid); },
   stRest: ({k, v}) => { st.rest[k] = k === 'on' || k === 'full' ? v === 'true' : k === 'sec' ? +v : v; openStartSheet(st.tid); },
