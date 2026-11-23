@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c=' 'sha256-z+S4+dwgMLqmqxDTCYUhV68Srjq2dUsFuqnBG24NbRs='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-ilHp4iuy11+kkjtmH1v7FurdC6EIfGZKmKGM3GJRPg8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.11.23.3';
+const APP_VERSION = '2026.11.23.4';
 const PATCH_NOTES = [
+  {v: '2026.11.23.4', date: 'Update vom 23. November 2026', items: [
+    ['🏃', 'Claude kann jetzt mehr beim Laufen (Beta)', 'Mit Beta-Zugang: Nach deiner Bestätigung kann Claude einen Leistungstest oder eine Bestzeit eintragen (Rennprognose und Trainingstempi) und einen eingetragenen Lauf korrigieren oder löschen. Tests am Limit lehnt die App bei Schmerz, Pause oder Comeback ab. Alles steht unter Einstellungen → Verbindungen → Claude und lässt sich zurücknehmen.'],
+  ]},
   {v: '2026.11.23.3', date: 'Update vom 23. November 2026', items: [
     ['🎯', 'Claude kann jetzt auch Ziele und Alltag (Beta)', 'Mit Beta-Zugang: Nach deiner Bestätigung kann Claude Kalorien-, Makro-, Wasser-, Schlaf- und Zielgewicht ändern sowie Gewicht, Wasser, Schlaf, Mahlzeiten und freie Aktivitäten eintragen. Alles steht unter Einstellungen → Verbindungen → Claude und lässt sich zurücknehmen.'],
   ]},
@@ -7265,11 +7268,61 @@ function claudeApply(it) {
   }
   if (it.kind === 'gym_plan') return claudeGymPlan(pl);
   if (it.kind === 'goals') return claudeGoals(pl);
+  if (it.kind === 'run_test') return claudeRunTest(pl);
+  if (it.kind === 'run_edit') return claudeRunEdit(pl);
   if (it.kind === 'body_log') return claudeBodyLog(pl);
   if (it.kind === 'meal_log') return claudeMealLog(pl);
   if (it.kind === 'activity_log') return claudeActLog(pl);
   if (it.kind === 'gym_log') return claudeGymLog(pl);
   return {ok: false, msg: 'Unbekannter Auftrag (App evtl. veraltet, Update abwarten).'};
+}
+/* Leistungstest oder Bestzeit wie rtParse/rtSave; Tests am Limit nur ohne Warnung (Schmerz, Pause, Comeback) oder mit force */
+function claudeRunTest(pl) {
+  const kind = pl.kind, date = pl.date;
+  if (!['cooper', 'k3', 'k5', 'best'].includes(kind)) return {ok: false, msg: 'Unbekannte Testart.'};
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '') || date > dateKey(Date.now()) || date < dateKey(Date.now() - 366 * DAY)) return {ok: false, msg: 'Datum ungültig (höchstens 365 Tage zurück, nicht in der Zukunft).'};
+  if (!runOn()) return {ok: false, msg: 'Laufen ist in der App ausgeschaltet.'};
+  let km = +pl.km, sec = Math.round(+pl.sec);
+  if (kind === 'cooper') { km = Math.round(+pl.km * 1000) / 1000; sec = 720; if (!(km >= 0.8 && km <= 6)) return {ok: false, msg: 'Distanz im Cooper-Test unplausibel.'}; }
+  else {
+    if (kind === 'k3') km = 3; else if (kind === 'k5') km = 5;
+    if (!(km >= 1.5 && km <= 50) || !(sec > 0) || sec / km < 150 || sec / km > 720) return {ok: false, msg: 'Zeit und Distanz passen nicht zusammen.'};
+  }
+  const v = vdotOf(km * 1000, sec);
+  if (!(v >= 15 && v <= 85)) return {ok: false, msg: 'Die Werte wirken unplausibel.'};
+  const warn = kind === 'best' || pl.force === true ? [] : rtWarn();
+  if (warn.length) return {ok: false, msg: 'Regel der App: ' + warn.join(' ') + ' Besser eine bekannte Bestzeit eintragen, oder mit ausdrücklichem „trotzdem“.'};
+  const ts = date === dateKey(Date.now()) ? Date.now() : keyToTs(date);
+  if (db.runTests.some(x => x.kind === kind && dateKey(x.date) === date && x.sec === sec && Math.abs(x.km - km) < 0.01)) return {ok: false, msg: 'Diesen Test gibt es schon, nichts doppelt eingetragen.'};
+  const vd = Math.round(v * 10) / 10, t = {id: uid(), date: ts, kind, km: Math.round(km * 1000) / 1000, sec, vdot: vd};
+  db.runTests.push(t); db.runTests.sort((a, b) => a.date - b.date);
+  return {ok: true, title: 'Lauftest eingetragen', rows: [[`${RTEST[kind].n}, ${longDate(ts)}`, rtResult(t)], ['VDOT', fmtN(vd)], ['Prognose', rtPred(vd).map(p => `${p.n} ${fmtHMS(p.sec)}`).join(' · ')]], undo: {id: t.id}, msg: `Lauftest eingetragen (VDOT ${fmtN(vd)})`};
+}
+/* Lauf korrigieren oder löschen (Planzuordnung bleibt). Undo nur, solange der Lauf seither nicht erneut geändert wurde. */
+function claudeRunEdit(pl) {
+  const r = db.runs.find(x => x.id === pl.id);
+  if (!r) return {ok: false, msg: 'Der Lauf ist nicht (mehr) in der App.'};
+  const label = `${longDate(r.date)}, ${r.min} min${r.km ? ', ' + fmtKm(r.km) : ''}`;
+  if (pl.delete === true) {
+    const undo = {del: true, run: JSON.parse(JSON.stringify(r))};
+    db.runs = db.runs.filter(x => x.id !== r.id);
+    return {ok: true, title: 'Lauf gelöscht', rows: [['Gelöscht', label]], undo, msg: 'Lauf gelöscht'};
+  }
+  const E = {}, rows = [], num = (v, lo, hi, int) => { const x = +v; return v != null && v !== '' && Number.isFinite(x) && x >= lo && x <= hi ? (int ? Math.round(x) : r2(x)) : null; };
+  if (pl.min != null) { E.min = num(pl.min, 1, 600, true); if (E.min == null) return {ok: false, msg: 'Dauer ungültig.'}; rows.push(['Dauer', `${r.min} → ${E.min} min`]); }
+  if (pl.km != null) { E.km = num(pl.km, 0.1, 100); if (E.km == null) return {ok: false, msg: 'Distanz ungültig.'}; rows.push(['Distanz', `${r.km ? fmtN(r.km) : '–'} → ${fmtN(E.km)} km`]); }
+  if (pl.hr != null) { E.hr = num(pl.hr, 40, 220, true); if (E.hr == null) return {ok: false, msg: 'Puls ungültig.'}; rows.push(['Ø Puls', `${r.hr || '–'} → ${E.hr}`]); }
+  if (pl.pain != null) { E.pain = num(pl.pain, 0, 10, true); if (E.pain == null) return {ok: false, msg: 'Schmerz ungültig.'}; rows.push(['Schmerz', `${r.pain || 0} → ${E.pain}/10`]); }
+  if (pl.rpe != null) { E.rpe = num(pl.rpe, 1, 10, true); if (E.rpe == null) return {ok: false, msg: 'Anstrengung ungültig.'}; rows.push(['Anstrengung', `${E.rpe}/10`]); }
+  if (pl.type != null) { if (!RTYPE[pl.type]) return {ok: false, msg: 'Art ungültig.'}; E.type = pl.type; rows.push(['Art', RTYPE[pl.type]]); }
+  if (pl.note != null) { E.note = String(pl.note).trim().slice(0, 1000); rows.push(['Notiz', E.note ? 'ersetzt' : 'entfernt']); }
+  if (!rows.length) return {ok: false, msg: 'Keine Änderung im Auftrag.'};
+  const undo = {id: r.id, run: JSON.parse(JSON.stringify(r)), after: ''};
+  ['min', 'km', 'hr', 'pain', 'rpe', 'type'].forEach(k => { if (E[k] != null) r[k] = E[k]; });
+  if (E.pain != null) delete r.chk;   // „Schmerz noch nachtragen“ ist erledigt
+  if (pl.note != null) { if (E.note) { r.note = E.note; r.noteAI = true; } else { delete r.note; delete r.noteAI; } }
+  undo.after = JSON.stringify(r);
+  return {ok: true, title: 'Lauf korrigiert', rows: [['Lauf', label], ...rows], undo, msg: 'Lauf korrigiert'};
 }
 /* Ziele: nur die genannten Felder, alles zuerst prüfen. Undo merkt nur die geänderten Felder. */
 function claudeGoals(pl) {
@@ -7453,7 +7506,7 @@ async function claudePull(force) {
       if (known) { acks.push([it.id, known.ok, known.msg]); continue; }
       let r;
       try { r = claudeApply(it); } catch (e) { r = {ok: false, msg: 'Fehler beim Anwenden.'}; }
-      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
+      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', run_test: 'Lauftest', run_edit: 'Lauf', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
       acks.push([it.id, !!r.ok, r.msg]); n++;
     }
     C.log = C.log.slice(-20).map(l => l.undo && l.at < Date.now() - 14 * DAY ? (({undo, ...x}) => x)(l) : l);
@@ -7466,8 +7519,9 @@ async function claudePull(force) {
   } catch (e) {} finally { claudeBusy = false; }
   return n;
 }
-const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (['run_log', 'gym_log', 'meal_log', 'activity_log'].includes(l.kind) || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
-  && (l.kind !== 'gym_plan' || JSON.stringify(db.templates) === l.undo.after);   // Vorlagen seither von Hand geändert: nicht zurückrollen
+const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (['run_log', 'gym_log', 'meal_log', 'activity_log', 'run_test'].includes(l.kind) || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
+  && (l.kind !== 'gym_plan' || JSON.stringify(db.templates) === l.undo.after)
+  && (l.kind !== 'run_edit' || (l.undo.del ? !db.runs.some(x => x.id === l.undo.run.id) : JSON.stringify(db.runs.find(x => x.id === l.undo.id)) === l.undo.after));   // Vorlagen seither von Hand geändert: nicht zurückrollen
 function claudeUndo(id) {
   const C = db.settings.claude, l = C.log.find(x => x.id === id);
   if (!l || !claudeCanUndo(l)) return false;
@@ -7475,6 +7529,11 @@ function claudeUndo(id) {
   if (l.kind === 'run_plan') undoProp(u);
   else if (l.kind === 'pause') { S.pause = u.pause || null; S.comeback = u.comeback || null; S.gapSeen = u.gapSeen; }
   else if (l.kind === 'run_log') db.runs = db.runs.filter(r => r.id !== u.runId);
+  else if (l.kind === 'run_test') db.runTests = db.runTests.filter(x => x.id !== u.id);
+  else if (l.kind === 'run_edit') {
+    if (u.del) { db.runs.push(u.run); db.runs.sort((a, b) => a.date - b.date); }
+    else { const i = db.runs.findIndex(x => x.id === u.id); if (i >= 0) db.runs[i] = u.run; }
+  }
   else if (l.kind === 'meal_log') { const ids = new Set(u.ids); db.meals = db.meals.filter(m => !ids.has(m.id)); }
   else if (l.kind === 'activity_log') db.xact = db.xact.filter(x => x.id !== u.id);
   else if (l.kind === 'goals') {
@@ -7526,7 +7585,7 @@ function renderClaude(keep) {
     + `<div class="pn-hero"><span>✨</span><b>Claude trägt für dich ein</b><small>Du besprichst Training oder Beschwerden in der Claude-App. Sagst du dort „trag das ein“, merkt Claude die Änderung vor, und Overload übernimmt sie hier.</small></div>`
     + `<div class="group"><button class="row" data-act="claudeToggle"><span class="t"><b>Aufträge von Claude übernehmen</b><span>${syncCfg() ? 'Beim Öffnen und nach jedem Abgleich' : 'Braucht „Geräte synchronisieren“ (Einstellungen → Daten)'}</span></span><span class="r">${C.on ? 'An' : 'Aus'}</span></button></div>`
     + (C.on ? `<button class="btn-secondary mt" data-act="claudeNow">Jetzt abholen</button>` : '')
-    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Gym-Vorlagen, Wochenplan und Wochenziel ändern Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
+    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Läufe korrigieren oder löschen, Leistungstest oder Bestzeit eintragen, Gym-Vorlagen, Wochenplan und Wochenziel ändern Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
     + `<label class="lbl mt">Letzte Änderungen</label>` + (list.length ? list.map(card).join('') : `<p class="hint">Noch nichts.</p>`) + `</div>`, keep, true);
 }
 
