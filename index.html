@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-OPFLgJ3890j0iv/w3wqL2LV2At7S4TQVVHT2maKH5K8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-W+xIhvGy6HDFGB9P/Z7QlBNvl/g24tphrl0vQlNexHg=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.11.23.5';
+const APP_VERSION = '2026.11.23.6';
 const PATCH_NOTES = [
+  {v: '2026.11.23.6', date: 'Update vom 23. November 2026', items: [
+    ['📝', 'Claude kann einen ganzen Laufplan selbst schreiben (Beta)', 'Mit Beta-Zugang: Statt des Fragebogen-Plans kann Claude nach deiner Bestätigung jede Woche selbst festlegen (Tage, Art, Minuten, Text, Entlastung, Rennwoche). Die App prüft dabei die Plan-Regeln (höchstens etwa 10 % mehr pro Woche, kein Lauf mehr als 10 % über dem längsten, Schmerz) und lehnt Verstöße ab. Der bisherige Plan wird ersetzt, unter Einstellungen → Verbindungen → Claude kannst du es zurücknehmen.'],
+  ]},
   {v: '2026.11.23.5', date: 'Update vom 23. November 2026', items: [
     ['🎯', 'Claude kann dein Laufziel ändern (Beta)', 'Mit Beta-Zugang: Nach deiner ausdrücklichen Bestätigung kann Claude Ziel und Renntermin ändern. Die App baut daraus einen neuen Laufplan ab nächstem Montag, der bei deinem tatsächlichen Umfang der letzten 4 Wochen ansetzt und die Plan-Regeln einhält. Der bisherige Plan wird ersetzt, eingetragene Läufe bleiben. Unter Einstellungen → Verbindungen → Claude kannst du es zurücknehmen.'],
   ]},
@@ -7273,12 +7276,26 @@ function claudeApply(it) {
   if (it.kind === 'goals') return claudeGoals(pl);
   if (it.kind === 'run_test') return claudeRunTest(pl);
   if (it.kind === 'run_goal') return claudeRunGoal(pl);
+  if (it.kind === 'run_plan_write') return claudeRunPlanWrite(pl);
   if (it.kind === 'run_edit') return claudeRunEdit(pl);
   if (it.kind === 'body_log') return claudeBodyLog(pl);
   if (it.kind === 'meal_log') return claudeMealLog(pl);
   if (it.kind === 'activity_log') return claudeActLog(pl);
   if (it.kind === 'gym_log') return claudeGymLog(pl);
   return {ok: false, msg: 'Unbekannter Auftrag (App evtl. veraltet, Update abwarten).'};
+}
+/* Ausgangslage aus den echten Läufen der letzten 28 Tage (immer die kleinere Stufe) und Angaben im Auftrag, im Format der Fragebogen-Antworten `a` von buildRunPlan */
+function claudeRunBase(pl, days, raceDate, cur) {
+  const since = Date.now() - 28 * DAY, rr = db.runs.filter(r => r.date >= since);
+  const avg = rr.reduce((a, r) => a + r.min, 0) / 4, longest = Math.max(0, ...rr.map(r => r.min));
+  let vol = 0; RVOL.forEach(([v], i) => { if (avg >= v && v > 0) vol = i; });
+  let lng = 1; RLONG.forEach(([v], i) => { if (i >= 1 && longest >= v) lng = i; });
+  const pain = db.runs.some(r => r.date > Date.now() - 7 * DAY && (r.pain || 0) >= 3), pz = db.settings.pause;
+  const inj = ['none', 'past', 'now'].includes(pl.inj) ? pl.inj : (pain || (pz && pz.type === 'injury' && (pz.areas || []).includes('run')) ? 'now' : cur && cur.area ? 'past' : 'none');
+  const areaKey = RAREA[pl.area] ? pl.area : (Object.keys(RAREA).find(k => RAREA[k] === (cur && cur.area)) || null);
+  const exp = REXP.some(x => x[0] === pl.exp) ? pl.exp : (db.runs.length >= 20 ? 'reg' : 'back');
+  const a = {goal: pl.goal, raceDate, exp, vol, longest: vol ? lng : null, days, inj, area: inj === 'none' ? null : areaKey, age: db.profile && db.profile.age ? db.profile.age : '', hrmax: db.run && db.run.z2hi ? Math.round(db.run.z2hi / 0.77) : '', pace: null};   // Zone 2 in der Plananzeige bleibt so nah an db.run wie möglich
+  return {a, avg, longest, inj};
 }
 /* Laufziel ändern: baut mit buildRunPlan einen NEUEN Plan (ab nächstem Montag) und ersetzt den bisherigen. Ausgangslage aus den echten Daten der letzten 4 Wochen
    (immer die kleinere Stufe, damit nichts überschätzt wird), Tempo und Zone 2 bleiben unverändert. Undo stellt den alten Plan wieder her. */
@@ -7300,15 +7317,7 @@ function claudeRunGoal(pl) {
     const wi = cur ? clamp(planWeekIndex(cur, Date.now()), 0, cur.weeks.length - 1) : 0, wk = cur ? [cur.weeks[wi], cur.weeks[Math.min(wi + 1, cur.weeks.length - 1)]].filter(Boolean).sort((a, b) => b.s.length - a.s.length)[0] : null;
     days = wk && wk.s.length >= 2 ? [...new Set(wk.s.map(x => x.dow))].sort((a, b) => a - b) : [1, 3, 5];
   }
-  const since = Date.now() - 28 * DAY, rr = db.runs.filter(r => r.date >= since);
-  const avg = rr.reduce((a, r) => a + r.min, 0) / 4, longest = Math.max(0, ...rr.map(r => r.min));
-  let vol = 0; RVOL.forEach(([v], i) => { if (avg >= v && v > 0) vol = i; });
-  let lng = 1; RLONG.forEach(([v], i) => { if (i >= 1 && longest >= v) lng = i; });
-  const pain = db.runs.some(r => r.date > Date.now() - 7 * DAY && (r.pain || 0) >= 3), pz = db.settings.pause;
-  const inj = ['none', 'past', 'now'].includes(pl.inj) ? pl.inj : (pain || (pz && pz.type === 'injury' && (pz.areas || []).includes('run')) ? 'now' : cur && cur.area ? 'past' : 'none');
-  const areaKey = RAREA[pl.area] ? pl.area : (Object.keys(RAREA).find(k => RAREA[k] === (cur && cur.area)) || null);
-  const exp = REXP.some(x => x[0] === pl.exp) ? pl.exp : (db.runs.length >= 20 ? 'reg' : 'back');
-  const a = {goal: pl.goal, raceDate, exp, vol, longest: vol ? lng : null, days, inj, area: inj === 'none' ? null : areaKey, age: db.profile && db.profile.age ? db.profile.age : '', hrmax: db.run && db.run.z2hi ? Math.round(db.run.z2hi / 0.77) : '', pace: null};   // Zone 2 in der Plananzeige bleibt so nah an db.run wie möglich
+  const {a, avg, longest, inj} = claudeRunBase(pl, days, raceDate, cur);
   const P = buildRunPlan(a);
   if (!P || !Array.isArray(P.weeks) || P.weeks.length < 4) return {ok: false, msg: 'Aus diesen Angaben lässt sich kein sinnvoller Plan bauen (Renntermin zu nah?).'};
   const undo = {old: JSON.stringify(old), newId: P.id}, N = P.weeks.length;
@@ -7318,6 +7327,57 @@ function claudeRunGoal(pl) {
     ['Umfang', `Woche 1 ${mins[0]} min, Höchstwert ${Math.max(...mins)} min, längster Lauf ${maxLong} min`], ['Start bei', `${Math.round(avg)} min pro Woche, längster Lauf ${longest} min (letzte 4 Wochen)`], ['Beschwerden', inj === 'none' ? 'keine' : inj === 'past' ? `früher${P.area ? ' (' + P.area + ')' : ''}` : `aktuell${P.area ? ' (' + P.area + ')' : ''}, vorsichtiger Start`]];
   if (G.km && maxLong < G.longReq * 0.85) rows.push(['Hinweis', `Knappe Vorbereitung: längster Lauf im Plan ${maxLong} min, für ${G.label} wären rund ${G.longReq} min ideal`]);
   return {ok: true, title: 'Laufziel geändert: neuer Plan', rows, undo, msg: `Neuer Laufplan (${G.n}${P.race ? ', ' + shortDate(P.race) : ''}), der bisherige ist ersetzt`};
+}
+/* Kompletter Plan von Claude (jede Woche selbst geschrieben): gleiche Prüfung der Plan-Regeln wie bei Steigerungen, dann ersetzt er db.runPlan (Undo wie run_goal). */
+function claudeRunPlanWrite(pl) {
+  if (!runOn()) return {ok: false, msg: 'Laufen ist in der App ausgeschaltet.'};
+  const G = RGOALS[pl.goal];
+  if (!G) return {ok: false, msg: 'Unbekanntes Ziel.'};
+  const W = Array.isArray(pl.weeks) ? pl.weeks : [], start = nextPlanStart(), TY = ['easy', 'long', 'tempo', 'int', 'rw', 'race'];
+  if (W.length < 4 || W.length > 40) return {ok: false, msg: 'Ein Plan braucht 4 bis 40 Wochen.'};
+  let raceTs = null, raceDate = '';
+  if (pl.raceDate) {
+    const ts = G.km && /^\d{4}-\d{2}-\d{2}$/.test(pl.raceDate) ? keyToTs(pl.raceDate, 9) : NaN;
+    if (!(ts >= addDays(start, 27)) || ts > addDays(Date.now(), 730)) return {ok: false, msg: 'Renntermin ungültig (frühestens 4 Wochen nach Planstart, höchstens 2 Jahre voraus).'};
+    raceTs = ts; raceDate = pl.raceDate;
+    if (W.length !== Math.round((weekStartOf(ts) - start) / DAY / 7) + 1) return {ok: false, msg: `Mit dem Renntermin muss der Plan genau ${Math.round((weekStartOf(ts) - start) / DAY / 7) + 1} Wochen haben (bis zur Rennwoche).`};
+  }
+  const weeks = [];
+  for (let i = 0; i < W.length; i++) {
+    const w = W[i] || {}, S = Array.isArray(w.s) ? w.s : [], seen = new Set(), out = [];
+    if (!(w.ph >= 0 && w.ph <= 3) || S.length < 1 || S.length > 6) return {ok: false, msg: `Woche ${i + 1}: Phase oder Zahl der Einheiten ungültig.`};
+    for (const x of S) {
+      const dow = Math.round(+x.dow), type = x.type, min = Math.round(+x.min || 0), text = String(x.text || '').trim().slice(0, 120);
+      if (!(dow >= 0 && dow <= 6) || seen.has(dow) || !TY.includes(type) || !text) return {ok: false, msg: `Woche ${i + 1}: Tag, Art oder Text ungültig.`};
+      if (type === 'race') { if (i !== W.length - 1 || raceTs == null || dow !== (new Date(raceTs).getDay() + 6) % 7) return {ok: false, msg: 'Die Wettkampf-Einheit gehört an den Renntag in der letzten Woche.'}; }
+      else if (!(min >= 1 && min <= 600)) return {ok: false, msg: `Woche ${i + 1}: Minuten ungültig.`};
+      seen.add(dow); out.push({dow, type, text, min: type === 'race' ? 0 : min});
+    }
+    weeks.push({ph: Math.round(w.ph), deload: !!w.deload, s: out.sort((p, q) => p.dow - q.dow)});
+  }
+  if (raceTs != null && !weeks[W.length - 1].s.some(x => x.type === 'race')) return {ok: false, msg: 'Die letzte Woche braucht die Wettkampf-Einheit am Renntag.'};
+  const days = [...new Set(weeks.flatMap(w => w.s.map(x => x.dow)))].sort((p, q) => p - q), cur = curPlan();
+  const {a, avg, longest, inj} = claudeRunBase({goal: pl.goal}, days, raceDate, cur);
+  const tot = weeks.map(w => w.s.reduce((x, y) => x + y.min, 0)), lg = weeks.map(w => Math.max(0, ...w.s.map(x => x.min)));
+  if (pl.force !== true) {   // Plan-Regeln wie bei Steigerungen: Umfang höchstens +10 %, kein Lauf mehr als 10 % über dem längsten der letzten 4 Wochen, bei Schmerz nicht steigern
+    const bad = [], pain = db.runs.some(r => r.date > Date.now() - 7 * DAY && (r.pain || 0) >= 3);
+    if (pain && tot[0] > Math.round(avg) + 1) bad.push(`Woche 1 (${tot[0]} min) steigert trotz Schmerz ab 3/10 in den letzten 7 Tagen (zuletzt ${Math.round(avg)} min pro Woche)`);
+    for (let i = 0; i < W.length && bad.length < 6; i++) {
+      const refT = i ? Math.max(...tot.slice(Math.max(0, i - 3), i)) : Math.max(avg, 40), refL = Math.max(i ? 0 : 20, longest, ...lg.slice(Math.max(0, i - 4), i));
+      if (tot[i] > refT * 1.1 + 1) bad.push(`Woche ${i + 1}: ${tot[i]} min sind mehr als 10 % über ${Math.round(refT)} min`);
+      if (lg[i] > refL * 1.1 + 1) bad.push(`Woche ${i + 1}: längster Lauf ${lg[i]} min ist mehr als 10 % über ${Math.round(refL)} min`);
+    }
+    if (bad.length) return {ok: false, msg: 'Plan-Regeln verletzt: ' + bad.slice(0, 4).join('; ') + (bad.length > 4 ? ' …' : '')};
+  }
+  const ph = [{n: a.exp === 'new' ? 'Einstieg' : 'Comeback', c: '#3DDCEB'}, {n: 'Grundlage', c: '#A7F432'}, {n: 'Aufbau', c: '#FFB340'}, {n: raceTs ? 'Tapern' : 'Abschluss', c: '#D1D1D6'}];
+  const P = {id: uid(), created: Date.now(), start, race: raceTs, goal: pl.goal, label: G.label, raceKm: G.km ? (raceTs || pl.goal !== 'm' ? G.km : 21.1) : null,
+    area: inj !== 'none' && a.area && RAREA[a.area] ? RAREA[a.area] : null, rules: {growth: 10, every: 4}, phases: ph, weeks, a, src: 'claude'};
+  const undo = {old: JSON.stringify(db.runPlan), newId: P.id}, N = weeks.length, maxLong = Math.max(...lg);
+  db.runPlan = P; showPlan = false;
+  const rows = [['Ziel', `${G.n}${raceTs ? ', Rennen am ' + longDate(raceTs, true) : ''}`], ['Plan', `${N} Wochen ab ${longDate(start, true)}, von Claude geschrieben`], ['Lauftage', days.map(i => WD[i]).join(', ')],
+    ['Umfang', `Woche 1 ${tot[0]} min, Höchstwert ${Math.max(...tot)} min, längster Lauf ${maxLong} min`], ['Start bei', `${Math.round(avg)} min pro Woche, längster Lauf ${longest} min (letzte 4 Wochen)`]];
+  if (G.km && maxLong < G.longReq * 0.85) rows.push(['Hinweis', `Knappe Vorbereitung: längster Lauf im Plan ${maxLong} min, für ${G.label} wären rund ${G.longReq} min ideal`]);
+  return {ok: true, title: 'Neuer Laufplan von Claude', rows, undo, msg: `Neuer Laufplan (${G.n}${raceTs ? ', ' + shortDate(raceTs) : ''}, ${N} Wochen), der bisherige ist ersetzt`};
 }
 /* Leistungstest oder Bestzeit wie rtParse/rtSave; Tests am Limit nur ohne Warnung (Schmerz, Pause, Comeback) oder mit force */
 function claudeRunTest(pl) {
@@ -7549,7 +7609,7 @@ async function claudePull(force) {
       if (known) { acks.push([it.id, known.ok, known.msg]); continue; }
       let r;
       try { r = claudeApply(it); } catch (e) { r = {ok: false, msg: 'Fehler beim Anwenden.'}; }
-      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', run_test: 'Lauftest', run_edit: 'Lauf', run_goal: 'Laufziel', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
+      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', run_test: 'Lauftest', run_edit: 'Lauf', run_goal: 'Laufziel', run_plan_write: 'Laufplan', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
       acks.push([it.id, !!r.ok, r.msg]); n++;
     }
     C.log = C.log.slice(-20).map(l => l.undo && l.at < Date.now() - 14 * DAY ? (({undo, ...x}) => x)(l) : l);
@@ -7564,8 +7624,8 @@ async function claudePull(force) {
 }
 const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (['run_log', 'gym_log', 'meal_log', 'activity_log', 'run_test'].includes(l.kind) || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
   && (l.kind !== 'gym_plan' || JSON.stringify(db.templates) === l.undo.after)
-  && (l.kind !== 'run_plan' || !db.settings.claude.log.some(x => x.kind === 'run_goal' && x.ok && !x.undone && x.at > l.at))   // ältere Planänderungen gehören zum ersetzten Plan
-  && (l.kind !== 'run_goal' || (!!db.runPlan && db.runPlan.id === l.undo.newId))
+  && (l.kind !== 'run_plan' || !db.settings.claude.log.some(x => ['run_goal', 'run_plan_write'].includes(x.kind) && x.ok && !x.undone && x.at > l.at))   // ältere Planänderungen gehören zum ersetzten Plan
+  && (!['run_goal', 'run_plan_write'].includes(l.kind) || (!!db.runPlan && db.runPlan.id === l.undo.newId))
   && (l.kind !== 'run_edit' || (l.undo.del ? !db.runs.some(x => x.id === l.undo.run.id) : JSON.stringify(db.runs.find(x => x.id === l.undo.id)) === l.undo.after));   // Vorlagen seither von Hand geändert: nicht zurückrollen
 function claudeUndo(id) {
   const C = db.settings.claude, l = C.log.find(x => x.id === id);
@@ -7574,7 +7634,7 @@ function claudeUndo(id) {
   if (l.kind === 'run_plan') undoProp(u);
   else if (l.kind === 'pause') { S.pause = u.pause || null; S.comeback = u.comeback || null; S.gapSeen = u.gapSeen; }
   else if (l.kind === 'run_log') db.runs = db.runs.filter(r => r.id !== u.runId);
-  else if (l.kind === 'run_goal') {
+  else if (l.kind === 'run_goal' || l.kind === 'run_plan_write') {
     const nid = u.newId + ':'; db.runs.forEach(r => { if (r.slot && String(r.slot).startsWith(nid)) r.slot = null; });
     db.runPlan = JSON.parse(u.old); showPlan = false;
   }
@@ -7634,7 +7694,7 @@ function renderClaude(keep) {
     + `<div class="pn-hero"><span>✨</span><b>Claude trägt für dich ein</b><small>Du besprichst Training oder Beschwerden in der Claude-App. Sagst du dort „trag das ein“, merkt Claude die Änderung vor, und Overload übernimmt sie hier.</small></div>`
     + `<div class="group"><button class="row" data-act="claudeToggle"><span class="t"><b>Aufträge von Claude übernehmen</b><span>${syncCfg() ? 'Beim Öffnen und nach jedem Abgleich' : 'Braucht „Geräte synchronisieren“ (Einstellungen → Daten)'}</span></span><span class="r">${C.on ? 'An' : 'Aus'}</span></button></div>`
     + (C.on ? `<button class="btn-secondary mt" data-act="claudeNow">Jetzt abholen</button>` : '')
-    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Läufe korrigieren oder löschen, Leistungstest oder Bestzeit eintragen, Laufziel und Renntermin ändern (baut einen neuen Plan, der bisherige wird ersetzt), Gym-Vorlagen, Wochenplan und Wochenziel ändern, Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
+    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Läufe korrigieren oder löschen, Leistungstest oder Bestzeit eintragen, Laufziel und Renntermin ändern oder einen ganzen Laufplan selbst schreiben (der bisherige wird ersetzt), Gym-Vorlagen, Wochenplan und Wochenziel ändern, Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
     + `<label class="lbl mt">Letzte Änderungen</label>` + (list.length ? list.map(card).join('') : `<p class="hint">Noch nichts.</p>`) + `</div>`, keep, true);
 }
 
