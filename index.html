@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-PMy9tzGhw1xwfBzjm4qXPWWrwxhmTPvMx2dEPCQ+dr8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c=' 'sha256-wBzIxUjoFqqY6CUaGvjpg/Bjhg/86lcJ3ZYuyE91BeM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.10.28.1';
+const APP_VERSION = '2026.11.23.1';
 const PATCH_NOTES = [
+  {v: '2026.11.23.1', date: 'Update vom 23. November 2026', items: [
+    ['✨', 'Claude trägt für dich ein (Beta)', 'Mit Beta-Zugang: Unter Einstellungen → Verbindungen → Claude einschalten. Dann kann Claude in der Claude-App nach deiner Bestätigung den Laufplan ändern, Läufe nachtragen und eine Pause setzen. Overload übernimmt die Aufträge beim Öffnen, prüft die Plan-Regeln und zeigt alles mit „Rückgängig“.'],
+  ]},
   {v: '2026.10.28.1', date: 'Update vom 28. Oktober 2026', items: [
     ['🌱', 'Leichter Wiedereinstieg nach einer Lücke', 'Auch ohne eingetragene Pause merkt die App, wenn deine letzte Einheit lange her ist. Bis 13 Tage passiert nichts, dann geht es normal weiter. Ab 14 Tagen schlägt sie eine lockere Woche vor (ab 3 Wochen zwei, ab 8 Wochen drei): im Gym etwas leichter mit einem Satz weniger, beim Laufen weniger Minuten in Zone 2. Du entscheidest mit „Locker einsteigen“ oder „Weiter wie vorher“.'],
   ]},
@@ -1890,6 +1893,9 @@ function migrate(d, fresh) {
     d.settings.gymSkip = isO(d.settings.gymSkip) ? d.settings.gymSkip : {};
     Object.keys(d.settings.gymSkip).forEach(k => { if (k < cut) delete d.settings.gymSkip[k]; }); }
   d.settings.hints = Object.assign({advice: true, report: true, review: true, load: true}, d.settings.hints && typeof d.settings.hints === 'object' ? d.settings.hints : {});
+  // Claude-Zugriff (Beta, nur Admin/Beta-Zugang): Schalter, Protokoll der übernommenen Aufträge, zuletzt gesehen
+  { const c = d.settings.claude && typeof d.settings.claude === 'object' && !Array.isArray(d.settings.claude) ? d.settings.claude : {};
+    d.settings.claude = {on: c.on === true, log: Array.isArray(c.log) ? c.log.filter(l => l && l.id != null) : [], seen: typeof c.seen === 'number' ? c.seen : 0}; }
   // Strava (Beta): verbundenes Gerät und übernommene Aktivitäten, Freischaltung durch den Admin
   if (d.settings.strava === undefined) d.settings.strava = null;
   if (d.settings.stravaBeta === undefined) d.settings.stravaBeta = false;
@@ -2269,7 +2275,7 @@ function vTodayNew() {
   const st = foodOn() ? foodStreak().cur : 0, open = d => d.act || `data-act="tab" data-v="${d.go}"`;
   let h = `<header class="lt hz-lt"><div class="sec-row"><p class="date">${todayLine()}</p>${st > 1 ? `<span class="hz-streak">${ICON.flame}${st}</span>` : ''}</div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
   if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
-  h += movedBanner() + newsBanner() + wxChip(true);
+  h += movedBanner() + claudeBanner() + newsBanner() + wxChip(true);
   h += gapCard();
   const T = dayTimeline(cfg);
   h += T.heroes.slice(0, 1).map(it => `<section class="hz-now"><p class="hz-lbl">${esc(it.lbl)}</p><h3>${esc(it.t)}</h3><p class="hz-sub">${esc(it.s)}</p><div class="hz-btns"><button class="btn-primary" ${it.act}>${esc(it.btn)}</button>${it.btn2 ? `<button class="btn-secondary" ${it.btn2.act}>${esc(it.btn2.n)}</button>` : ''}</div></section>`).join('');
@@ -2310,7 +2316,7 @@ function vToday() {
   const cfg = db.settings.home, ids =cfg.order.filter(id => !cfg.hidden.includes(id) && homeAvail(id)), D = ids.map(homeData).filter(Boolean);
   let h = `<header class="lt"><div class="sec-row"><p class="date">${todayLine()}</p><button class="btn-text sm" data-act="homeSettings">Anpassen</button></div><h1>${greeting()}${syncOn() && nameValid() ? `, ${esc(devInfo().name.split(' ')[0])}` : ''}</h1></header>`;
   if (db.active) h += `<button class="banner" data-act="tab" data-v="workout"><span class="dot"></span><span class="t"><b>${esc(db.active.title)} läuft</b><span id="bannerTime">${fmtDur(Date.now() - db.active.startedAt)}</span></span><span class="banner-cta">Fortsetzen</span></button>`;
-  h += movedBanner() + wxChip() + gapCard() + adviceHTML(dayAdvice(), 2);
+  h += movedBanner() + claudeBanner() + wxChip() + gapCard() + adviceHTML(dayAdvice(), 2);
   if (!D.length) return h + `<div class="empty"><p>Alle Karten sind ausgeblendet.</p><button class="btn-secondary" data-act="homeSettings">Startseite anpassen</button></div>`;
   const open = d => d.act || `data-act="tab" data-v="${d.go}"`;
   const val = d => `<span class="hv${d.text ? ' txt' : ''}">${esc(String(d.val))}</span>${d.unit ? `<span class="hu">${esc(d.unit)}</span>` : ''}`;
@@ -2889,7 +2895,7 @@ function vMore() {
   h += `<section class="sec"><h3 class="sec-h">Bereiche</h3><div class="group"><button class="row" data-act="toggleRun"><span class="t"><b>Laufplan anzeigen</b><span>${legacy ? 'Halbmarathon-Plan im Tab „Laufen“' : 'Persönlicher Trainingsplan im Tab „Laufen“'}</span></span><span class="r">${ulR ? (db.settings.showRun ? 'An' : 'Aus') : locked}</span></button><button class="row" data-act="toggleFood"><span class="t"><b>Ernährung</b><span>Mahlzeiten, Rezepte, Gerichte, Kalorien und Makros</span></span><span class="r">${db.settings.showFood ? 'An' : 'Aus'}</span></button><button class="row" data-act="toggleTri"><span class="t"><b>Triathlon</b><span>Plan für Schwimmen, Rad und Laufen</span></span><span class="r">${db.settings.unlockTri ? (db.settings.showTri ? 'An' : 'Aus') : locked}</span></button></div>`
     + (ulR && db.settings.unlockTri ? '' : '<p class="foot">Laufplan und Triathlon schaltest du einmalig mit einem Passwort frei. Frag den Admin danach.</p>') + `</section>`;
 
-  { const SV = db.settings.strava, ST = studyLoad(); h += `<section class="sec"><h3 class="sec-h">Verbindungen</h3><div class="group">` + (stravaVisible() ? `<button class="row" data-act="stravaSheet"><span class="ic-box">${ICON.sync}</span><span class="t"><b>Strava <i class="tag sv-beta">Beta</i></b><span>${SV ? `Verbunden${SV.name ? ' als ' + esc(SV.name) : ''}${SV.at ? ', abgerufen ' + esc(relTime(SV.at)) : ''}` : 'Läufe von Garmin, Apple Watch und Co. automatisch übernehmen'}</span></span><span class="chev">${ICON.chev}</span></button>` : '') + `<button class="row" data-act="studySheet"><span class="ic-box">${ICON.sync}</span><span class="t"><b>Study App</b><span>${ST ? `Verbunden${ST.at ? ', gesendet ' + esc(relTime(ST.at)) : ''}` : 'Training, Belastung und Schlaf an deine Lern-App senden'}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`; }
+  { const SV = db.settings.strava, ST = studyLoad(); h += `<section class="sec"><h3 class="sec-h">Verbindungen</h3><div class="group">` + (stravaVisible() ? `<button class="row" data-act="stravaSheet"><span class="ic-box">${ICON.sync}</span><span class="t"><b>Strava <i class="tag sv-beta">Beta</i></b><span>${SV ? `Verbunden${SV.name ? ' als ' + esc(SV.name) : ''}${SV.at ? ', abgerufen ' + esc(relTime(SV.at)) : ''}` : 'Läufe von Garmin, Apple Watch und Co. automatisch übernehmen'}</span></span><span class="chev">${ICON.chev}</span></button>` : '') + claudeRow() + `<button class="row" data-act="studySheet"><span class="ic-box">${ICON.sync}</span><span class="t"><b>Study App</b><span>${ST ? `Verbunden${ST.at ? ', gesendet ' + esc(relTime(ST.at)) : ''}` : 'Training, Belastung und Schlaf an deine Lern-App senden'}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`; }
   if (syncOn()) { const nIn = shr.list ? shr.list.in.filter(s => s.state === 'pending').length : 0, nAct = shr.list ? shr.list.in.filter(s => s.state === 'active').length + shr.list.out.filter(s => s.state === 'active').length : 0;
     h += `<section class="sec"><h3 class="sec-h">Teilen</h3><div class="group"><button class="row" data-act="shareSheet"><span class="ic-box">🤝</span><span class="t"><b>Daten teilen${nIn ? ` <i class="tag t-deload">${nIn} ${nIn === 1 ? 'Anfrage' : 'Anfragen'}</i>` : ''}</b><span>${me() ? `Deine ID ${esc(me().oid)}${nAct ? ` · ${nAct} aktiv` : ''}` : 'Ernährung, Gewicht, Gym oder Laufen mit Freunden teilen'}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`; }
   h += `<section class="sec"><h3 class="sec-h">Daten</h3>${storageOK ? '' : '<p class="warn">In dieser Ansicht kann nicht gespeichert werden. Einträge gehen beim Schließen verloren.</p>'}<div class="group">`
@@ -6504,6 +6510,7 @@ async function syncNow(force) {
     syncCfgSave({...now, rev, at: Date.now()}); syncErr = ''; ok = true;
     if (!deq(next, merged)) syncQueued = true;
     if (changed) { OVL_THEME.apply(db.settings.theme); render(); if (!force) toast('Aktualisiert vom anderen Gerät'); }
+    if (db.settings.claude && db.settings.claude.on) setTimeout(() => claudePull(), 400);
   } catch (e) { syncErr = syncMsg(e); }
   finally { syncing = false; if (syncQueued) { syncQueued = false; syncSoon(ok ? 1500 : 8000); } }
   return ok;
@@ -7174,6 +7181,144 @@ function undoProp(u) {
   P.weeks = d.weeks;
   if (u.kind === 'run') db.run = d.run;
   if (d.tri) { const m = new Map(d.tri); db.tri.forEach(r => { if (m.has(r.id)) r.slot = m.get(r.id); }); }
+}
+
+/* ---------- Claude-Zugriff: Aufträge übernehmen (Beta, nur Admin/Beta-Zugang, siehe CLAUDE.md „Claude-Zugriff“, supabase-update-12.sql) ----------
+   Claude (Claude-App, Connector „Overload“) merkt Änderungen auf dem Server vor (claude_inbox), nachdem der Nutzer sie im Chat bestätigt hat.
+   Diese App holt sie nach jedem Abgleich (ovl_inbox_pull, mit dem Sync-Code, atomar beansprucht), wendet sie mit der eigenen Logik an
+   (propPlan/applyProp, Pause, Lauf eintragen), prüft die Regeln, protokolliert alles in settings.claude.log (synchronisiert, mit Rückgängig)
+   und meldet das Ergebnis zurück (ovl_inbox_ack). Nie ungeprüft schreiben: alles läuft durch dieselbe Bereinigung wie die Coach-Vorschläge. */
+const claudeVisible = () => stravaVisible();
+const claudeOn = () => claudeVisible() && !!syncCfg() && db.settings.claude.on === true;
+let claudeBusy = false;
+/* Regeln beim Laufplan (nur Steigerungen): Schmerz ab 3/10, Wochenumfang höchstens +10 %, kein Lauf mehr als 10 % über dem längsten der letzten 4 Wochen.
+   Kürzen und Streichen ist immer erlaubt. Mit force (Nutzer hat nach der Warnung ausdrücklich „trotzdem“ gesagt) werden sie übergangen. */
+function claudeWarn(p) {
+  const P = curPlan(), W = [];
+  if (!P || p.kind !== 'run') return W;
+  const sim = JSON.parse(JSON.stringify(P.weeks.map(w => w.s)));
+  p.list.forEach(c => {
+    const S = sim[c.i], k = c.mt ? S.findIndex(s => s.dow === c.dow && s.type === c.mt) : -1;
+    if (c.op === 'remove') { if (k >= 0) S.splice(k, 1); } else if (c.op === 'set' && k >= 0) Object.assign(S[k], {type: c.type, min: c.min}); else S.push({dow: c.dow, type: c.type, min: c.min});
+  });
+  const tot = S => S.reduce((a, s) => a + (s.type === 'race' ? Math.round(P.raceKm * db.run.pace) : s.min), 0);
+  const painRecent = db.runs.some(r => r.date > Date.now() - 7 * DAY && (r.pain || 0) >= 3);
+  const longest = Math.max(0, ...db.runs.filter(r => r.date > Date.now() - 28 * DAY).map(r => r.min));
+  [...new Set(p.list.map(c => c.i))].forEach(i => {
+    const now = tot(sim[i]), was = tot(P.weeks[i].s);
+    if (now <= was) return;
+    if (painRecent) W.push(`Woche ${i + 1}: Schmerz ab 3/10 in den letzten 7 Tagen, nicht steigern.`);
+    else if (i > 0 && !P.weeks[i].deload && now > Math.round(tot(sim[i - 1]) * 1.1) + 1) W.push(`Woche ${i + 1}: ${now} min sind mehr als 10 % über Woche ${i} (${tot(sim[i - 1])} min).`);
+  });
+  p.list.forEach(c => {
+    if (c.op === 'remove') return;
+    const old = c.mt ? (P.weeks[c.i].s.find(s => s.dow === c.dow && s.type === c.mt) || {}).min || 0 : 0;
+    if (c.min > old && longest > 0 && c.min > Math.round(longest * 1.1) + 1) W.push(`Woche ${c.i + 1} ${WD[c.dow]}: ${c.min} min sind mehr als 10 % über deinem längsten Lauf der letzten 4 Wochen (${longest} min).`);
+  });
+  return [...new Set(W)];
+}
+/* Einen Auftrag anwenden. Rückgabe {ok, msg, title, rows, undo}; bei ok: false wurde nichts geändert. */
+function claudeApply(it) {
+  const pl = it.payload && typeof it.payload === 'object' ? it.payload : {}, S = db.settings;
+  if (it.kind === 'run_plan') {
+    if (!runOn() || !curPlan()) return {ok: false, msg: 'Laufen oder Laufplan ist in der App nicht eingerichtet.'};
+    const p = propPlan('run', pl.changes, pl.settings), n = Array.isArray(pl.changes) ? pl.changes.length : 0;
+    if (!p) return {ok: false, msg: 'Keine gültige Änderung (nur aktuelle oder spätere Wochen, passende Einheiten, Werte im erlaubten Bereich).'};
+    const warn = pl.force === true ? [] : claudeWarn(p);
+    if (warn.length) return {ok: false, msg: 'Regel der App: ' + warn.join(' ') + ' Mit ausdrücklichem „trotzdem“ geht es doch.'};
+    const rows = propRows(p), undo = applyProp(p);
+    return {ok: true, title: 'Laufplan geändert', rows, undo, msg: `${p.list.length}${n > p.list.length ? ' von ' + n : ''} Änderung${p.list.length === 1 ? '' : 'en'} übernommen${pl.force === true ? ' (Regeln übergangen)' : ''}`};
+  }
+  if (it.kind === 'pause') {
+    const undo = {pause: S.pause, comeback: S.comeback, gapSeen: S.gapSeen};
+    if (pl.action === 'end') {
+      if (!S.pause) return {ok: false, msg: 'Es war keine Pause aktiv.'};
+      endPause(true);
+      return {ok: true, title: 'Pause beendet', rows: [['Pause', 'beendet']], undo, msg: 'Pause beendet'};
+    }
+    const T = PAUSE_TYPES.find(x => x[0] === pl.type), areas = (Array.isArray(pl.areas) ? pl.areas : []).filter((a, i, l) => l.indexOf(a) === i && (a === 'gym' || a === 'run' && runOn() || a === 'tri' && triOn()));
+    if (!T || !areas.length) return {ok: false, msg: 'Pause nicht möglich (Art oder Bereich passt nicht zu deiner App).'};
+    const until = /^\d{4}-\d{2}-\d{2}$/.test(pl.until || '') ? keyToTs(pl.until, 23) : null;
+    S.pause = {type: T[0], from: S.pause ? S.pause.from : Date.now(), until, areas}; S.comeback = null;
+    return {ok: true, title: `${T[2]}: Pause eingetragen`, rows: [['Pause', `${T[1]} ${T[2]}${until ? ' bis ' + longDate(until) : ''}`], ['Pausiert', areas.map(a => ({gym: 'Gym', run: 'Laufen', tri: 'Triathlon'})[a]).join(' und ')]], undo, msg: 'Pause eingetragen'};
+  }
+  if (it.kind === 'run_log') {
+    if (!runOn()) return {ok: false, msg: 'Laufen ist in der App ausgeschaltet.'};
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(pl.date || '') ? pl.date : null, min = Math.round(+pl.min);
+    if (!date || !(min >= 1 && min <= 600) || date > dateKey(Date.now()) || date < dateKey(Date.now() - 61 * DAY)) return {ok: false, msg: 'Datum oder Dauer ungültig.'};
+    const ts = date === dateKey(Date.now()) ? Date.now() : keyToTs(date);
+    const twin = db.runs.find(r => dateKey(r.date) === date && Math.abs(r.min - min) <= Math.max(5, min * 0.25));
+    if (twin && pl.force !== true) return {ok: false, msg: `Am selben Tag gibt es schon einen Lauf (${twin.min} min), nichts doppelt eingetragen.`};
+    const km = +pl.km > 0 && +pl.km <= 100 ? r2(+pl.km) : null, hr = +pl.hr >= 40 && +pl.hr <= 220 ? Math.round(+pl.hr) : null, pain = +pl.pain >= 0 && +pl.pain <= 10 ? Math.round(+pl.pain) : 0;
+    const m = stravaSlot(ts, 'run'), r = {id: uid(), date: ts, min, km, hr, pain, slot: m ? m.slot : null, type: RTYPE[pl.type] ? pl.type : (m ? m.type : (min >= 75 ? 'long' : 'easy')), src: 'claude'};
+    if (+pl.rpe >= 1 && +pl.rpe <= 10) r.rpe = Math.round(+pl.rpe);
+    const note = String(pl.note || '').trim().slice(0, 1000);
+    if (note) { r.note = note; r.noteAI = true; }
+    db.runs.push(r); db.runs.sort((a, b) => a.date - b.date);
+    return {ok: true, title: 'Lauf eingetragen', rows: [[longDate(ts), runLine(r) + (m ? ' · Planeinheit zugeordnet' : '')]], undo: {runId: r.id}, msg: 'Lauf eingetragen'};
+  }
+  return {ok: false, msg: 'Unbekannter Auftrag (App evtl. veraltet, Update abwarten).'};
+}
+/* Aufträge holen und anwenden. Nur wenn kein Blatt offen und kein Feld fokussiert ist, sonst beim nächsten Abgleich. */
+async function claudePull(force) {
+  if (claudeBusy || !claudeOn() || !navigator.onLine || (!force && syncBusyUI())) return 0;
+  const cfg = syncCfg(); claudeBusy = true;
+  let n = 0;
+  try {
+    const items = await syncRpc('ovl_inbox_pull', {p_code: cfg.code});
+    if (!Array.isArray(items) || !items.length) return 0;
+    const C = db.settings.claude, acks = [];
+    for (const it of items) {
+      if (!it || !it.id) continue;
+      const known = C.log.find(l => l.id === it.id);   // schon angewendet (Quittung ging verloren): nur erneut quittieren
+      if (known) { acks.push([it.id, known.ok, known.msg]); continue; }
+      let r;
+      try { r = claudeApply(it); } catch (e) { r = {ok: false, msg: 'Fehler beim Anwenden.'}; }
+      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
+      acks.push([it.id, !!r.ok, r.msg]); n++;
+    }
+    C.log = C.log.slice(-20).map(l => l.undo && l.at < Date.now() - 14 * DAY ? (({undo, ...x}) => x)(l) : l);
+    if (n) { saveDB(); render(); if ($('#claudeSheet')) renderClaude(true); toast(n === 1 ? 'Claude hat etwas eingetragen' : `Claude hat ${n} Dinge eingetragen`); }
+    for (const [id, ok, msg] of acks) { try { await syncRpc('ovl_inbox_ack', {p_code: cfg.code, p_id: id, p_ok: ok, p_msg: msg || ''}); } catch (e) {} }
+  } catch (e) {} finally { claudeBusy = false; }
+  return n;
+}
+const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (l.kind === 'run_log' || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at));
+function claudeUndo(id) {
+  const C = db.settings.claude, l = C.log.find(x => x.id === id);
+  if (!l || !claudeCanUndo(l)) return false;
+  const u = l.undo, S = db.settings;
+  if (l.kind === 'run_plan') undoProp(u);
+  else if (l.kind === 'pause') { S.pause = u.pause || null; S.comeback = u.comeback || null; S.gapSeen = u.gapSeen; }
+  else if (l.kind === 'run_log') db.runs = db.runs.filter(r => r.id !== u.runId);
+  l.undone = Date.now(); delete l.undo;
+  saveDB(); return true;
+}
+function claudeBanner() {
+  if (!claudeVisible()) return '';
+  const C = db.settings.claude, fresh = C.log.filter(l => l.at > C.seen);
+  if (!fresh.length) return '';
+  const ok = fresh.filter(l => l.ok).length, no = fresh.length - ok;
+  const ttl = !no ? `Claude hat ${ok === 1 ? 'etwas' : ok + ' Dinge'} eingetragen` : !ok ? `Claude: ${no === 1 ? 'ein Auftrag' : no + ' Aufträge'} abgelehnt` : `Claude: ${ok} übernommen, ${no} abgelehnt`;
+  return `<div class="news-bar"><button class="nb-main" data-act="claudeSheet"><span class="nb-e">✨</span><span class="nb-t"><b>${ttl}</b><small>${esc(fresh.slice(-2).map(l => l.title).join(' · '))}</small></span></button><button class="nb-x" data-act="claudeSeen" aria-label="Ausblenden">×</button></div>`;
+}
+function claudeRow() {
+  if (!claudeVisible()) return '';
+  const C = db.settings.claude, last = C.log[C.log.length - 1];
+  return `<button class="row" data-act="claudeSheet"><span class="ic-box">${ICON.spark}</span><span class="t"><b>Claude <i class="tag sv-beta">Beta</i></b><span>${C.on ? (last ? `An, zuletzt ${esc(relTime(last.at))}: ${esc(last.title)}` : 'An, noch keine Änderungen') : 'Claude trägt nach deiner Bestätigung im Chat Pläne und Läufe ein'}</span></span><span class="chev">${ICON.chev}</span></button>`;
+}
+function renderClaude(keep) {
+  const C = db.settings.claude, list = C.log.slice().reverse();
+  const card = l => `<div class="pcard"><div class="pc-h"><b>${esc(l.title)}</b><span>${esc(relTime(l.at))}</span></div>`
+    + (l.rows && l.rows.length ? `<ul class="prop-l">${l.rows.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('')}</ul>` : '')
+    + (l.undone ? `<p class="hint">Rückgängig gemacht</p>` : l.ok ? `<p class="pc-ok">${ICON.check}${esc(l.msg || 'Übernommen')}</p>` : `<p class="warn">${esc(l.msg || 'Abgelehnt')}</p>`)
+    + (claudeCanUndo(l) ? `<button class="btn-chip muted" data-act="claudeUndo" data-id="${esc(l.id)}">Rückgängig</button>` : '') + `</div>`;
+  openSheet(`<div id="claudeSheet"><div class="sheet-h"><span></span><h2>Claude</h2><button class="btn-text strong" data-act="closeSheet">Fertig</button></div>`
+    + `<div class="pn-hero"><span>✨</span><b>Claude trägt für dich ein</b><small>Du besprichst Training oder Beschwerden in der Claude-App. Sagst du dort „trag das ein“, merkt Claude die Änderung vor, und Overload übernimmt sie hier.</small></div>`
+    + `<div class="group"><button class="row" data-act="claudeToggle"><span class="t"><b>Aufträge von Claude übernehmen</b><span>${syncCfg() ? 'Beim Öffnen und nach jedem Abgleich' : 'Braucht „Geräte synchronisieren“ (Einstellungen → Daten)'}</span></span><span class="r">${C.on ? 'An' : 'Aus'}</span></button></div>`
+    + (C.on ? `<button class="btn-secondary mt" data-act="claudeNow">Jetzt abholen</button>` : '')
+    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe nachtragen und eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
+    + `<label class="lbl mt">Letzte Änderungen</label>` + (list.length ? list.map(card).join('') : `<p class="hint">Noch nichts.</p>`) + `</div>`, keep, true);
 }
 
 /* ---------- KI über den Overload-Server (Supabase Edge Function „ai“, siehe supabase-update-4.sql) ----------
@@ -10512,10 +10657,15 @@ function stravaCheckNote(list, act) {
   const r = open[open.length - 1];
   return `<button class="notice k-reps sv-note" data-act="${act}" data-id="${esc(r.id)}"><b>Neu von Strava${open.length > 1 ? ` (${open.length})` : ''}</b><p>${esc(new Date(r.date).toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'short'}))}: Wie hat sich ${act === 'editRun' && painName() ? 'das ' + esc(painName()) : 'dein Körper'} angefühlt? Tipp hier und trag Schmerz und Notiz nach.</p></button>`;
 }
-const stravaMark = r => r.src === 'strava' ? ' · Strava' : r.src === 'shot' ? ' · Screenshot' : '';
+const stravaMark = r => r.src === 'strava' ? ' · Strava' : r.src === 'shot' ? ' · Screenshot' : r.src === 'claude' ? ' · Claude' : '';
 document.addEventListener('click', ev => { if (ev.target.closest && ev.target.closest('.sv-go')) { stravaWait(); setTimeout(() => { if ($('#svSheet')) renderStrava(true); }, 400); } });
 Object.assign(A, {
   studySheet: () => { study.err = ''; renderStudy(); },
+  claudeSheet: () => { if (!claudeVisible()) return; db.settings.claude.seen = Date.now(); saveDB(); renderClaude(); },
+  claudeSeen: () => { db.settings.claude.seen = Date.now(); saveDB(); render(); },
+  claudeToggle: () => { const C = db.settings.claude; if (!C.on && !syncCfg()) { toast('Erst „Geräte synchronisieren“ einrichten'); return; } C.on = !C.on; saveDB(); renderClaude(true); render(); if (C.on) claudePull(true).then(n => { if (!n) toast('Claude ist verbunden'); }); },
+  claudeNow: async () => { toast('Hole Aufträge …'); const n = await claudePull(true); if (!n) toast('Keine neuen Aufträge'); },
+  claudeUndo: ({id}) => { if (claudeUndo(id)) { renderClaude(true); render(); toast('Rückgängig gemacht'); } },
   studyConnect: async () => {
     const code = ($('#studyCode')?.value || '').trim().toUpperCase();
     if (!/^STU-[A-HJ-NP-Z2-9]{32}$/.test(code)) { toast('Code prüfen'); return; }
