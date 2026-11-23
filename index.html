@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c=' 'sha256-wBzIxUjoFqqY6CUaGvjpg/Bjhg/86lcJ3ZYuyE91BeM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-NcYThzs+601PwkA1USM8J6+W/OBeYbtGfCRNf+Qm06o=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.11.23.1';
+const APP_VERSION = '2026.11.23.2';
 const PATCH_NOTES = [
+  {v: '2026.11.23.2', date: 'Update vom 23. November 2026', items: [
+    ['🏋️', 'Claude kann jetzt auch das Gym (Beta)', 'Mit Beta-Zugang: Claude kann nach deiner Bestätigung Vorlagen und Übungen ändern (Sätze, Wiederholungen, Wochenplan, Wochenziel) und ein Training nachtragen. Gewichte steigert die App weiter selbst. Alles steht unter Einstellungen → Verbindungen → Claude und lässt sich zurücknehmen.'],
+  ]},
   {v: '2026.11.23.1', date: 'Update vom 23. November 2026', items: [
     ['✨', 'Claude trägt für dich ein (Beta)', 'Mit Beta-Zugang: Unter Einstellungen → Verbindungen → Claude einschalten. Dann kann Claude in der Claude-App nach deiner Bestätigung den Laufplan ändern, Läufe nachtragen und eine Pause setzen. Overload übernimmt die Aufträge beim Öffnen, prüft die Plan-Regeln und zeigt alles mit „Rückgängig“.'],
   ]},
@@ -7257,7 +7260,95 @@ function claudeApply(it) {
     db.runs.push(r); db.runs.sort((a, b) => a.date - b.date);
     return {ok: true, title: 'Lauf eingetragen', rows: [[longDate(ts), runLine(r) + (m ? ' · Planeinheit zugeordnet' : '')]], undo: {runId: r.id}, msg: 'Lauf eingetragen'};
   }
+  if (it.kind === 'gym_plan') return claudeGymPlan(pl);
+  if (it.kind === 'gym_log') return claudeGymLog(pl);
   return {ok: false, msg: 'Unbekannter Auftrag (App evtl. veraltet, Update abwarten).'};
+}
+/* Gym-Plan nach Auftrag: erst alles prüfen (bei Fehler bleibt alles unverändert), dann ändern. Bestehende Übungen behalten ID und Verlauf,
+   Vorlagen mit gleichem Namen behalten ihre ID, Übungen werden nie gelöscht. Startgewicht nur ohne Verlauf (wie applyPlan). */
+function claudeGymPlan(pl) {
+  const S = db.settings, byN = {}, tByN = {};
+  Object.values(db.exercises).forEach(x => { byN[norm(x.name)] = x; });
+  db.templates.forEach(t => { tByN[norm(t.name)] = t; });
+  const opt = (v, lo, hi, rnd) => { const x = +v; return v != null && v !== '' && Number.isFinite(x) ? clamp(rnd ? Math.round(x) : x, lo, hi) : null; };
+  const T = (Array.isArray(pl.templates) ? pl.templates : []).slice(0, 7).map(t => ({name: String(t && t.name || '').trim().slice(0, 40), E: (Array.isArray(t && t.exercises) ? t.exercises : []).slice(0, 12).map(e => ({
+    name: String(e && e.name || '').trim().slice(0, 40), sets: opt(e.sets, 1, 8, true), repMin: opt(e.repMin, 1, 50, true), repMax: opt(e.repMax, 1, 60, true), inc: opt(e.inc, 0.25, 20), start: opt(e.startKg, 0, 500)})).filter(e => e.name)})).filter(t => t.name && t.E.length);
+  const rm = (Array.isArray(pl.removeTemplates) ? pl.removeTemplates : []).map(x => String(x).trim()).filter(Boolean);
+  const sched = pl.schedule && typeof pl.schedule === 'object' ? pl.schedule : {}, days = opt(pl.days, 1, 7, true);
+  if (!T.length && !rm.length && !Object.keys(sched).length && days == null) return {ok: false, msg: 'Keine gültige Änderung im Auftrag.'};
+  for (const t of T) for (const e of t.E) if (!byN[norm(e.name)] && (e.sets == null || e.repMin == null || e.repMax == null)) return {ok: false, msg: `Neue Übung „${e.name}“ braucht Sätze und Wiederholungsbereich.`};
+  for (const r of rm) if (!tByN[norm(r)]) return {ok: false, msg: `Vorlage „${r}“ gibt es nicht (mehr).`};
+  const finalNames = new Set([...db.templates.map(t => norm(t.name)).filter(n => !rm.some(r => norm(r) === n)), ...T.map(t => norm(t.name))]);
+  for (const d of Object.keys(sched)) if (WD.indexOf(d) < 0 || (sched[d] && !finalNames.has(norm(sched[d])))) return {ok: false, msg: `Wochenplan ${d}: Tag oder Vorlage passt nicht.`};
+  const undo = {ex: {}, created: [], templates: JSON.stringify(db.templates), gw: JSON.stringify(S.gymWeek || {}), goal: S.weeklyGoal, after: ''}, rows = [];
+  T.forEach(t => {
+    const ids = [], line = [];
+    t.E.forEach(e => {
+      let x = byN[norm(e.name)];
+      if (x) {
+        if (!(x.id in undo.ex)) undo.ex[x.id] = JSON.stringify(x);
+        if (e.sets != null) x.sets = e.sets;
+        if (e.repMin != null) x.repMin = e.repMin;
+        if (e.repMax != null) x.repMax = e.repMax;
+        if (x.repMax < x.repMin) x.repMax = x.repMin;
+        if (e.inc != null) x.inc = r2(e.inc);
+      } else {
+        x = {id: uid(), name: e.name, repMin: e.repMin, repMax: Math.max(e.repMax, e.repMin), inc: e.inc != null ? r2(e.inc) : 2.5, sets: e.sets};
+        db.exercises[x.id] = x; byN[norm(e.name)] = x; undo.created.push(x.id);
+      }
+      if (e.start && !history(x.id, 1).length) { if (!(x.id in undo.ex) && !undo.created.includes(x.id)) undo.ex[x.id] = JSON.stringify(x); x.start = Math.round(e.start * 2) / 2; }
+      if (!ids.includes(x.id)) { ids.push(x.id); line.push(`${x.name} ${x.sets || 3}×${x.repMin}–${x.repMax}${undo.created.includes(x.id) ? ' (neu)' : ''}`); }
+    });
+    const old = tByN[norm(t.name)];
+    if (old) old.exIds = ids; else { const n = {id: uid(), name: t.name, exIds: ids}; db.templates.push(n); tByN[norm(t.name)] = n; }
+    rows.push([(old ? 'Vorlage ' : 'Neue Vorlage ') + t.name, line.join(', ')]);
+  });
+  if (rm.length) {
+    const gone = new Set(rm.map(r => tByN[norm(r)].id));
+    db.templates = db.templates.filter(t => !gone.has(t.id));
+    const W = S.gymWeek || {}; Object.keys(W).forEach(d => { if (gone.has(W[d])) delete W[d]; });
+    rows.push(['Vorlage gelöscht', rm.join(', ')]);
+  }
+  Object.keys(sched).forEach(d => {
+    const W = S.gymWeek = S.gymWeek || {}, i = WD.indexOf(d), t = sched[d] ? db.templates.find(x => norm(x.name) === norm(sched[d])) : null;
+    if (t) W[i] = t.id; else delete W[i];
+    rows.push([WDL[i], t ? t.name : 'Ruhetag']);
+  });
+  if (days != null) { S.weeklyGoal = days; rows.push(['Wochenziel', `${days} Trainings`]); }
+  undo.after = JSON.stringify(db.templates);
+  return {ok: true, title: 'Gym-Plan geändert', rows, undo, msg: 'Gym-Plan geändert'};
+}
+/* Training nachtragen: nur mit den genannten Werten, höchstens 60 Tage zurück, Doppelte (gleicher Tag und Titel) abgelehnt. */
+function claudeGymLog(pl) {
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(pl.date || '') ? pl.date : null, today = dateKey(Date.now());
+  if (!date || date > today || date < dateKey(Date.now() - 61 * DAY)) return {ok: false, msg: 'Datum ungültig (höchstens 60 Tage zurück, nicht in der Zukunft).'};
+  const byN = {}; Object.values(db.exercises).forEach(x => { byN[norm(x.name)] = x; });
+  const list = (Array.isArray(pl.exercises) ? pl.exercises : []).slice(0, 15), E = [];
+  for (const e of list) {
+    const name = String(e && e.name || '').trim().slice(0, 40), sets = (Array.isArray(e && e.sets) ? e.sets : []).slice(0, 10).map(x => ({w: clamp(Math.round((+(x && x.kg) || 0) * 4) / 4, 0, 500), r: Math.round(+(x && x.reps))})).filter(x => x.r >= 1 && x.r <= 100);
+    if (!name || !sets.length) return {ok: false, msg: 'Übung oder Sätze ungültig.'};
+    if (!byN[norm(name)] && e.isNew !== true) return {ok: false, msg: `Übung „${name}“ gibt es in der App nicht.`};
+    if (E.some(x => norm(x.name) === norm(name))) return {ok: false, msg: `Übung „${name}“ doppelt.`};
+    E.push({name, sets});
+  }
+  if (!E.length) return {ok: false, msg: 'Keine Übungen im Auftrag.'};
+  const tpl = pl.template ? db.templates.find(t => norm(t.name) === norm(pl.template)) : null, title = tpl ? tpl.name : String(pl.title || '').trim().slice(0, 40) || 'Freies Training';
+  if (!tpl && pl.template) return {ok: false, msg: `Vorlage „${pl.template}“ gibt es nicht.`};
+  if (!pl.force && db.sessions.some(s => !s.demo && dateKey(s.date) === date && norm(s.title || '') === norm(title))) return {ok: false, msg: `Am selben Tag gibt es schon ein Training „${title}“, nichts doppelt eingetragen.`};
+  const min = clamp(Math.round(+pl.min) || 60, 10, 240), created = [];
+  const ts = date === today ? Math.max(Date.now() - min * 60000, keyToTs(today, 0)) : keyToTs(date, 18);
+  const entries = E.map(e => {
+    let x = byN[norm(e.name)];
+    if (!x) { x = {id: uid(), name: e.name, repMin: 8, repMax: 12, inc: 2.5, sets: clamp(e.sets.length, 1, 8)}; db.exercises[x.id] = x; byN[norm(e.name)] = x; created.push(x.id); }
+    return {exId: x.id, name: x.name, sets: e.sets};
+  });
+  const s = {id: uid(), date: ts, end: ts + min * 60000, templateId: tpl ? tpl.id : null, title, entries, src: 'claude', ...(lightActive() && ts >= weekStart() ? {deload: true} : {})};
+  if (+pl.rpe >= 1 && +pl.rpe <= 10) s.rpe = Math.round(+pl.rpe);
+  const note = String(pl.note || '').trim().slice(0, 1000);
+  if (note) { s.note = note; s.noteAI = true; }
+  db.sessions.push(s); db.sessions.sort((a, b) => a.date - b.date);
+  const sum = e => e.sets.map(x => `${x.w ? fmtN(x.w) + '×' : ''}${x.r}`).join(' · ');
+  return {ok: true, title: 'Training eingetragen', rows: [[`${longDate(ts)} · ${title}`, `${min} min`], ...entries.map(e => [e.name, sum(e)])], undo: {sessionId: s.id, created}, msg: 'Training eingetragen'};
 }
 /* Aufträge holen und anwenden. Nur wenn kein Blatt offen und kein Feld fokussiert ist, sonst beim nächsten Abgleich. */
 async function claudePull(force) {
@@ -7274,16 +7365,21 @@ async function claudePull(force) {
       if (known) { acks.push([it.id, known.ok, known.msg]); continue; }
       let r;
       try { r = claudeApply(it); } catch (e) { r = {ok: false, msg: 'Fehler beim Anwenden.'}; }
-      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
+      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
       acks.push([it.id, !!r.ok, r.msg]); n++;
     }
     C.log = C.log.slice(-20).map(l => l.undo && l.at < Date.now() - 14 * DAY ? (({undo, ...x}) => x)(l) : l);
-    if (n) { saveDB(); render(); if ($('#claudeSheet')) renderClaude(true); toast(n === 1 ? 'Claude hat etwas eingetragen' : `Claude hat ${n} Dinge eingetragen`); }
+    if (n) {
+      const ok = C.log.slice(-n).filter(l => l.ok).length;
+      saveDB(); render(); if ($('#claudeSheet')) renderClaude(true);
+      toast(!ok ? (n === 1 ? 'Claude: Auftrag abgelehnt' : `Claude: ${n} Aufträge abgelehnt`) : ok === 1 ? 'Claude hat etwas eingetragen' : `Claude hat ${ok} Dinge eingetragen`);
+    }
     for (const [id, ok, msg] of acks) { try { await syncRpc('ovl_inbox_ack', {p_code: cfg.code, p_id: id, p_ok: ok, p_msg: msg || ''}); } catch (e) {} }
   } catch (e) {} finally { claudeBusy = false; }
   return n;
 }
-const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (l.kind === 'run_log' || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at));
+const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (l.kind === 'run_log' || l.kind === 'gym_log' || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
+  && (l.kind !== 'gym_plan' || JSON.stringify(db.templates) === l.undo.after);   // Vorlagen seither von Hand geändert: nicht zurückrollen
 function claudeUndo(id) {
   const C = db.settings.claude, l = C.log.find(x => x.id === id);
   if (!l || !claudeCanUndo(l)) return false;
@@ -7291,8 +7387,21 @@ function claudeUndo(id) {
   if (l.kind === 'run_plan') undoProp(u);
   else if (l.kind === 'pause') { S.pause = u.pause || null; S.comeback = u.comeback || null; S.gapSeen = u.gapSeen; }
   else if (l.kind === 'run_log') db.runs = db.runs.filter(r => r.id !== u.runId);
+  else if (l.kind === 'gym_log') { db.sessions = db.sessions.filter(x => x.id !== u.sessionId); claudeDropEx(u.created); }
+  else if (l.kind === 'gym_plan') {
+    Object.keys(u.ex).forEach(id => { if (db.exercises[id]) db.exercises[id] = JSON.parse(u.ex[id]); });
+    db.templates = JSON.parse(u.templates); S.gymWeek = JSON.parse(u.gw); S.weeklyGoal = u.goal;
+    claudeDropEx(u.created);
+  }
   l.undone = Date.now(); delete l.undo;
   saveDB(); return true;
+}
+/* Von Claude angelegte Übungen beim Zurücknehmen entfernen, aber nur, wenn sie nirgends mehr benutzt werden */
+function claudeDropEx(ids) {
+  (ids || []).forEach(id => {
+    const used = db.sessions.some(s => s.entries.some(e => e.exId === id)) || db.templates.some(t => t.exIds.includes(id)) || (db.active && db.active.entries.some(e => e.exId === id));
+    if (!used) delete db.exercises[id];
+  });
 }
 function claudeBanner() {
   if (!claudeVisible()) return '';
@@ -7305,7 +7414,7 @@ function claudeBanner() {
 function claudeRow() {
   if (!claudeVisible()) return '';
   const C = db.settings.claude, last = C.log[C.log.length - 1];
-  return `<button class="row" data-act="claudeSheet"><span class="ic-box">${ICON.spark}</span><span class="t"><b>Claude <i class="tag sv-beta">Beta</i></b><span>${C.on ? (last ? `An, zuletzt ${esc(relTime(last.at))}: ${esc(last.title)}` : 'An, noch keine Änderungen') : 'Claude trägt nach deiner Bestätigung im Chat Pläne und Läufe ein'}</span></span><span class="chev">${ICON.chev}</span></button>`;
+  return `<button class="row" data-act="claudeSheet"><span class="ic-box">${ICON.spark}</span><span class="t"><b>Claude <i class="tag sv-beta">Beta</i></b><span>${C.on ? (last ? `An, zuletzt ${esc(relTime(last.at))}: ${esc(last.title)}` : 'An, noch keine Änderungen') : 'Claude trägt nach deiner Bestätigung im Chat Pläne, Läufe und Trainings ein'}</span></span><span class="chev">${ICON.chev}</span></button>`;
 }
 function renderClaude(keep) {
   const C = db.settings.claude, list = C.log.slice().reverse();
@@ -7317,7 +7426,7 @@ function renderClaude(keep) {
     + `<div class="pn-hero"><span>✨</span><b>Claude trägt für dich ein</b><small>Du besprichst Training oder Beschwerden in der Claude-App. Sagst du dort „trag das ein“, merkt Claude die Änderung vor, und Overload übernimmt sie hier.</small></div>`
     + `<div class="group"><button class="row" data-act="claudeToggle"><span class="t"><b>Aufträge von Claude übernehmen</b><span>${syncCfg() ? 'Beim Öffnen und nach jedem Abgleich' : 'Braucht „Geräte synchronisieren“ (Einstellungen → Daten)'}</span></span><span class="r">${C.on ? 'An' : 'Aus'}</span></button></div>`
     + (C.on ? `<button class="btn-secondary mt" data-act="claudeNow">Jetzt abholen</button>` : '')
-    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe nachtragen und eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
+    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Gym-Vorlagen, Wochenplan und Wochenziel ändern sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
     + `<label class="lbl mt">Letzte Änderungen</label>` + (list.length ? list.map(card).join('') : `<p class="hint">Noch nichts.</p>`) + `</div>`, keep, true);
 }
 
