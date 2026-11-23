@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-NcYThzs+601PwkA1USM8J6+W/OBeYbtGfCRNf+Qm06o=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c=' 'sha256-z+S4+dwgMLqmqxDTCYUhV68Srjq2dUsFuqnBG24NbRs='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1424,8 +1424,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.11.23.2';
+const APP_VERSION = '2026.11.23.3';
 const PATCH_NOTES = [
+  {v: '2026.11.23.3', date: 'Update vom 23. November 2026', items: [
+    ['🎯', 'Claude kann jetzt auch Ziele und Alltag (Beta)', 'Mit Beta-Zugang: Nach deiner Bestätigung kann Claude Kalorien-, Makro-, Wasser-, Schlaf- und Zielgewicht ändern sowie Gewicht, Wasser, Schlaf, Mahlzeiten und freie Aktivitäten eintragen. Alles steht unter Einstellungen → Verbindungen → Claude und lässt sich zurücknehmen.'],
+  ]},
   {v: '2026.11.23.2', date: 'Update vom 23. November 2026', items: [
     ['🏋️', 'Claude kann jetzt auch das Gym (Beta)', 'Mit Beta-Zugang: Claude kann nach deiner Bestätigung Vorlagen und Übungen ändern (Sätze, Wiederholungen, Wochenplan, Wochenziel) und ein Training nachtragen. Gewichte steigert die App weiter selbst. Alles steht unter Einstellungen → Verbindungen → Claude und lässt sich zurücknehmen.'],
   ]},
@@ -7261,8 +7264,93 @@ function claudeApply(it) {
     return {ok: true, title: 'Lauf eingetragen', rows: [[longDate(ts), runLine(r) + (m ? ' · Planeinheit zugeordnet' : '')]], undo: {runId: r.id}, msg: 'Lauf eingetragen'};
   }
   if (it.kind === 'gym_plan') return claudeGymPlan(pl);
+  if (it.kind === 'goals') return claudeGoals(pl);
+  if (it.kind === 'body_log') return claudeBodyLog(pl);
+  if (it.kind === 'meal_log') return claudeMealLog(pl);
+  if (it.kind === 'activity_log') return claudeActLog(pl);
   if (it.kind === 'gym_log') return claudeGymLog(pl);
   return {ok: false, msg: 'Unbekannter Auftrag (App evtl. veraltet, Update abwarten).'};
+}
+/* Ziele: nur die genannten Felder, alles zuerst prüfen. Undo merkt nur die geänderten Felder. */
+function claudeGoals(pl) {
+  const S = db.settings, chk = (v, lo, hi, int) => { const x = +v; return v != null && v !== '' && Number.isFinite(x) && x >= lo && x <= hi ? (int ? Math.round(x) : x) : null; };
+  const G = {kcal: pl.kcal != null ? chk(pl.kcal, 1000, 6000, true) : undefined, p: pl.protein != null ? chk(pl.protein, 20, 600, true) : undefined, c: pl.carbs != null ? chk(pl.carbs, 20, 900, true) : undefined,
+    f: pl.fat != null ? chk(pl.fat, 20, 400, true) : undefined, w: pl.waterMl != null ? chk(pl.waterMl, 1000, 6000, true) : undefined, s: pl.sleepH != null ? chk(pl.sleepH, 5, 11) : undefined};
+  const wk = 'weightKg' in pl ? (pl.weightKg === null ? null : chk(pl.weightKg, 30, 300)) : undefined;
+  if (Object.values(G).some(v => v === null) || wk === null && pl.weightKg !== null) return {ok: false, msg: 'Ein Zielwert liegt außerhalb des erlaubten Bereichs.'};
+  if (Object.values(G).every(v => v === undefined) && wk === undefined) return {ok: false, msg: 'Keine Ziele im Auftrag.'};
+  const undo = {}, rows = [], mg = S.macroGoal || {};
+  if (G.kcal != null) { undo.k = {v: S.kcalGoal}; rows.push(['Kalorien', `${S.kcalGoal ? fmtInt(S.kcalGoal) : '–'} → ${fmtInt(G.kcal)} kcal`]); S.kcalGoal = G.kcal; }
+  if (G.p != null || G.c != null || G.f != null) {
+    undo.m = {v: S.macroGoal ? Object.assign({}, S.macroGoal) : null};
+    const n = Object.assign({p: 0, c: 0, f: 0}, S.macroGoal || {});
+    [['p', 'Protein'], ['c', 'Kohlenhydrate'], ['f', 'Fett']].forEach(([k, l]) => { if (G[k] != null) { rows.push([l, `${mg[k] ? mg[k] : '–'} → ${G[k]} g`]); n[k] = G[k]; } });
+    S.macroGoal = n;
+  }
+  if (G.w != null) { undo.w = {v: S.waterGoal}; rows.push(['Wasserziel', `${fmtInt(S.waterGoal)} → ${fmtInt(G.w)} ml`]); S.waterGoal = G.w; }
+  if (G.s != null) { const v = Math.round(G.s * 2) / 2; undo.s = {v: S.sleepGoal}; rows.push(['Schlafziel', `${fmtN(S.sleepGoal)} → ${fmtN(v)} h`]); S.sleepGoal = v; }
+  if (wk !== undefined) {
+    undo.g = {v: db.weightGoal ? Object.assign({}, db.weightGoal) : null};
+    rows.push(['Zielgewicht', wk === null ? 'entfernt' : `${db.weightGoal ? fmtN(db.weightGoal.target) : '–'} → ${fmtN(Math.round(wk * 10) / 10)} kg`]);
+    db.weightGoal = wk === null ? null : {target: Math.round(wk * 10) / 10};
+  }
+  return {ok: true, title: 'Ziele geändert', rows, undo, msg: 'Ziele geändert'};
+}
+const claudeDateOk = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '') && d <= dateKey(Date.now()) && d >= dateKey(Date.now() - 61 * DAY);
+/* Gewicht, Wasser (wird addiert), Schlaf eines Tages */
+function claudeBodyLog(pl) {
+  const date = pl.date, hmOk = v => typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
+  if (!claudeDateOk(date)) return {ok: false, msg: 'Datum ungültig (höchstens 60 Tage zurück, nicht in der Zukunft).'};
+  const kg = pl.weightKg != null ? Math.round(+pl.weightKg * 10) / 10 : null, add = pl.waterAddMl != null ? Math.round(+pl.waterAddMl) : null, sh = pl.sleepHours != null ? Math.round(+pl.sleepHours * 4) / 4 : null;
+  const q = pl.sleepQuality != null ? Math.round(+pl.sleepQuality) : null, times = pl.bed != null || pl.wake != null;
+  if (kg != null && !(kg >= 30 && kg <= 300) || add != null && !(add >= 50 && add <= 5000) || sh != null && !(sh >= 1 && sh <= 14) || q != null && !(q >= 1 && q <= 5) || times && !(hmOk(pl.bed) && hmOk(pl.wake))) return {ok: false, msg: 'Ein Wert liegt außerhalb des erlaubten Bereichs.'};
+  if (kg == null && add == null && sh == null && q == null && !times) return {ok: false, msg: 'Keine Werte im Auftrag.'};
+  const rows = [], undo = {date}, rec = db.daily[date] || (db.daily[date] = {}), hadRec = date in db.daily && Object.keys(rec).length > 0;
+  if (kg != null) { undo.kg = {v: db.weights[date] != null ? db.weights[date] : null}; db.weights[date] = kg; rows.push(['Gewicht', `${fmtN(kg)} kg`]); }
+  if (add != null) { undo.add = add; rec.w = Math.min(20000, (rec.w || 0) + add); rows.push(['Wasser', `+${fmtInt(add)} ml (heute ${fmtInt(rec.w)} ml)`]); }
+  if (sh != null || times || q != null) {
+    undo.sl = {s: rec.s, sb: rec.sb, sw: rec.sw, sq: rec.sq};
+    if (times) { rec.sb = pl.bed; rec.sw = pl.wake; rec.s = slDur(pl.bed, pl.wake); }
+    else if (sh != null) { rec.s = sh; delete rec.sb; delete rec.sw; }
+    if (q != null) rec.sq = q;
+    rows.push(['Schlaf', [rec.s ? `${fmtN(rec.s)} h` : '', times ? `${pl.bed}–${pl.wake}` : '', q != null ? `Qualität ${q}/5` : ''].filter(Boolean).join(' · ')]);
+  }
+  if (!hadRec && undo.sl == null && add == null) delete db.daily[date];
+  return {ok: true, title: 'Körperdaten eingetragen', rows: [[longDate(keyToTs(date)), ''], ...rows].slice(0), undo, msg: 'Körperdaten eingetragen'};
+}
+/* Mahlzeiten: feste Uhrzeit je Slot (heute höchstens jetzt), Doppelte (gleicher Tag, Slot, Name) abgelehnt */
+function claudeMealLog(pl) {
+  const date = pl.date, SL = ['breakfast', 'lunch', 'dinner', 'snack'], SN = {breakfast: 'Frühstück', lunch: 'Mittag', dinner: 'Abend', snack: 'Snacks'};
+  if (!claudeDateOk(date)) return {ok: false, msg: 'Datum ungültig (höchstens 60 Tage zurück, nicht in der Zukunft).'};
+  const num = (v, hi) => { const x = +v; return Number.isFinite(x) && x >= 0 && x <= hi ? Math.round(x * 10) / 10 : null; };
+  const out = [];
+  for (const m of (Array.isArray(pl.meals) ? pl.meals : []).slice(0, 10)) {
+    const name = String(m && m.name || '').trim().slice(0, 60), kcal = Math.round(+m.kcal), P = num(m.p, 500), C = num(m.c, 500), F = num(m.f, 500);
+    if (!name || !SL.includes(m.slot) || !(kcal >= 1 && kcal <= 5000) || P == null || C == null || F == null) return {ok: false, msg: 'Eine Mahlzeit hat ungültige Werte.'};
+    if (!pl.force && (db.meals.some(x => dateKey(x.date) === date && x.slot === m.slot && norm(x.name || '') === norm(name)) || out.some(x => x.slot === m.slot && norm(x.name) === norm(name)))) return {ok: false, msg: `„${name}“ steht am selben Tag schon unter ${SN[m.slot]}, nichts doppelt eingetragen.`};
+    const g = m.g != null && +m.g >= 1 && +m.g <= 5000 ? Math.round(+m.g * 10) / 10 : null;
+    out.push({id: uid(), date: Math.min(keyToTs(date, {breakfast: 8, lunch: 13, dinner: 19, snack: 16}[m.slot]), Date.now()), slot: m.slot, name, kcal, p: P, c: C, f: F, ai: false, src: 'claude', ...(g ? {g} : {})});
+  }
+  if (!out.length) return {ok: false, msg: 'Keine Mahlzeiten im Auftrag.'};
+  db.meals.push(...out); db.meals.sort((a, b) => a.date - b.date);
+  return {ok: true, title: 'Essen eingetragen', rows: out.map(m => [`${SN[m.slot]} · ${m.name}`, `${fmtInt(m.kcal)} kcal · P ${fmtN(m.p)} · K ${fmtN(m.c)} · F ${fmtN(m.f)} g`]), undo: {ids: out.map(m => m.id)}, msg: `${out.length} Mahlzeit${out.length === 1 ? '' : 'en'} eingetragen`};
+}
+/* Freie Aktivität wie im Formular (xaSave), Sportart wird mit xaProblem geprüft; bekannte Sportarten bekommen Symbol und MET */
+function claudeActLog(pl) {
+  if (!claudeDateOk(pl.date)) return {ok: false, msg: 'Datum ungültig (höchstens 60 Tage zurück, nicht in der Zukunft).'};
+  const t = String(pl.sport || '').trim().replace(/\s+/g, ' '), prob = xaProblem(t), min = Math.round(+pl.min);
+  if (prob) return {ok: false, msg: 'Sportart nicht möglich: ' + prob};
+  if (!(min >= 1 && min <= 1440)) return {ok: false, msg: 'Dauer ungültig.'};
+  const km = +pl.km > 0 && +pl.km <= 1000 ? r2(+pl.km) : null, hr = +pl.hr >= 30 && +pl.hr <= 230 ? Math.round(+pl.hr) : null, kcal = +pl.kcal >= 1 && +pl.kcal <= 20000 ? Math.round(+pl.kcal) : null;
+  const k = xaKnown(t), P = k ? xaPreset(k) : {ic: '🏅', met: 5, dr: 5}, sport = k ? (xaNormTxt(t) === xaNormTxt(k[0]) ? k[0] : t.charAt(0).toUpperCase() + t.slice(1)) : t.charAt(0).toUpperCase() + t.slice(1);
+  const ts = pl.date === dateKey(Date.now()) ? Date.now() : keyToTs(pl.date, 12);
+  if (!pl.force && db.xact.some(x => dateKey(x.date) === pl.date && norm(x.sport || '') === norm(sport) && Math.abs(x.min - min) <= Math.max(5, min * 0.25))) return {ok: false, msg: `Am selben Tag gibt es schon „${sport}“ mit ähnlicher Dauer, nichts doppelt eingetragen.`};
+  const item = {id: uid(), date: ts, sport, ic: sIc(P.ic), met: P.met, dr: P.dr, min, km, hr, hrMax: null, kcal, elev: null, load: pl.load !== false, src: 'claude'};
+  if (+pl.rpe >= 1 && +pl.rpe <= 10) item.rpe = Math.round(+pl.rpe);
+  const note = String(pl.note || '').trim().slice(0, 1000);
+  if (note) { item.note = note; item.noteAI = true; }
+  db.xact.push(item); db.xact.sort((a, b) => a.date - b.date);
+  return {ok: true, title: 'Aktivität eingetragen', rows: [[`${longDate(ts)} · ${sport}`, [fmtMin(min * 60e3), km ? fmtKm(km) : '', hr ? hr + ' bpm' : '', kcal ? fmtInt(kcal) + ' kcal' : ''].filter(Boolean).join(' · ')]], undo: {id: item.id}, msg: 'Aktivität eingetragen'};
 }
 /* Gym-Plan nach Auftrag: erst alles prüfen (bei Fehler bleibt alles unverändert), dann ändern. Bestehende Übungen behalten ID und Verlauf,
    Vorlagen mit gleichem Namen behalten ihre ID, Übungen werden nie gelöscht. Startgewicht nur ohne Verlauf (wie applyPlan). */
@@ -7365,7 +7453,7 @@ async function claudePull(force) {
       if (known) { acks.push([it.id, known.ok, known.msg]); continue; }
       let r;
       try { r = claudeApply(it); } catch (e) { r = {ok: false, msg: 'Fehler beim Anwenden.'}; }
-      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
+      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
       acks.push([it.id, !!r.ok, r.msg]); n++;
     }
     C.log = C.log.slice(-20).map(l => l.undo && l.at < Date.now() - 14 * DAY ? (({undo, ...x}) => x)(l) : l);
@@ -7378,7 +7466,7 @@ async function claudePull(force) {
   } catch (e) {} finally { claudeBusy = false; }
   return n;
 }
-const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (l.kind === 'run_log' || l.kind === 'gym_log' || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
+const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (['run_log', 'gym_log', 'meal_log', 'activity_log'].includes(l.kind) || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
   && (l.kind !== 'gym_plan' || JSON.stringify(db.templates) === l.undo.after);   // Vorlagen seither von Hand geändert: nicht zurückrollen
 function claudeUndo(id) {
   const C = db.settings.claude, l = C.log.find(x => x.id === id);
@@ -7387,6 +7475,18 @@ function claudeUndo(id) {
   if (l.kind === 'run_plan') undoProp(u);
   else if (l.kind === 'pause') { S.pause = u.pause || null; S.comeback = u.comeback || null; S.gapSeen = u.gapSeen; }
   else if (l.kind === 'run_log') db.runs = db.runs.filter(r => r.id !== u.runId);
+  else if (l.kind === 'meal_log') { const ids = new Set(u.ids); db.meals = db.meals.filter(m => !ids.has(m.id)); }
+  else if (l.kind === 'activity_log') db.xact = db.xact.filter(x => x.id !== u.id);
+  else if (l.kind === 'goals') {
+    if (u.k) S.kcalGoal = u.k.v; if (u.m) S.macroGoal = u.m.v; if (u.w) S.waterGoal = u.w.v; if (u.s) S.sleepGoal = u.s.v; if (u.g) db.weightGoal = u.g.v;
+  }
+  else if (l.kind === 'body_log') {
+    const rec = db.daily[u.date] || (db.daily[u.date] = {});
+    if (u.kg) { if (u.kg.v == null) delete db.weights[u.date]; else db.weights[u.date] = u.kg.v; }
+    if (u.add) { rec.w = Math.max(0, (rec.w || 0) - u.add); if (!rec.w) delete rec.w; }
+    if (u.sl) ['s', 'sb', 'sw', 'sq'].forEach(k => { if (u.sl[k] == null) delete rec[k]; else rec[k] = u.sl[k]; });
+    if (!Object.keys(rec).length) delete db.daily[u.date];
+  }
   else if (l.kind === 'gym_log') { db.sessions = db.sessions.filter(x => x.id !== u.sessionId); claudeDropEx(u.created); }
   else if (l.kind === 'gym_plan') {
     Object.keys(u.ex).forEach(id => { if (db.exercises[id]) db.exercises[id] = JSON.parse(u.ex[id]); });
@@ -7414,7 +7514,7 @@ function claudeBanner() {
 function claudeRow() {
   if (!claudeVisible()) return '';
   const C = db.settings.claude, last = C.log[C.log.length - 1];
-  return `<button class="row" data-act="claudeSheet"><span class="ic-box">${ICON.spark}</span><span class="t"><b>Claude <i class="tag sv-beta">Beta</i></b><span>${C.on ? (last ? `An, zuletzt ${esc(relTime(last.at))}: ${esc(last.title)}` : 'An, noch keine Änderungen') : 'Claude trägt nach deiner Bestätigung im Chat Pläne, Läufe und Trainings ein'}</span></span><span class="chev">${ICON.chev}</span></button>`;
+  return `<button class="row" data-act="claudeSheet"><span class="ic-box">${ICON.spark}</span><span class="t"><b>Claude <i class="tag sv-beta">Beta</i></b><span>${C.on ? (last ? `An, zuletzt ${esc(relTime(last.at))}: ${esc(last.title)}` : 'An, noch keine Änderungen') : 'Claude trägt nach deiner Bestätigung im Chat Pläne, Trainings, Essen, Ziele und mehr ein'}</span></span><span class="chev">${ICON.chev}</span></button>`;
 }
 function renderClaude(keep) {
   const C = db.settings.claude, list = C.log.slice().reverse();
@@ -7426,7 +7526,7 @@ function renderClaude(keep) {
     + `<div class="pn-hero"><span>✨</span><b>Claude trägt für dich ein</b><small>Du besprichst Training oder Beschwerden in der Claude-App. Sagst du dort „trag das ein“, merkt Claude die Änderung vor, und Overload übernimmt sie hier.</small></div>`
     + `<div class="group"><button class="row" data-act="claudeToggle"><span class="t"><b>Aufträge von Claude übernehmen</b><span>${syncCfg() ? 'Beim Öffnen und nach jedem Abgleich' : 'Braucht „Geräte synchronisieren“ (Einstellungen → Daten)'}</span></span><span class="r">${C.on ? 'An' : 'Aus'}</span></button></div>`
     + (C.on ? `<button class="btn-secondary mt" data-act="claudeNow">Jetzt abholen</button>` : '')
-    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Gym-Vorlagen, Wochenplan und Wochenziel ändern sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
+    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Gym-Vorlagen, Wochenplan und Wochenziel ändern Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
     + `<label class="lbl mt">Letzte Änderungen</label>` + (list.length ? list.map(card).join('') : `<p class="hint">Noch nichts.</p>`) + `</div>`, keep, true);
 }
 
