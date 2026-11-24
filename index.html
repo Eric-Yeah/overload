@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-F0bQgIrSpZhLewiAwUAMHN0FSlMxlDxVfgNFnLl1cqs=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-iiY+3X9MFsXVQ80YDIvPOjwBn2cvzW1ZHGS/c2Xbgz0=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -59,20 +59,17 @@
   --num:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   color-scheme:dark;
   box-sizing:border-box;
-  --sat:env(safe-area-inset-top,0px);
-  padding-top:var(--sat);
+  padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 /* Die App ist bewusst nur dunkel – gleiche Tokens in jedem Modus */
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark}}
 :root[data-theme="dark"]{color-scheme:dark}
-/* iPad-Fenster oder Split View: die Fenster-Knöpfe (rot/gelb/grün) liegen oben links über der Seite, env() meldet dafür keinen Platz */
-:root.win-ctl{--sat:max(env(safe-area-inset-top,0px),56px)}
 
 *,*::before,*::after{box-sizing:border-box}
-html{height:100%;background:var(--bg);-webkit-text-size-adjust:100%;scroll-padding-top:var(--sat)}
+html{height:100%;background:var(--bg);-webkit-text-size-adjust:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:17px/1.35 var(--font);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
-body::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--bg);z-index:50}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:50}
 body.locked{overflow:hidden}
 button{font:inherit;color:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;background:none;border:0;padding:0}
 button:disabled{opacity:.3;cursor:default}
@@ -172,7 +169,7 @@ button.row:active{background:var(--surface-2)}
 .icon-btn{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--text)}
 
 /* Aktives Training */
-.wk-head{position:sticky;top:var(--sat);z-index:30;display:flex;align-items:center;gap:10px;margin:0 -16px 14px;padding:10px 16px;background:rgba(0,0,0,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep)}
+.wk-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;align-items:center;gap:10px;margin:0 -16px 14px;padding:10px 16px;background:rgba(0,0,0,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep)}
 .wk-title{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
 .wk-title h1{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wk-title p{font-family:var(--num);font-size:14px;font-weight:600;color:var(--lime);font-variant-numeric:tabular-nums}
@@ -301,7 +298,7 @@ button.row:active{background:var(--surface-2)}
 .ld-w.sel .ld-bars i:not(.plan){outline:2px solid var(--text);outline-offset:1px}
 .ld-w.sel span{color:var(--text)}
 
-.toast{position:fixed;left:50%;top:calc(var(--sat) + 12px);z-index:80;transform:translate(-50%,-150%);padding:10px 18px;border-radius:999px;background:var(--surface-3);font-size:15px;font-weight:600;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s cubic-bezier(.2,.85,.25,1)}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:80;transform:translate(-50%,-150%);padding:10px 18px;border-radius:999px;background:var(--surface-3);font-size:15px;font-weight:600;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s cubic-bezier(.2,.85,.25,1)}
 .toast.show{transform:translate(-50%,0)}
 
 /* Laufen */
@@ -1109,7 +1106,7 @@ body.chat .chat{flex:1 0 auto;min-height:0}
 .fr-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:6px 0 10px;padding:26px 18px;border-radius:22px;background:var(--surface)}
 .fr-empty>span{font-size:44px}.fr-empty b{font-size:19px;font-weight:800}.fr-empty p{margin:0 0 10px;max-width:32ch;font-size:15px;color:var(--text-2)}
 .fr-stack{display:flex;align-items:center}.fr-stack .fr-av{width:30px;height:30px;font-size:13px;margin-left:-8px;box-shadow:0 0 0 2px var(--surface)}.fr-stack .fr-av:first-child{margin-left:0}
-.live{position:fixed;inset:0;z-index:55;display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding:calc(var(--sat) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--bg)}
+.live{position:fixed;inset:0;z-index:55;display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--bg)}
 .lv-top{display:flex;align-items:center;justify-content:space-between;font-size:17px}
 .lv-gps{font-size:13px;font-weight:600;color:var(--text-2)}
 .lv-big{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-top:6px}
@@ -1273,10 +1270,10 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 .wrap-t{display:block;font-size:14px;line-height:1.4;white-space:normal;color:var(--text)}
 .tips .t span.wrap-t{white-space:normal;overflow:visible;color:var(--text)}
 /* Großer Pausen-Timer */
-.rest-full{position:fixed;inset:0;z-index:45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:calc(24px + var(--sat)) 20px calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg);background:color-mix(in srgb,var(--bg) 92%,var(--lime));animation:rf-in .3s cubic-bezier(.2,.85,.25,1);transition:transform .15s;touch-action:none}
+.rest-full{position:fixed;inset:0;z-index:45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg);background:color-mix(in srgb,var(--bg) 92%,var(--lime));animation:rf-in .3s cubic-bezier(.2,.85,.25,1);transition:transform .15s;touch-action:none}
 @keyframes rf-in{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
-.rf-grab{position:absolute;top:calc(10px + var(--sat));left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--surface-3)}
-.rf-min{position:absolute;top:calc(22px + var(--sat));right:16px;display:flex;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:999px;background:var(--surface-2);font-size:14px;font-weight:600}
+.rf-grab{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--surface-3)}
+.rf-min{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));right:16px;display:flex;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:999px;background:var(--surface-2);font-size:14px;font-weight:600}
 .rf-min svg{width:16px;height:16px}
 .rf-lbl{margin:0;font-size:15px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2)}
 .rf-ring .ring-c b{font-size:72px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -1424,27 +1421,13 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 'use strict';
 const PRISTINE_HTML = document.documentElement.outerHTML;
 
-/* ---------- Fenster-Knöpfe (iPad-Fenster, Split View) ---------- */
-/* Als Home-Bildschirm-App im Fenster liegen die Knöpfe über dem Inhalt; die Safe Area bleibt aber klein. Erkennung: Fensterbreite passt weder zur kurzen noch zur langen Bildschirmseite. */
-{
-  const root = document.documentElement;
-  const standalone = () => navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
-  const winCtl = () => {
-    if (!standalone()) return false;
-    const a = Math.min(screen.width, screen.height), b = Math.max(screen.width, screen.height), w = window.innerWidth;
-    return Math.abs(w - a) > 24 && Math.abs(w - b) > 24;
-  };
-  const upd = () => root.classList.toggle('win-ctl', winCtl());
-  upd(); addEventListener('resize', upd); addEventListener('orientationchange', upd);
-}
-
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
 const APP_VERSION = '2026.11.24.1';
 const PATCH_NOTES = [
   {v: '2026.11.24.1', date: 'Update vom 24. November 2026', items: [
-    ['🪟', 'Fenster-Knöpfe verdecken nichts mehr', 'Läuft Overload auf dem iPad in einem Fenster oder in Split View, lag die Titelzeile samt Fenster-Knöpfen über dem Datum und der Überschrift (Heute, Laufen und alle anderen Tabs). Der Inhalt beginnt jetzt darunter.'],
+    ['🍽️', 'Claude plant dein Essen (Beta)', 'Mit Beta-Zugang: Nach deiner Bestätigung kann Claude eigene Rezepte (Rezepte-Tab, Filter „Eigene“), Gerichte (Essens-Suche → Meine Gerichte) und Lebensmittel anlegen und einen Essensplan für die nächsten Tage eintragen. Geplantes steht im Essen-Tab unter „Essensplan“: ein Tipp trägt die Mahlzeit ein, die Woche siehst du mit „Alle Tage“. Alles lässt sich unter Einstellungen → Verbindungen → Claude zurücknehmen.'],
   ]},
   {v: '2026.11.23.6', date: 'Update vom 23. November 2026', items: [
     ['📝', 'Claude kann einen ganzen Laufplan selbst schreiben (Beta)', 'Mit Beta-Zugang: Statt des Fragebogen-Plans kann Claude nach deiner Bestätigung jede Woche selbst festlegen (Tage, Art, Minuten, Text, Entlastung, Rennwoche). Die App prüft dabei die Plan-Regeln (höchstens etwa 10 % mehr pro Woche, kein Lauf mehr als 10 % über dem längsten, Schmerz) und lehnt Verstöße ab. Der bisherige Plan wird ersetzt, unter Einstellungen → Verbindungen → Claude kannst du es zurücknehmen.'],
@@ -1952,6 +1935,8 @@ function migrate(d, fresh) {
   // style: 'new' (Standard seit 12.10.2026) oder 'classic' (der bisherige Look, bleibt immer wählbar)
   d.settings.theme = {mode: ['dark', 'graphite', 'light', 'auto'].includes(th.mode) ? th.mode : 'dark', accent: window.OVL_THEME && OVL_THEME.ACC[th.accent] ? th.accent : 'lime', style: th.style === 'classic' ? 'classic' : 'new'};
   d.dishes = Array.isArray(d.dishes) ? d.dishes : [];
+  d.userRecipes = Array.isArray(d.userRecipes) ? d.userRecipes : [];   // eigene Rezepte (z. B. von Claude angelegt)
+  d.mealPlan = Array.isArray(d.mealPlan) ? d.mealPlan : [];   // Essensplan: geplante, noch nicht gegessene Mahlzeiten
   // Laufplan: Der feste Halbmarathon-Plan (Legacy) bleibt für bestehende Daten, neue Nutzer erstellen ihren Plan per Fragebogen
   if (d.runPlan === undefined) d.runPlan = !fresh && d.settings.showRun ? {legacy: true} : null;
   if (d.settings.kcalGoal === undefined) d.settings.kcalGoal = null;
@@ -2405,12 +2390,15 @@ let REC = null, rf = {slot: 'all', kc: 'all', q: '', fav: false, quick: false, p
 function recipes() {
   if (REC) return REC;
   const by = Object.fromEntries(FOOD_DB.map(f => [f.name, f]));
-  REC = RECIPES.map(([name, slot, min, diff, ing, extra, steps], i) => {
+  const mk = (name, slot, min, diff, ing, extra, steps, i, extraPer, user) => {
+    const look = n => by[n] || (extraPer && extraPer[n]) || (db.foods || []).find(x => x.name === n) || null;
     let k = 0, p = 0, c = 0, f = 0, g = 0;
-    ing.forEach(([n, gr]) => { const x = by[n]; if (!x) return; k += x.k * gr / 100; p += x.p * gr / 100; c += x.c * gr / 100; f += x.f * gr / 100; g += gr; });
-    const A2 = aggPer(ing.map(([n, gr]) => ({name: n, g: gr})));
-    return {i, name, slot, min, diff, ing, extra, steps, k, p, c, f, g, m: A2.m, mq: A2.q, band: kcalBand(k), emo: recEmoji(name, slot), q: norm(name + ' ' + ing.map(x => x[0]).join(' ') + ' ' + extra)};
-  });
+    ing.forEach(([n, gr]) => { const x = look(n); if (!x) return; k += x.k * gr / 100; p += x.p * gr / 100; c += x.c * gr / 100; f += x.f * gr / 100; g += gr; });
+    const A2 = aggPer(ing.map(([n, gr]) => ({name: n, g: gr, per: by[n] ? undefined : look(n) || undefined})));
+    return {i, name, slot, min, diff, ing, extra, steps, k, p, c, f, g, m: A2.m, mq: A2.q, band: kcalBand(k), emo: recEmoji(name, slot), user, look, q: norm(name + ' ' + ing.map(x => x[0]).join(' ') + ' ' + extra)};
+  };
+  REC = RECIPES.map(([name, slot, min, diff, ing, extra, steps], i) => mk(name, slot, min, diff, ing, extra, steps, i));
+  (db.userRecipes || []).forEach(u => REC.push(mk(u.name, u.slot, u.min, u.diff, u.ing, u.extra || '', u.steps || [], REC.length, u.per, u.id)));
   return REC;
 }
 const isFav = r => db.settings.recipeFavs.includes(r.name);
@@ -2418,7 +2406,7 @@ const diffDots = d => `<span class="dots3">${[1, 2, 3].map(n => `<i class="${n <
 function recFiltered() {
   const q = norm(rf.q.trim()), words = q ? q.split(/\s+/) : [];
   const list = recipes().filter(r => (rf.slot === 'all' || r.slot === rf.slot) && (rf.kc === 'all' || r.band === +rf.kc)
-    && (!rf.fav || isFav(r)) && (!rf.quick || r.min <= 15) && (!rf.prot || r.p >= 25) && words.every(w => r.q.includes(w)));
+    && (!rf.fav || isFav(r)) && (!rf.own || r.user) && (!rf.quick || r.min <= 15) && (!rf.prot || r.p >= 25) && words.every(w => r.q.includes(w)));
   const by = {time: (a, b) => a.min - b.min || a.k - b.k, kcal: (a, b) => a.k - b.k, prot: (a, b) => b.p - a.p};
   return list.sort(by[rf.sort] || by.time);
 }
@@ -2453,7 +2441,7 @@ function vRecipes() {
   h += `<div class="fchips">${chip('slot', 'all', 'Alle')}${SLOTS.map(([k]) => chip('slot', k, ICON[SLOT_META[k].ic] + SLOT_SHORT[k], SLOT_META[k].c)).join('')}</div>`
     + `<div class="kcbar" role="group" aria-label="Kalorien pro Portion">${[['all', 'Alle', '', 'var(--text)'], ...RKCAL].map(([v, n, , c]) => `<button class="${String(rf.kc) === String(v) ? 'on' : ''}" data-act="recFilter" data-k="kc" data-v="${v}" style="--c:${c}">${v === 'all' ? n : n.replace(' kcal', '')}${v === 'all' ? '' : '<small>kcal</small>'}</button>`).join('')}</div>`
     + (rf.kc !== 'all' ? `<p class="hint kc-hint" style="--c:${bandOf(+rf.kc)[3]}">${bandOf(+rf.kc)[2]}. ${+rf.kc === 100 ? 'Kleine Mahlzeiten und Snacks, ideal beim Abnehmen.' : +rf.kc === 300 ? 'Leichte Mahlzeiten mit viel Volumen.' : +rf.kc === 500 ? 'Richtige Mahlzeiten, die lange satt machen.' : 'Viel Energie, gut beim Aufbauen oder nach harten Einheiten.'}</p>` : '')
-    + `<div class="fchips">${tog('fav', ICON.heart, 'Favoriten')}${tog('quick', ICON.clock, 'Bis 15 min')}${tog('prot', ICON.train, 'Viel Protein')}</div>`;
+    + `<div class="fchips">${tog('fav', ICON.heart, 'Favoriten')}${(db.userRecipes || []).length ? tog('own', ICON.spark, 'Eigene') : ''}${tog('quick', ICON.clock, 'Bis 15 min')}${tog('prot', ICON.train, 'Viel Protein')}</div>`;
   return h + `<div id="recList">${recListHTML()}</div>`;
 }
 /* Offenes Rezept: Portionen, abgehakte Zutaten und Schritte */
@@ -2462,27 +2450,49 @@ function openRecipe(i, keep) {
   const r = recipes()[+i];
   if (!r) return;
   if (!rs || rs.i !== r.i) rs = {i: r.i, por: 1, ing: [], st: []};
-  const M = SLOT_META[r.slot], B = bandOf(r.band), by = Object.fromEntries(FOOD_DB.map(f => [f.name, f])), x = rs.por, fav = isFav(r);
+  const M = SLOT_META[r.slot], B = bandOf(r.band), by = {}, x = rs.por, fav = isFav(r);
   const kc = r.p * 4 + r.c * 4 + r.f * 9 || 1, pct = v => Math.round(v / kc * 100);
   const nSt = rs.st.length, porTxt = x === 1 ? '1 Portion' : `${fmtN(x)} Portionen`;
   openSheet(`<div class="sheet-h"><button class="btn-text" data-act="closeSheet">Schließen</button><h2></h2><button class="rc-fav big${fav ? ' on' : ''}" data-act="recFav" data-i="${r.i}" aria-pressed="${fav}" aria-label="Favorit">${ICON.heart}</button></div>`
     + `<div class="rd-hero" style="--c:${M.c}"><span>${r.emo}</span></div>`
     + `<p class="food-name rd-name">${esc(r.name)}</p>`
-    + `<div class="rd-tags"><span>${ICON.clock}${r.min} min</span><span>${diffDots(r.diff)}${DIFF[r.diff]}</span><span style="color:${M.c}">${ICON[M.ic]}${SLOT_SHORT[r.slot]}</span><span style="color:${B[3]}">${B[1]}</span></div>`
+    + `<div class="rd-tags"><span>${ICON.clock}${r.min} min</span><span>${diffDots(r.diff)}${DIFF[r.diff]}</span><span style="color:${M.c}">${ICON[M.ic]}${SLOT_SHORT[r.slot]}</span><span style="color:${B[3]}">${B[1]}</span>${r.user ? `<span>${ICON.spark}Eigenes Rezept</span>` : ''}</div>`
     + `<div class="rd-por"><div><b>Portionen</b><span>${fmtInt(r.g * x)} g insgesamt</span></div>${stepper('recPor', fmtN(x))}</div>`
     + `<div class="calc4"><div><span>kcal</span><b>${fmtInt(r.k * x)}</b></div><div><span>Protein</span><b>${fmt1(r.p * x)} g</b></div><div><span>Kohlenh.</span><b>${fmt1(r.c * x)} g</b></div><div><span>Fett</span><b>${fmt1(r.f * x)} g</b></div></div>`
     + `<div class="msplit" aria-hidden="true"><i style="flex:${pct(r.p * 4)};background:var(--lime)"></i><i style="flex:${pct(r.c * 4)};background:var(--cyan)"></i><i style="flex:${pct(r.f * 9)};background:var(--amber)"></i></div>`
     + `<div class="legend msleg"><span style="--k:var(--lime)"><i></i>Protein ${pct(r.p * 4)} %</span><span style="--k:var(--cyan)"><i></i>Kohlenh. ${pct(r.c * 4)} %</span><span style="--k:var(--amber)"><i></i>Fett ${pct(r.f * 9)} %</span></div>`
     + `<div class="sec-row rd-sec"><label class="lbl">Zutaten für ${porTxt}</label><span class="rd-cnt">${rs.ing.length}/${r.ing.length}</span></div>`
-    + `<div class="ing">${r.ing.map(([n, g], j) => { const on = rs.ing.includes(j); return `<button class="ing-row${on ? ' on' : ''}" data-act="recIng" data-n="${j}" aria-pressed="${on}"><span class="cb">${ICON.check}</span><b>${fmtN(Math.round(g * x))} g</b><span>${esc(n)}</span><em>${by[n] ? fmtInt(by[n].k * g * x / 100) + ' kcal' : ''}</em></button>`; }).join('')}</div>`
+    + `<div class="ing">${r.ing.map(([n, g], j) => { const on = rs.ing.includes(j); return `<button class="ing-row${on ? ' on' : ''}" data-act="recIng" data-n="${j}" aria-pressed="${on}"><span class="cb">${ICON.check}</span><b>${fmtN(Math.round(g * x))} g</b><span>${esc(n)}</span><em>${r.look(n) ? fmtInt(r.look(n).k * g * x / 100) + ' kcal' : ''}</em></button>`; }).join('')}</div>`
     + (r.extra ? `<p class="hint">Außerdem: ${esc(r.extra)}</p>` : '')
     + `<div class="sec-row rd-sec"><label class="lbl">Zubereitung</label><span class="rd-cnt">${nSt === r.steps.length ? 'Fertig!' : `${nSt}/${r.steps.length}`}</span></div>`
     + `<div class="kbar sm rd-prog" aria-hidden="true"><i style="width:${(nSt / r.steps.length * 100).toFixed(0)}%;background:${M.c}"></i></div>`
     + `<div class="steps">${r.steps.map((s, j) => { const on = rs.st.includes(j); return `<button class="step${on ? ' on' : ''}" data-act="recStep" data-n="${j}" aria-pressed="${on}"><span class="sn">${on ? ICON.check : j + 1}</span><span>${esc(s)}</span></button>`; }).join('')}</div>`
     + `<button class="btn-primary" data-act="recipeLog" data-i="${r.i}">Als ${SLOT_NAME[r.slot]} eintragen${x === 1 ? '' : ` (${porTxt})`}</button>`
-    + `<button class="btn-text wide" data-act="recNext">Anderes Rezept vorschlagen</button>`, keep);
+    + `<button class="btn-text wide" data-act="recNext">Anderes Rezept vorschlagen</button>`
+    + (r.user ? `<button class="btn-text wide" style="color:var(--red,#FF453A)" data-act="delUserRecipe" data-i="${r.i}">Eigenes Rezept löschen</button>` : ''), keep);
 }
 const SLOT_META = {breakfast: {ic: 'sunrise', c: 'var(--amber)', share: 0.25}, lunch: {ic: 'sun', c: 'var(--lime)', share: 0.35}, dinner: {ic: 'moon', c: 'var(--cyan)', share: 0.3}, snack: {ic: 'apple', c: 'var(--pink)', share: 0.1}};
+/* ---------- Essensplan (db.mealPlan): geplante Mahlzeiten, ein Tipp trägt sie ein ---------- */
+const planSort = (a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : SLOTS.findIndex(x => x[0] === a.slot) - SLOTS.findIndex(x => x[0] === b.slot);
+const planDayName = k => { const t = dateKey(Date.now()); return k === t ? 'Heute' : k === dateKey(addDays(Date.now(), 1)) ? 'Morgen' : new Date(keyToTs(k)).toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long'}); };
+const planRow = (m, eat) => `<div class="mi pl-row"><span class="t"><b>${esc(m.name)}</b><span>${SLOT_SHORT[m.slot]} · ${m.g ? fmtInt(m.g) + ' g · ' : ''}P ${fmtInt(m.p)} · K ${fmtInt(m.c)} · F ${fmtInt(m.f)} g${m.note ? ' · ' + esc(m.note) : ''}</span></span><span class="mi-k">${fmtInt(m.kcal)}<small> kcal</small></span>`
+  + `${eat ? `<button class="btn-chip" data-act="planEat" data-id="${esc(m.id)}" aria-label="${esc(m.name)} eintragen">${ICON.check}</button>` : ''}<button class="btn-chip muted" data-act="planDel" data-id="${esc(m.id)}" aria-label="${esc(m.name)} aus dem Plan entfernen">${ICON.x}</button></div>`;
+function planCardHTML() {
+  const tk = dateKey(Date.now()), list = db.mealPlan.filter(m => m.date >= tk).sort(planSort);
+  if (!list.length) return '';
+  const today = list.filter(m => m.date === tk), next = list.find(m => m.date > tk), kc = today.reduce((a, m) => a + m.kcal, 0);
+  const sub = today.length ? `Heute geplant: ${today.length} · ${fmtInt(kc)} kcal` : `Nächster Eintrag: ${planDayName(next.date)}`;
+  return `<section class="meal" style="--c:var(--lime)"><div class="meal-h"><span class="meal-ic">${ICON.today}</span><div class="meal-t"><b>Essensplan</b><span>${sub}</span></div><button class="btn-text sm" data-act="planOpen">Alle Tage</button></div>`
+    + (today.length ? `<div class="meal-list">${today.map(m => planRow(m, true)).join('')}</div>` : '') + `</section>`;
+}
+function openMealPlan() {
+  const tk = dateKey(Date.now()), list = db.mealPlan.filter(m => m.date >= tk).sort(planSort), days = [...new Set(list.map(m => m.date))], goal = db.settings.kcalGoal;
+  let h = `<div class="sheet-h"><button class="btn-text" data-act="closeSheet">Fertig</button><h2>Essensplan</h2><span></span></div>`;
+  if (!days.length) h += `<div class="empty"><p>Nichts geplant. In Claude kannst du dir einen Essensplan zusammenstellen lassen.</p></div>`;
+  days.forEach(d => { const L = list.filter(m => m.date === d), kc = L.reduce((a, m) => a + m.kcal, 0);
+    h += `<div class="sec-row pl-day"><label class="lbl">${esc(planDayName(d))}</label><span class="rd-cnt">${fmtInt(kc)}${goal ? ' von ' + fmtInt(goal) : ''} kcal</span></div><div class="meal-list pl-list">${L.map(m => planRow(m, d === tk)).join('')}</div>`; });
+  openSheet(h, true);
+}
 function mealCard(k, n, list, goal) {
   const M = SLOT_META[k], s = mealSum(list), target = goal ? Math.round(goal * M.share / 10) * 10 : null;
   const sub = list.length ? `${fmtInt(s.kcal)}${target ? ` von ca. ${fmtInt(target)}` : ''} kcal · P ${fmtInt(s.p)} · K ${fmtInt(s.c)} · F ${fmtInt(s.f)} g` : target ? `Empfohlen ca. ${fmtInt(target)} kcal` : 'Noch nichts eingetragen';
@@ -5198,6 +5208,7 @@ function vFood() {
   const tk = dateKey(Date.now()), today = db.meals.filter(m => dateKey(m.date) === tk), s = mealSum(today), goal = db.settings.kcalGoal, mg = db.settings.macroGoal;
   let h = bodySeg() + `<header class="lt"><p class="date">${todayLine()}</p><h1>Essen</h1></header>`;
   h += kcalCard(s, goal, mg);
+  h += planCardHTML();
   const mealsH = `<div class="meals">${SLOTS.map(([k, n]) => mealCard(k, n, today.filter(m => m.slot === k), goal)).join('')}</div>`;
   if (newStyle()) h += mealsH;   // neuer Stil: Mahlzeiten (Plus zum Eintragen) direkt unter den Kalorien, Score und Tipps danach
 
@@ -6396,10 +6407,10 @@ function applyRemoteReset(areas) {
   }
   if (S.has('runs')) { db.runs = []; db.runReviews = {}; db.runTests = []; }
   if (S.has('runplan') && !(db.runPlan && db.runPlan.legacy)) { db.runPlan = null; rob = null; }
-  if (S.has('meals')) db.meals = [];
+  if (S.has('meals')) { db.meals = []; db.mealPlan = []; }
   if (S.has('nutrition')) { db.profile = null; db.settings.kcalGoal = null; db.settings.macroGoal = null; ob = null; }
   if (S.has('weight')) { db.weights = {}; db.weightGoal = null; }
-  if (S.has('foods')) { db.foods = []; db.dishes = []; }
+  if (S.has('foods')) { db.foods = []; db.dishes = []; db.userRecipes = []; REC = null; }
   if (S.has('tri')) { db.triPlan = null; db.tri = []; tob = null; }
   saveDB();
 }
@@ -7297,6 +7308,11 @@ function claudeApply(it) {
   if (it.kind === 'run_test') return claudeRunTest(pl);
   if (it.kind === 'run_goal') return claudeRunGoal(pl);
   if (it.kind === 'run_plan_write') return claudeRunPlanWrite(pl);
+  if (it.kind === 'food_create') return claudeFoodCreate(pl);
+  if (it.kind === 'dish_create') return claudeDishCreate(pl);
+  if (it.kind === 'recipe_create') return claudeRecipeCreate(pl);
+  if (it.kind === 'meal_plan') return claudeMealPlan(pl);
+  if (it.kind === 'meal_plan_clear') return claudeMealPlanClear(pl);
   if (it.kind === 'run_edit') return claudeRunEdit(pl);
   if (it.kind === 'body_log') return claudeBodyLog(pl);
   if (it.kind === 'meal_log') return claudeMealLog(pl);
@@ -7347,6 +7363,113 @@ function claudeRunGoal(pl) {
     ['Umfang', `Woche 1 ${mins[0]} min, Höchstwert ${Math.max(...mins)} min, längster Lauf ${maxLong} min`], ['Start bei', `${Math.round(avg)} min pro Woche, längster Lauf ${longest} min (letzte 4 Wochen)`], ['Beschwerden', inj === 'none' ? 'keine' : inj === 'past' ? `früher${P.area ? ' (' + P.area + ')' : ''}` : `aktuell${P.area ? ' (' + P.area + ')' : ''}, vorsichtiger Start`]];
   if (G.km && maxLong < G.longReq * 0.85) rows.push(['Hinweis', `Knappe Vorbereitung: längster Lauf im Plan ${maxLong} min, für ${G.label} wären rund ${G.longReq} min ideal`]);
   return {ok: true, title: 'Laufziel geändert: neuer Plan', rows, undo, msg: `Neuer Laufplan (${G.n}${P.race ? ', ' + shortDate(P.race) : ''}), der bisherige ist ersetzt`};
+}
+/* ---------- Claude: Ernährung (eigene Lebensmittel, Gerichte, Rezepte, Essensplan) ---------- */
+const FOOD_NORM = () => (FOOD_NORM.m || (FOOD_NORM.m = Object.fromEntries(FOOD_DB.map(f => [norm(f.name), f]))));
+/* Name -> Lebensmittel der App-Datenbank oder eigenes (mit Mikros über perOf); sonst null */
+const claudeFoodFind = name => FOOD_NORM()[norm(name)] || (db.foods || []).find(x => norm(x.name || '') === norm(name)) || null;
+function claudeItems(list) {
+  const out = [];
+  for (const x of (Array.isArray(list) ? list : []).slice(0, 25)) {
+    const name = String(x && x.name || '').trim().slice(0, 60), g = Math.round(+x.g * 10) / 10, kn = claudeFoodFind(name);
+    if (!name || !(g >= 1 && g <= 5000)) return null;
+    if (kn) { out.push({name: kn.name, g, per: perOf(kn), known: !FOOD_NORM()[norm(name)] ? 'own' : 'db'}); continue; }
+    const q = x.per || {}, ok = v => Number.isFinite(+v) && +v >= 0 && +v <= 900;
+    if (![q.k, q.p, q.c, q.f].every(ok)) return null;
+    out.push({name, g, per: {k: +q.k, p: +q.p, c: +q.c, f: +q.f}, known: 'inline'});
+  }
+  return out.length ? out : null;
+}
+function claudeFoodCreate(pl) {
+  const name = String(pl.name || '').trim().replace(/\s+/g, ' ').slice(0, 60), key = norm(name), num = (v, hi) => { const x = +v; return Number.isFinite(x) && x >= 0 && x <= hi ? Math.round(x * 10) / 10 : null; };
+  const k = num(pl.k, 900), p = num(pl.p, 100), c = num(pl.c, 100), f = num(pl.f, 100);
+  if (name.length < 2 || k == null || p == null || c == null || f == null || p + c + f > 100.5) return {ok: false, msg: 'Werte ungültig.'};
+  if (FOOD_NORM()[key]) return {ok: false, msg: `„${name}“ gibt es schon in der Datenbank der App.`};
+  const old = db.foods.find(x => norm(x.name || '') === key);
+  if (old && pl.update !== true) return {ok: false, msg: `„${old.name}“ gibt es schon als eigenes Lebensmittel.`};
+  const pg = +pl.pg >= 1 && +pl.pg <= 2000 ? Math.round(+pl.pg) : null, vals = {name, k, p, c, f, pg, pl: pg ? '1 Portion' : null};
+  if (pl.m && typeof pl.m === 'object') { vals.m = Object.fromEntries(MK.map(x => [x, Math.max(0, Math.min(5000, +pl.m[x] || 0))])); vals.q = [0, 1, 2].includes(+pl.q) ? +pl.q : 1; }
+  let undo;
+  if (old) { undo = {id: old.id, old: JSON.stringify(old)}; delete old.m; delete old.q; Object.assign(old, vals, {src: old.src || 'claude'}); }
+  else { const o = {id: uid(), ...vals, src: 'claude'}; db.foods.push(o); undo = {id: o.id}; }
+  return {ok: true, title: old ? 'Lebensmittel geändert' : 'Lebensmittel angelegt', rows: [['Name', name], ['Pro 100 g', `${fmtN(k)} kcal · P ${fmtN(p)} · K ${fmtN(c)} · F ${fmtN(f)} g`], ...(vals.m ? [['Mikros', 'angegeben']] : [])], undo, msg: `„${name}“ ${old ? 'geändert' : 'als eigenes Lebensmittel angelegt'}`};
+}
+function claudeDishCreate(pl) {
+  const name = String(pl.name || '').trim().replace(/\s+/g, ' ').slice(0, 60), por = +pl.por, items = claudeItems(pl.items);
+  if (name.length < 2 || !(por >= 1 && por <= 20) || !items) return {ok: false, msg: 'Name, Portionen oder Zutaten ungültig (unbekannte Zutat ohne Werte pro 100 g?).'};
+  const old = db.dishes.find(d => norm(d.name || '') === norm(name));
+  if (old && pl.update !== true) return {ok: false, msg: `Ein Gericht „${old.name}“ gibt es schon.`};
+  const d = {id: old ? old.id : uid(), name, por: Math.round(por * 10) / 10, items: items.map(i => ({name: i.name, g: i.g, per: i.per}))};
+  const undo = old ? {id: d.id, old: JSON.stringify(old)} : {id: d.id};
+  if (old) db.dishes[db.dishes.indexOf(old)] = d; else db.dishes.push(d);
+  const A2 = aggPer(d.items), T = dishTotals(d);
+  return {ok: true, title: old ? 'Gericht ersetzt' : 'Gericht angelegt', rows: [['Gericht', `${name}, ${fmtN(d.por)} Portion${d.por === 1 ? '' : 'en'}`], ['Pro Portion', `${fmtInt(A2.k * T.g / 100 / d.por)} kcal · P ${fmtN(r1(A2.p * T.g / 100 / d.por))} · K ${fmtN(r1(A2.c * T.g / 100 / d.por))} · F ${fmtN(r1(A2.f * T.g / 100 / d.por))} g`], ['Zutaten', items.map(i => `${i.name} ${fmtN(i.g)} g`).join(', ')]], undo, msg: `Gericht „${name}“ ${old ? 'ersetzt' : 'angelegt'}`};
+}
+function claudeRecipeCreate(pl) {
+  const name = String(pl.name || '').trim().replace(/\s+/g, ' ').slice(0, 60), items = claudeItems(pl.items), SL = ['breakfast', 'lunch', 'dinner', 'snack'];
+  const min = Math.round(+pl.min), diff = [1, 2, 3].includes(+pl.diff) ? +pl.diff : 1, steps = (Array.isArray(pl.steps) ? pl.steps : []).map(x => String(x).trim().slice(0, 240)).filter(Boolean).slice(0, 15);
+  if (name.length < 2 || !SL.includes(pl.slot) || !(min >= 1 && min <= 240) || !items || !steps.length) return {ok: false, msg: 'Name, Mahlzeit, Zeit, Zutaten oder Schritte ungültig.'};
+  if (RECIPES.some(r => norm(r[0]) === norm(name))) return {ok: false, msg: `Ein Rezept „${name}“ gehört schon zur App.`};
+  const old = db.userRecipes.find(r => norm(r.name || '') === norm(name));
+  if (old && pl.update !== true) return {ok: false, msg: `Ein eigenes Rezept „${old.name}“ gibt es schon.`};
+  const per = {}; items.forEach(i => { if (!FOOD_NORM()[norm(i.name)]) per[i.name] = i.per; });
+  const r = {id: old ? old.id : uid(), name, slot: pl.slot, min, diff, ing: items.map(i => [i.name, i.g]), per, extra: String(pl.extra || '').trim().slice(0, 120), steps, src: 'claude'};
+  const undo = old ? {id: r.id, old: JSON.stringify(old)} : {id: r.id};
+  if (old) db.userRecipes[db.userRecipes.indexOf(old)] = r; else db.userRecipes.push(r);
+  REC = null;
+  const R = recipes().find(x => x.user === r.id);
+  return {ok: true, title: old ? 'Rezept ersetzt' : 'Rezept angelegt', rows: [['Rezept', `${name} · ${SLOT_SHORT[r.slot]} · ${min} min`], ['Pro Portion', `${fmtInt(R.k)} kcal · P ${fmtN(r1(R.p))} · K ${fmtN(r1(R.c))} · F ${fmtN(r1(R.f))} g`], ['Zutaten', items.map(i => `${i.name} ${fmtN(i.g)} g`).join(', ')], ['Schritte', String(steps.length)]], undo, msg: `Rezept „${name}“ ${old ? 'ersetzt' : 'angelegt'} (Rezepte-Tab, Filter „Eigene“)`};
+}
+const planDateOk = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '') && d >= dateKey(Date.now()) && d <= dateKey(addDays(Date.now(), 28));
+/* Eintrag des Essensplans aus Rezept, Gericht, Lebensmittel oder eigenen Werten; Nährwerte schlägt die App selbst nach */
+function claudePlanItem(e) {
+  const por = Math.max(0.5, Math.min(6, +e.portions || 1)), base = {id: uid(), date: e.date, slot: e.slot, src: 'claude'}, note = String(e.note || '').trim().slice(0, 120);
+  if (note) base.note = note;
+  if (e.recipe) {
+    const r = recipes().find(x => norm(x.name) === norm(e.recipe));
+    if (!r || !r.g) return null;
+    const x = v => Math.round(v / r.g * 1000) / 10, g = Math.round(r.g * por);
+    return {...base, name: por === 1 ? r.name : `${r.name} ×${fmtN(por)}`, kcal: Math.round(r.k * por), p: r1(r.p * por), c: r1(r.c * por), f: r1(r.f * por), g, per: {k: x(r.k), p: x(r.p), c: x(r.c), f: x(r.f), ...(r.m ? {m: r.m, q: r.mq} : {})}};
+  }
+  if (e.dish) {
+    const d = db.dishes.find(x => norm(x.name || '') === norm(e.dish));
+    if (!d) return null;
+    const di = dishItem(d), g = Math.round(di.qg * por);
+    return {...base, name: por === 1 ? d.name : `${d.name} ×${fmtN(por)}`, kcal: Math.round(di.k * g / 100), p: r1(di.p * g / 100), c: r1(di.c * g / 100), f: r1(di.f * g / 100), g, per: perOf(di)};
+  }
+  if (e.food) {
+    const f = claudeFoodFind(e.food), g = Math.round(+e.grams * 10) / 10;
+    if (!f || !(g >= 1 && g <= 5000)) return null;
+    return {...base, name: f.name, kcal: Math.round(f.k * g / 100), p: r1(f.p * g / 100), c: r1(f.c * g / 100), f: r1(f.f * g / 100), g, per: perOf(f)};
+  }
+  const name = String(e.name || '').trim().slice(0, 60), kcal = Math.round(+e.kcal), P = +e.p, C = +e.c, F = +e.f;
+  if (!name || !(kcal >= 1 && kcal <= 5000) || ![P, C, F].every(v => Number.isFinite(v) && v >= 0 && v <= 500)) return null;
+  return {...base, name, kcal, p: r1(P), c: r1(C), f: r1(F)};
+}
+function claudeMealPlan(pl) {
+  const SL = ['breakfast', 'lunch', 'dinner', 'snack'], SN = {breakfast: 'Frühstück', lunch: 'Mittag', dinner: 'Abend', snack: 'Snack'}, list = Array.isArray(pl.entries) ? pl.entries.slice(0, 60) : [], out = [];
+  if (!list.length) return {ok: false, msg: 'Keine Einträge im Auftrag.'};
+  for (const e of list) {
+    if (!e || !planDateOk(e.date) || !SL.includes(e.slot)) return {ok: false, msg: `Eintrag ungültig (Datum nur heute bis +28 Tage): ${e && e.date}`};
+    const it = claudePlanItem(e);
+    if (!it) return {ok: false, msg: `„${e.recipe || e.dish || e.food || e.name || '?'}“ nicht gefunden oder Werte ungültig.`};
+    out.push(it);
+  }
+  const days = new Set(out.map(x => x.date)), removed = pl.replaceDays === true ? db.mealPlan.filter(m => days.has(m.date)) : [];
+  if (removed.length) db.mealPlan = db.mealPlan.filter(m => !days.has(m.date));
+  db.mealPlan.push(...out); db.mealPlan.sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : SL.indexOf(a.slot) - SL.indexOf(b.slot));
+  const sum = {}; out.forEach(x => { sum[x.date] = (sum[x.date] || 0) + x.kcal; });
+  const rows = [...days].sort().slice(0, 7).map(d => [longDate(keyToTs(d)), `${out.filter(x => x.date === d).map(x => `${SN[x.slot]}: ${x.name}`).join(' · ')} (${fmtInt(sum[d])} kcal)`]);
+  if (days.size > 7) rows.push(['…', `${days.size - 7} weitere Tage`]);
+  return {ok: true, title: 'Essensplan eingetragen', rows, undo: {added: out.map(x => x.id), removed}, msg: `${out.length} Mahlzeit${out.length === 1 ? '' : 'en'} an ${days.size} Tag${days.size === 1 ? '' : 'en'} geplant`};
+}
+function claudeMealPlanClear(pl) {
+  const f = pl.from, t = pl.to || pl.from;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(f || '') || !/^\d{4}-\d{2}-\d{2}$/.test(t || '') || t < f) return {ok: false, msg: 'Zeitraum ungültig.'};
+  const removed = db.mealPlan.filter(m => m.date >= f && m.date <= t);
+  if (!removed.length) return {ok: false, msg: 'In diesem Zeitraum war nichts geplant.'};
+  const ids = new Set(removed.map(m => m.id)); db.mealPlan = db.mealPlan.filter(m => !ids.has(m.id));
+  return {ok: true, title: 'Essensplan geleert', rows: [['Zeitraum', f === t ? longDate(keyToTs(f)) : `${longDate(keyToTs(f))} bis ${longDate(keyToTs(t))}`], ['Entfernt', `${removed.length} geplante Mahlzeit${removed.length === 1 ? '' : 'en'}`]], undo: {removed}, msg: `${removed.length} geplante Einträge entfernt`};
 }
 /* Kompletter Plan von Claude (jede Woche selbst geschrieben): gleiche Prüfung der Plan-Regeln wie bei Steigerungen, dann ersetzt er db.runPlan (Undo wie run_goal). */
 function claudeRunPlanWrite(pl) {
@@ -7629,7 +7752,7 @@ async function claudePull(force) {
       if (known) { acks.push([it.id, known.ok, known.msg]); continue; }
       let r;
       try { r = claudeApply(it); } catch (e) { r = {ok: false, msg: 'Fehler beim Anwenden.'}; }
-      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', run_test: 'Lauftest', run_edit: 'Lauf', run_goal: 'Laufziel', run_plan_write: 'Laufplan', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
+      C.log.push({id: it.id, at: Date.now(), kind: it.kind, ok: !!r.ok, title: r.title || ({run_plan: 'Laufplan', pause: 'Pause', run_log: 'Lauf', gym_plan: 'Gym-Plan', gym_log: 'Training', run_test: 'Lauftest', run_edit: 'Lauf', run_goal: 'Laufziel', run_plan_write: 'Laufplan', food_create: 'Lebensmittel', dish_create: 'Gericht', recipe_create: 'Rezept', meal_plan: 'Essensplan', meal_plan_clear: 'Essensplan', goals: 'Ziele', body_log: 'Körperdaten', meal_log: 'Essen', activity_log: 'Aktivität'}[it.kind] || 'Änderung') + (r.ok ? '' : ' abgelehnt'), rows: r.rows || [], msg: r.msg || '', ...(r.ok ? {undo: r.undo} : {})});
       acks.push([it.id, !!r.ok, r.msg]); n++;
     }
     C.log = C.log.slice(-20).map(l => l.undo && l.at < Date.now() - 14 * DAY ? (({undo, ...x}) => x)(l) : l);
@@ -7642,7 +7765,7 @@ async function claudePull(force) {
   } catch (e) {} finally { claudeBusy = false; }
   return n;
 }
-const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (['run_log', 'gym_log', 'meal_log', 'activity_log', 'run_test'].includes(l.kind) || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
+const claudeCanUndo = l => !!l.ok && !!l.undo && !l.undone && (['run_log', 'gym_log', 'meal_log', 'activity_log', 'run_test', 'food_create', 'dish_create', 'recipe_create', 'meal_plan', 'meal_plan_clear'].includes(l.kind) || !db.settings.claude.log.some(x => x.kind === l.kind && x.ok && !x.undone && x.at > l.at))
   && (l.kind !== 'gym_plan' || JSON.stringify(db.templates) === l.undo.after)
   && (l.kind !== 'run_plan' || !db.settings.claude.log.some(x => ['run_goal', 'run_plan_write'].includes(x.kind) && x.ok && !x.undone && x.at > l.at))   // ältere Planänderungen gehören zum ersetzten Plan
   && (!['run_goal', 'run_plan_write'].includes(l.kind) || (!!db.runPlan && db.runPlan.id === l.undo.newId))
@@ -7658,6 +7781,13 @@ function claudeUndo(id) {
     const nid = u.newId + ':'; db.runs.forEach(r => { if (r.slot && String(r.slot).startsWith(nid)) r.slot = null; });
     db.runPlan = JSON.parse(u.old); showPlan = false;
   }
+  else if (l.kind === 'food_create' || l.kind === 'dish_create' || l.kind === 'recipe_create') {
+    const key = {food_create: 'foods', dish_create: 'dishes', recipe_create: 'userRecipes'}[l.kind], i = db[key].findIndex(x => x.id === u.id);
+    if (u.old) { if (i >= 0) db[key][i] = JSON.parse(u.old); else db[key].push(JSON.parse(u.old)); } else db[key] = db[key].filter(x => x.id !== u.id);
+    if (key === 'userRecipes') REC = null;
+  }
+  else if (l.kind === 'meal_plan') { const a = new Set(u.added); db.mealPlan = db.mealPlan.filter(m => !a.has(m.id)).concat(u.removed || []); }
+  else if (l.kind === 'meal_plan_clear') db.mealPlan = db.mealPlan.concat(u.removed || []);
   else if (l.kind === 'run_test') db.runTests = db.runTests.filter(x => x.id !== u.id);
   else if (l.kind === 'run_edit') {
     if (u.del) { db.runs.push(u.run); db.runs.sort((a, b) => a.date - b.date); }
@@ -7714,7 +7844,7 @@ function renderClaude(keep) {
     + `<div class="pn-hero"><span>✨</span><b>Claude trägt für dich ein</b><small>Du besprichst Training oder Beschwerden in der Claude-App. Sagst du dort „trag das ein“, merkt Claude die Änderung vor, und Overload übernimmt sie hier.</small></div>`
     + `<div class="group"><button class="row" data-act="claudeToggle"><span class="t"><b>Aufträge von Claude übernehmen</b><span>${syncCfg() ? 'Beim Öffnen und nach jedem Abgleich' : 'Braucht „Geräte synchronisieren“ (Einstellungen → Daten)'}</span></span><span class="r">${C.on ? 'An' : 'Aus'}</span></button></div>`
     + (C.on ? `<button class="btn-secondary mt" data-act="claudeNow">Jetzt abholen</button>` : '')
-    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Läufe korrigieren oder löschen, Leistungstest oder Bestzeit eintragen, Laufziel und Renntermin ändern oder einen ganzen Laufplan selbst schreiben (der bisherige wird ersetzt), Gym-Vorlagen, Wochenplan und Wochenziel ändern, Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
+    + `<p class="hint">Möglich: Laufplan ändern (nur aktuelle und spätere Wochen, mit den Plan-Regeln), Läufe und Gym-Trainings nachtragen, Läufe korrigieren oder löschen, Leistungstest oder Bestzeit eintragen, Laufziel und Renntermin ändern oder einen ganzen Laufplan selbst schreiben (der bisherige wird ersetzt), eigene Rezepte, Gerichte und Lebensmittel anlegen, Essensplan eintragen, Gym-Vorlagen, Wochenplan und Wochenziel ändern, Ziele ändern (Kalorien, Makros, Wasser, Schlaf, Zielgewicht), Gewicht, Wasser, Schlaf, Mahlzeiten und Aktivitäten eintragen sowie eine Pause setzen oder beenden. Alles steht unten und lässt sich zurücknehmen. Ende-zu-Ende ist hier aufgehoben: Die Verbindung zu Claude läuft über deinen Overload-Server und liest deine Daten.</p>`
     + `<label class="lbl mt">Letzte Änderungen</label>` + (list.length ? list.map(card).join('') : `<p class="hint">Noch nichts.</p>`) + `</div>`, keep, true);
 }
 
@@ -8372,9 +8502,28 @@ Object.assign(A, {
   homeToggle: ({id}) => { const hd = db.settings.home.hidden, i = hd.indexOf(id); if (i >= 0) hd.splice(i, 1); else hd.push(id); saveDB(); render(); openHomeSettings(true); },
   homeMove: ({i, d}) => { const o = db.settings.home.order, a = +i, b = a + +d; if (b < 0 || b >= o.length) return; [o[a], o[b]] = [o[b], o[a]]; saveDB(); render(); openHomeSettings(true); },
   recFilter: ({k, v}) => { rf[k] = v; render(); },
+  planOpen: () => openMealPlan(),
+  planEat: ({id}) => {
+    const m = db.mealPlan.find(x => x.id === id);
+    if (!m) return;
+    const meal = {id: uid(), date: m.date === dateKey(Date.now()) ? Date.now() : keyToTs(m.date, {breakfast: 8, lunch: 13, dinner: 19, snack: 16}[m.slot] || 12), slot: m.slot, name: m.name, kcal: m.kcal, p: m.p, c: m.c, f: m.f, ai: false};
+    if (m.per && m.g) Object.assign(meal, {g: m.g, per: m.per});
+    db.meals.push(meal); db.meals.sort((a, b) => a.date - b.date);
+    db.mealPlan = db.mealPlan.filter(x => x.id !== id); saveDB(); render();
+    if ($('#sheet.show')) openMealPlan();
+    toast(`${m.name} eingetragen`);
+  },
+  planDel: ({id}) => { db.mealPlan = db.mealPlan.filter(x => x.id !== id); saveDB(); render(); if ($('#sheet.show')) openMealPlan(); },
+  delUserRecipe: async ({i}) => {
+    const r = recipes()[+i];
+    if (!r || !r.user) return;
+    const v = await askChoice({title: `„${r.name}“ löschen?`, text: 'Eingetragene Mahlzeiten bleiben erhalten.', choices: [{label: 'Rezept löschen', value: 1, style: 'danger'}]});
+    if (!v) return;
+    db.userRecipes = db.userRecipes.filter(x => x.id !== r.user); REC = null; saveDB(); closeSheet(); render(); toast('Rezept gelöscht');
+  },
   recToggle: ({k}) => { rf[k] = !rf[k]; render(); },
   recSort: () => { const i = RSORT.findIndex(x => x[0] === rf.sort); rf.sort = RSORT[(i + 1) % RSORT.length][0]; $('#recList').innerHTML = recListHTML(); },
-  recClear: () => { Object.assign(rf, {kc: 'all', q: '', fav: false, quick: false, prot: false}); render(); },
+  recClear: () => { Object.assign(rf, {kc: 'all', q: '', fav: false, own: false, quick: false, prot: false}); render(); },
   recRandom: () => { const L = recFiltered(); if (!L.length) { toast('Keine Rezepte für diese Auswahl'); return; } rs = null; openRecipe(L[Math.floor(Math.random() * L.length)].i); },
   recFav: ({i}) => {
     const r = recipes()[+i];
