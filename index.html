@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-iiY+3X9MFsXVQ80YDIvPOjwBn2cvzW1ZHGS/c2Xbgz0=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-exNP3nmuk+Y6aZjbLEOSNXFjSS/H0oacvBvgEQyyuo8=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -1312,6 +1312,7 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 .run-hero h2{margin-top:3px;font-size:28px;font-weight:700;letter-spacing:-.02em}
 .run-hero .rh-sub{margin-top:2px;font-size:15px;color:var(--text-2)}
 .rh-btns{display:flex;gap:10px;margin-top:14px}
+.rh-btns>*{margin:0}
 /* Heute (neu): Schnellaktionen, Zeitleiste „Dein Tag“, Kennzahlen */
 .hz-lt .sec-row{align-items:center}
 .hz-streak{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;background:var(--surface);font-family:var(--num);font-size:15px;font-weight:700}
@@ -1348,6 +1349,7 @@ a.btn-chip{text-decoration:none;color:var(--lime)}
 .hz-btns{display:flex;gap:8px;margin-top:12px}
 .hz-btns .btn-primary,.hz-btns .btn-secondary{height:48px;font-size:16px;border-radius:16px}
 .hz-btns .btn-secondary{width:auto;flex:none;padding:0 16px;background:var(--surface-2)}
+.hz-btns>*{margin:0}
 .hz-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
 .hz-stat{padding:12px 14px;border-radius:22px;background:var(--surface);text-align:left}
 .hz-stat span{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2)}
@@ -1424,8 +1426,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.11.24.1';
+const APP_VERSION = '2026.11.24.2';
 const PATCH_NOTES = [
+  {v: '2026.11.24.2', date: 'Update vom 24. November 2026', items: [
+    ['🔧', 'Knöpfe sitzen wieder gerade', 'Bei „Als Nächstes“ auf Heute und im Laufen-Tab saß der zweite Knopf (z. B. „Optionen“) ein Stück zu tief. Jetzt stehen beide Knöpfe auf einer Linie.']
+  ]},
   {v: '2026.11.24.1', date: 'Update vom 24. November 2026', items: [
     ['🍽️', 'Claude plant dein Essen (Beta)', 'Mit Beta-Zugang: Nach deiner Bestätigung kann Claude eigene Rezepte (Rezepte-Tab, Filter „Eigene“), Gerichte (Essens-Suche → Meine Gerichte) und Lebensmittel anlegen und einen Essensplan für die nächsten Tage eintragen. Geplantes steht im Essen-Tab unter „Essensplan“: ein Tipp trägt die Mahlzeit ein, die Woche siehst du mit „Alle Tage“. Alles lässt sich unter Einstellungen → Verbindungen → Claude zurücknehmen.'],
   ]},
