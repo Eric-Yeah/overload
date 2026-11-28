@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Overload">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c=' 'sha256-sVRtm9ghrr+ihB2EEEPzm2EXPIlj2rlgeSauke2Uzg4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-7IcKPRG5rbYrRO12wkfZ1zBi6YCMYkgRs/KxPIc2Aas=' 'sha256-pd2DbjFhowX+RL5NX2pCbYZ3yjCE57rPgyvv/o8CD7c=' 'sha256-toVOicZr/rSgLIZDcx3eAIDmi3/Oo9rDqD58+iPqCqc='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' https://api.groq.com https://isqarvlxjojckkidcebx.supabase.co https://mhyunfeirajnmbrpdojm.supabase.co https://world.openfoodfacts.org https://api.open-meteo.com https://air-quality-api.open-meteo.com https://geocoding-api.open-meteo.com https://api.bigdatacloud.net https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <script>if (window.top !== window.self) { try { window.top.location = window.self.location.href; } catch (e) { document.documentElement.style.display = "none"; } }</script>
 <title>Overload</title>
@@ -398,6 +398,11 @@ button.row:active{background:var(--surface-2)}
 .wk-info .locker{margin:0}
 .wk-est{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:999px;background:var(--surface);font-size:14px;font-weight:600;color:var(--text-2)}
 .wk-est svg{width:16px;height:16px}
+button.wk-est{border:0;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ge-q{display:flex;align-items:center;gap:8px;margin:12px 0 4px}
+.ge-q .field{flex:1;min-width:0;margin:0}
+.ge-q .btn-chip{flex:none;height:44px;padding:0 16px}
+.gym-at{margin:-4px 0 8px;font-weight:600}
 .lock-in{font-family:var(--num);font-size:28px;font-weight:800;text-align:center;letter-spacing:.1em;height:64px}
 .est-row{display:flex;align-items:center;gap:12px;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--surface-2)}
 .est-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--lime-dim);color:var(--lime)}
@@ -1426,8 +1431,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 /* ---------- Helfer ---------- */
 const STORE = 'overload-v1';
 /* Version dieses Uploads: bei JEDEM Deploy erhöhen (Format JJJJ.MM.TT.N) und oben in PATCH_NOTES beschreiben. */
-const APP_VERSION = '2026.11.24.3';
+const APP_VERSION = '2026.11.28.1';
 const PATCH_NOTES = [
+  {v: '2026.11.28.1', date: 'Update vom 28. November 2026', items: [
+    ['📍', 'Gym per GPS erkennen (Beta)', 'Für Tester: Unter Einstellungen → Training → „Gyms und Standort“ legst du dein Gym an. Beim Training erkennt Overload per GPS, wo du bist: im Standard-Gym fragt die App nie nach, an einem anderen Gym fragt sie „Stimmt das?“, an einem neuen Ort bietet sie an, ihn zu speichern. Pro Gym lassen sich Übungen und Vorlagen abwählen, die es dort nicht gibt.']
+  ]},
   {v: '2026.11.24.3', date: 'Update vom 24. November 2026', items: [
     ['🔧', 'Knöpfe sitzen jetzt wirklich gerade', 'Der zweite Knopf neben „Training starten“ und „Lauf eintragen“ (z. B. „Optionen“) stand noch immer zu tief. Jetzt sind beide auf einer Linie.']
   ]},
@@ -1897,6 +1905,12 @@ function migrate(d, fresh) {
   const rs0 = d.settings.rest && typeof d.settings.rest === 'object' ? d.settings.rest : {};
   d.settings.rest = {on: rs0.on === undefined ? true : !!rs0.on, sec: clamp(+rs0.sec || 120, 15, 600), mode: ['set', 'exercise', 'manual'].includes(rs0.mode) ? rs0.mode : 'set', full: rs0.full === undefined ? true : !!rs0.full};
   if (d.settings.startAsk === undefined) d.settings.startAsk = false;   // Start-Fenster vor jedem Training (aus: „Als Nächstes“ startet sofort)
+  // Gyms mit Standort (seit 27.11.2026): [{id, name, lat, lon, r, addr, noEx: [Übungs-IDs, die es dort nicht gibt], noTpl: [Vorlagen-IDs, die dort nicht vorgesehen sind]}]
+  d.settings.gyms = (Array.isArray(d.settings.gyms) ? d.settings.gyms : []).filter(g => g && typeof g === 'object' && g.id && Number.isFinite(g.lat) && Number.isFinite(g.lon))
+    .map(g => Object.assign(g, {name: String(g.name || 'Gym').slice(0, 30), r: clamp(+g.r || 150, 50, 1000), addr: String(g.addr || '').slice(0, 80), noEx: Array.isArray(g.noEx) ? g.noEx : [], noTpl: Array.isArray(g.noTpl) ? g.noTpl : []}));
+  if (!d.settings.gyms.some(g => g.id === d.settings.gymDefault)) d.settings.gymDefault = null;   // Standard-Gym: hier keine Nachfrage
+  if (d.settings.gymAuto === undefined) d.settings.gymAuto = true;   // GPS beim Trainingsstart (nur wirksam, wenn es Gyms gibt)
+  d.settings.gymIgnore = (Array.isArray(d.settings.gymIgnore) ? d.settings.gymIgnore : []).filter(x => x && x.id && Number.isFinite(x.lat) && Number.isFinite(x.lon));   // Orte, an denen nicht nach einem neuen Gym gefragt wird
   d.settings.deload = Object.assign({until: null, last: null, snooze: null}, d.settings.deload || {});
   if (typeof d.settings.gapSeen !== 'number') d.settings.gapSeen = 0;   // Lücke ohne Pause: letzte Einheit, für die der Hinweis erledigt ist
   if (d.settings.awardsInit === undefined) d.settings.awardsInit = false;
@@ -2044,11 +2058,13 @@ function makeEntry(exId) {
   if (lightActive()) n = Math.max(2, n - 1);
   return {exId, sets: Array.from({length: n}, () => ({w: null, r: null, done: false}))};
 }
-function startWorkout(tid, rest, skip = []) {
-  const t = db.templates.find(x => x.id === tid);
+/* gym = erkanntes Gym; auto: Übungen, die es dort nicht gibt, werden als „Heute ausgelassen“ angelegt (mit „Doch machen“); aus dem Start-Fenster
+   kommen sie schon in skip und werden gar nicht erst angelegt */
+function startWorkout(tid, rest, skip = [], gym = null, auto = true) {
+  const t = db.templates.find(x => x.id === tid), noEx = gym && auto ? gym.noEx || [] : [];
   db.active = {id: uid(), startedAt: Date.now(), templateId: t ? t.id : null, title: t ? t.name : 'Freies Training',
-    entries: (t ? t.exIds : []).filter(id => db.exercises[id] && !skip.includes(id)).map(makeEntry),
-    rest: rest || Object.assign({}, db.settings.rest, {on: false}), restEnd: null, deload: lightActive()};
+    entries: (t ? t.exIds : []).filter(id => db.exercises[id] && !skip.includes(id)).map(id => { const e = makeEntry(id); if (noEx.includes(id)) e.skip = true; return e; }),
+    rest: rest || Object.assign({}, db.settings.rest, {on: false}), restEnd: null, deload: lightActive(), ...(gym ? {gymId: gym.id, gym: gym.name} : {})};
   saveDB();
   go('workout');
 }
@@ -2831,7 +2847,8 @@ function vHome() {
     return `<button class="row" data-act="start" data-t="${esc(t.id)}"><span class="t"><b>${esc(t.name)}</b><span>${t.exIds.length} ${t.exIds.length === 1 ? 'Übung' : 'Übungen'}</span></span><span class="r">${l ? relDay(l) : 'neu'}</span><span class="chev">${ICON.chev}</span></button>`;
   }).join('');
   h += `<button class="row" data-act="start" data-t=""><span class="plus-ic">${ICON.plus}</span><span class="t"><b>Freies Training</b><span>Ohne Vorlage, Übungen frei wählen</span></span><span class="chev">${ICON.chev}</span></button>`
-    + `<button class="row" data-act="xaOpen"><span class="plus-ic">${ICON.plus}</span><span class="t"><b>Aktivität eintragen</b><span>Radfahren, Yoga, Fußball und mehr, mit Puls und Kalorien</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
+    + `<button class="row" data-act="xaOpen"><span class="plus-ic">${ICON.plus}</span><span class="t"><b>Aktivität eintragen</b><span>Radfahren, Yoga, Fußball und mehr, mit Puls und Kalorien</span></span><span class="chev">${ICON.chev}</span></button>`
+    + (gymVisible() ? `<button class="row" data-act="gymsSheet"><span class="ic-box">📍</span><span class="t"><b>Gyms und Standort <i class="tag sv-beta">Beta</i></b><span>${esc(gymLine())}</span></span><span class="chev">${ICON.chev}</span></button>` : '') + `</div></section>`;
   return h;
 }
 
@@ -2842,7 +2859,7 @@ function vWorkout() {
   a.entries.forEach(e => { if (!e.skip) e.sets.forEach(s => { total++; if (s.done) done++; }); });
   const remSets = a.entries.filter(e => !e.skip).map(e => e.sets.filter(s => !s.done).length), remMin = done < total ? estMinutes(remSets, a.rest) : 0;
   let h = `<div class="wk-head"><button class="icon-btn" data-act="tab" data-v="home" aria-label="Zur Startseite">${ICON.back}</button><div class="wk-title">${ringHTML(total ? done / total : 0, 34, 5)}<div><h1>${esc(a.title)}</h1><p><span id="elapsed">${fmtDur(Date.now() - a.startedAt)}</span>&nbsp;&nbsp;${done}/${total}<span class="hide-sm"> Sätze</span></p></div></div><button class="icon-btn sm" data-act="restSheet" aria-label="Pausen-Timer">${ICON.clock}</button><button class="pill" data-act="finish">Beenden</button></div>`;
-  if (lockerNow() || remMin) h += `<div class="wk-info">${lockerNow() ? lockerChip() : ''}${remMin ? `<span class="wk-est">${ICON.clock}noch ~${remMin} min · bis ${clockIn(remMin)}</span>` : ''}</div>`;
+  if (lockerNow() || remMin || a.gym) h += `<div class="wk-info">${a.gym && gymVisible() ? `<button class="wk-est" data-act="wkGym" aria-label="Gym ändern">📍 ${esc(a.gym)}</button>` : ''}${lockerNow() ? lockerChip() : ''}${remMin ? `<span class="wk-est">${ICON.clock}noch ~${remMin} min · bis ${clockIn(remMin)}</span>` : ''}</div>`;
   if (!a.entries.length) h += `<div class="empty"><p>Füg deine erste Übung hinzu, um loszulegen.</p></div>`;
   a.entries.forEach((e, i) => { h += exCard(e, i); });
   h += `<div class="wk-foot"><button class="btn-secondary" data-act="addEx">${ICON.plus}<span>Übung hinzufügen</span></button><button class="btn-text danger" data-act="discard">Training verwerfen</button></div>`;
@@ -2878,7 +2895,7 @@ function vHistory() {
     const m = new Date(t).toLocaleDateString('de-DE', {month: 'long', year: 'numeric'});
     if (m !== month) { month = m; h += `<h3 class="month">${esc(m)}</h3>`; }
     if (r) { h += xaCardHTML(r); return; }
-    h += `<article class="sess"><div class="sess-h"><div><h2>${esc(s.title)}</h2><p>${esc(fmtDate(s.date))}</p></div><button class="icon-btn" data-act="sessMenu" data-id="${esc(s.id)}" aria-label="Training löschen">${ICON.more}</button></div>`
+    h += `<article class="sess"><div class="sess-h"><div><h2>${esc(s.title)}</h2><p>${esc(fmtDate(s.date))}${s.gym && gymVisible() ? ' · 📍 ' + esc(s.gym) : ''}</p></div><button class="icon-btn" data-act="sessMenu" data-id="${esc(s.id)}" aria-label="Training löschen">${ICON.more}</button></div>`
       + `<div class="sess-stats"><div><span>Dauer</span><b>${s.end ? fmtMin(s.end - s.date) : '–'}</b></div><div><span>Volumen</span><b>${fmtInt(sessVol(s))} kg</b></div><div><span>Sätze</span><b>${sessSets(s)}</b></div></div>`
       + `<ul class="sess-ex">${s.entries.map(e => `<li><span>${esc(db.exercises[e.exId]?.name || e.name)}</span><span>${esc(fmtSets(e.sets))}</span></li>`).join('')}</ul>`
       + (s.note ? `<p class="sess-note">📝 ${esc(s.note)}${s.noteAI ? '' : ' <i class="tag">privat</i>'}</p>` : '') + `</article>`;
@@ -2942,7 +2959,8 @@ function vMore() {
   const PZ = db.settings.pause;
   h += `<section class="sec"><h3 class="sec-h">Pause</h3><div class="group"><button class="row" data-act="pauseSheet"><span class="ic-box">${PZ ? PAUSE_TYPES.find(x => x[0] === PZ.type)[1] : '⏸️'}</span><span class="t"><b>Krank, verletzt, Urlaub</b><span>${PZ ? `Aktiv seit ${esc(shortDate(PZ.from))}` : comebackActive() ? 'Wiedereinstieg läuft' : (a => (a.length > 1 ? a.slice(0, -1).join(', ') + ' und ' + a[a.length - 1] : a[0]) + ' pausieren')(['Gym', ...(runOn() ? ['Laufen'] : []), ...(triOn() ? ['Triathlon'] : [])])}</span></span><span class="chev">${ICON.chev}</span></button></div></section>`;
   h += `<section class="sec"><h3 class="sec-h">Training</h3><div class="group"><div class="row"><span class="t"><b>Trainings pro Woche</b><span>Füllt den Wochenring im Gym</span></span>${stepper('goalStep', db.settings.weeklyGoal)}</div>`
-    + `<button class="row wrap" data-act="startAskToggle" role="switch" aria-checked="${!!db.settings.startAsk}"><span class="t"><b>Start-Fenster vor dem Training</b><span>Aus: „Training starten“ unter „Als Nächstes“ legt sofort los. Übungen auslassen und Timer wählst du dann über „Optionen“ oder im Training.</span></span><span class="r">${db.settings.startAsk ? 'An' : 'Aus'}</span></button></div></section>`;
+    + `<button class="row wrap" data-act="startAskToggle" role="switch" aria-checked="${!!db.settings.startAsk}"><span class="t"><b>Start-Fenster vor dem Training</b><span>Aus: „Training starten“ unter „Als Nächstes“ legt sofort los. Übungen auslassen und Timer wählst du dann über „Optionen“ oder im Training.</span></span><span class="r">${db.settings.startAsk ? 'An' : 'Aus'}</span></button>`
+    + (gymVisible() ? `<button class="row" data-act="gymsSheet"><span class="t"><b>Gyms und Standort <i class="tag sv-beta">Beta</i></b><span>${esc(gymLine())}</span></span><span class="chev">${ICON.chev}</span></button>` : '') + `</div></section>`;
 
   const legacy = db.runPlan && db.runPlan.legacy;
   h += `<section class="sec"><h3 class="sec-h">Bereiche</h3><div class="group"><button class="row" data-act="toggleRun"><span class="t"><b>Laufplan anzeigen</b><span>${legacy ? 'Halbmarathon-Plan im Tab „Laufen“' : 'Persönlicher Trainingsplan im Tab „Laufen“'}</span></span><span class="r">${ulR ? (db.settings.showRun ? 'An' : 'Aus') : locked}</span></button><button class="row" data-act="toggleFood"><span class="t"><b>Ernährung</b><span>Mahlzeiten, Rezepte, Gerichte, Kalorien und Makros</span></span><span class="r">${db.settings.showFood ? 'An' : 'Aus'}</span></button><button class="row" data-act="toggleTri"><span class="t"><b>Triathlon</b><span>Plan für Schwimmen, Rad und Laufen</span></span><span class="r">${db.settings.unlockTri ? (db.settings.showTri ? 'An' : 'Aus') : locked}</span></button></div>`
@@ -6013,12 +6031,14 @@ function restOpts(r, act) {
       + `<label class="lbl">Anzeige</label><div class="seg">${[[true, 'Vollbild'], [false, 'Nur Leiste']].map(([v, n]) => `<button class="${(r.full !== false) === v ? 'on' : ''}" data-act="${act}" data-k="full" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${r.full !== false ? 'Nach jedem Satz füllt der Timer den Bildschirm, nach unten wischen macht ihn klein.' : 'Der Timer bleibt klein unten, die Sätze bleiben sichtbar. Ein Tipp darauf macht ihn groß.'}</p>`
       + `<label class="lbl">Wann startet die Pause?</label><div class="seg rt-mode">${REST_MODES.map(([v, n]) => `<button class="${r.mode === v ? 'on' : ''}" data-act="${act}" data-k="mode" data-v="${v}">${n}</button>`).join('')}</div><p class="hint">${REST_MODES.find(m => m[0] === r.mode)[2]}</p>` : '<p class="hint">Ohne Timer. Du kannst ihn während des Trainings oben über die Uhr einschalten.</p>');
 }
-function openStartSheet(tid) {
+function openStartSheet(tid, gym, fresh) {
   const t = db.templates.find(x => x.id === tid);
-  if (!st || st.tid !== (tid || null)) st = {tid: tid || null, skip: [], rest: Object.assign({}, db.settings.rest)};
+  if (!st || fresh || st.tid !== (tid || null)) st = {tid: tid || null, gym: gym || null, skip: t && gym ? t.exIds.filter(id => (gym.noEx || []).includes(id)) : [], rest: Object.assign({}, db.settings.rest)};
+  const gx = st.gym ? st.gym.noEx || [] : [];
   let h = `<div class="sheet-h"><button class="btn-text" data-act="closeSheet">Abbrechen</button><h2>${esc(t ? t.name : 'Freies Training')}</h2><button class="btn-text strong" data-act="startGo">Starten</button></div>`;
+  if (st.gym) h += `<p class="hint gym-at">📍 ${esc(st.gym.name)}</p>`;
   if (lightActive()) h += `<div class="notice k-hold"><b>${deloadActive() ? 'Entlastungswoche' : 'Comeback-Woche'}</b><p>Die Vorschläge sind ${deloadActive() ? 10 : pctL(cbF())} % leichter und mit einem Satz weniger.</p></div>`;
-  if (t && t.exIds.length) h += `<label class="lbl">Übungen heute</label><div class="group">${t.exIds.filter(id => db.exercises[id]).map(id => { const on = !st.skip.includes(id); return `<button class="row adm-area${on ? ' on' : ''}" data-act="stToggle" data-id="${esc(id)}" aria-pressed="${on}"><span class="cb">${ICON.check}</span><span class="t"><b>${esc(db.exercises[id].name)}</b></span>${on ? '' : '<span class="r">auslassen</span>'}</button>`; }).join('')}</div><p class="hint">Hak Übungen ab, die du dieses Mal auslassen willst.</p>`;
+  if (t && t.exIds.length) h += `<label class="lbl">Übungen heute</label><div class="group">${t.exIds.filter(id => db.exercises[id]).map(id => { const on = !st.skip.includes(id); return `<button class="row adm-area${on ? ' on' : ''}" data-act="stToggle" data-id="${esc(id)}" aria-pressed="${on}"><span class="cb">${ICON.check}</span><span class="t"><b>${esc(db.exercises[id].name)}</b></span>${on ? '' : `<span class="r">${gx.includes(id) ? 'nicht hier' : 'auslassen'}</span>`}</button>`; }).join('')}</div><p class="hint">Hak Übungen ab, die du dieses Mal auslassen willst.${gx.length ? ` Was es in „${esc(st.gym.name)}“ nicht gibt, ist schon abgewählt.` : ''}</p>`;
   const estSets = t ? t.exIds.filter(id => db.exercises[id] && !st.skip.includes(id)).map(id => Math.max(1, (db.exercises[id].sets || 3) - (lightActive() ? 1 : 0))) : [];
   h += `<label class="lbl">Pausen-Timer</label>${restOpts(st.rest, 'stRest')}`
     + estRow(estMinutes(estSets, st.rest, t && t.id), `${estSets.reduce((x, y) => x + y, 0)} Sätze, ${st.rest.on ? `${fmtSec(st.rest.sec)} Pause` : 'ohne Timer ~1:30 Pause'}`)
@@ -8146,8 +8166,17 @@ const A = {
       if (v === 'resume') { go('workout'); return; }
       if (v !== 'new') return;
     }
-    if (quick && !db.settings.startAsk) { startWorkout(t || null, Object.assign({}, db.settings.rest)); return; }
-    openStartSheet(t || null);
+    const rs = await gymResolve();   // Gym per GPS erkennen (nur wenn Gyms angelegt sind), fragt nur bei Abweichung vom Standard-Gym
+    if (rs.cancel) return;
+    const gym = rs.gym;
+    if (gym && t && (gym.noTpl || []).includes(t)) {   // Vorlage ist für dieses Gym nicht vorgesehen: andere anbieten
+      const tp = db.templates.find(x => x.id === t), alts = db.templates.filter(x => !gym.noTpl.includes(x.id)).slice(0, 4);
+      const v = await askChoice({title: `„${tp ? tp.name : 'Diese Vorlage'}“ ist für „${gym.name}“ nicht vorgesehen`, text: 'Nimm eine andere Vorlage oder trainiere sie trotzdem.', choices: [...alts.map(x => ({label: x.name, value: x.id, style: 'primary'})), {label: `Trotzdem ${tp ? tp.name : 'diese Vorlage'}`, value: t}, {label: 'Freies Training', value: ''}]});
+      if (v === null) return;
+      t = v;
+    }
+    if (quick && !db.settings.startAsk) { startWorkout(t || null, Object.assign({}, db.settings.rest), [], gym); return; }
+    openStartSheet(t || null, gym, true);
   },
   startAskToggle: () => { db.settings.startAsk = !db.settings.startAsk; saveDB(); render(); },
 
@@ -8224,7 +8253,7 @@ const A = {
     const a = db.active;
     if (!a || !fin) return;   // Doppeltippen auf „Training speichern“
     const note = String($('#finNote')?.value ?? fin.note ?? '').trim().slice(0, 1000);
-    db.sessions.push({id: a.id, date: a.startedAt, end: Date.now(), templateId: a.templateId, title: a.title, entries: fin.entries, ...(a.deload ? {deload: true} : {}), ...(fin.rpe ? {rpe: fin.rpe} : {}), ...(note ? {note, noteAI: fin.noteAI} : {})});
+    db.sessions.push({id: a.id, date: a.startedAt, end: Date.now(), templateId: a.templateId, title: a.title, entries: fin.entries, ...(a.deload ? {deload: true} : {}), ...(a.gymId ? {gymId: a.gymId, gym: a.gym} : {}), ...(fin.rpe ? {rpe: fin.rpe} : {}), ...(note ? {note, noteAI: fin.noteAI} : {})});
     db.sessions.sort((x, y) => x.date - y.date);
     if (fin.tpl && fin.addToTpl && fin.newIds.length) fin.tpl.exIds.push(...fin.newIds);
     db.active = null; fin = null; saveDB();
@@ -8727,7 +8756,7 @@ Object.assign(A, {
   stToggle: ({id}) => { const i = st.skip.indexOf(id); if (i >= 0) st.skip.splice(i, 1); else st.skip.push(id); openStartSheet(st.tid); },
   stRest: ({k, v}) => { st.rest[k] = k === 'on' || k === 'full' ? v === 'true' : k === 'sec' ? +v : v; openStartSheet(st.tid); },
   stRestStep: ({d}) => { st.rest.sec = clamp(st.rest.sec + +d * 15, 15, 600); openStartSheet(st.tid); },
-  startGo: () => { const x = st; if (!x) return; db.settings.rest = Object.assign({}, x.rest); st = null; closeSheet(); startWorkout(x.tid, Object.assign({}, x.rest), x.skip); },
+  startGo: () => { const x = st; if (!x) return; db.settings.rest = Object.assign({}, x.rest); st = null; closeSheet(); startWorkout(x.tid, Object.assign({}, x.rest), x.skip, x.gym, false); },
   wkRest: ({k, v}) => { const r = db.active.rest; r[k] = k === 'on' || k === 'full' ? v === 'true' : k === 'sec' ? +v : v; if (!r.on) db.active.restEnd = null; db.settings.rest = Object.assign({}, r); saveDB(); render(); openRestSheet(); },
   wkRestStep: ({d}) => { const r = db.active.rest; r.sec = clamp(r.sec + +d * 15, 15, 600); db.settings.rest = Object.assign({}, r); saveDB(); render(); openRestSheet(); },
   restSheet: () => openRestSheet(),
@@ -9156,6 +9185,8 @@ document.addEventListener('keydown', ev => {
   if (ev.key === 'Enter' && ev.target.id === 'pwIn') { ev.preventDefault(); A.doUnlock(); }
   if (ev.key === 'Enter' && ev.target.id === 'nameIn') { ev.preventDefault(); nameSave(); }   // Return auf der Tastatur speichert den Namen (das Feld sagt „Fertig“)
   if (ev.key === 'Enter' && ev.target.id === 'recQ') ev.target.blur();
+  if (ev.key === 'Enter' && ev.target.id === 'geQ') { ev.preventDefault(); A.geSearch(); }
+  if (ev.key === 'Enter' && ev.target.id === 'gymNameIn') { ev.preventDefault(); A.gymNameOk(); }
   if (ev.key === 'Enter' && ev.target.id === 'admPw') { ev.preventDefault(); A.adminDoLogin(); }
   if (ev.key === 'Enter' && ev.target.id === 'devName') ev.target.blur();
   if (ev.key === 'Enter' && ev.target.id === 'coachKey') { ev.preventDefault(); A.coachKey(); }
@@ -9922,6 +9953,208 @@ Object.assign(A, {
   xaKcal: () => { const k = xaEstKcal(); if (k) { xf.kcal = String(k); const el = $('#xaKcal'); if (el) el.value = xf.kcal; xaEstHTML(); } },
   xaSave: () => xaSave(),
   xaDel: async () => { const ok = await askChoice({title: 'Aktivität löschen?', choices: [{label: 'Löschen', value: true, style: 'danger'}, {label: 'Abbrechen', value: false}]}); if (!ok || !xf) return; db.xact = db.xact.filter(r => r.id !== xf.id); xf = null; saveDB(); closeSheet(); render(); toast('Aktivität gelöscht'); },
+});
+
+/* ---------- Gyms und automatische Erkennung (seit 27.11.2026) ----------
+   settings.gyms = [{id, name, lat, lon, r (Umkreis in m), addr, noEx [Übungs-IDs, die es dort nicht gibt], noTpl [Vorlagen-IDs, die dort nicht vorgesehen sind]}],
+   settings.gymDefault (Standard-Gym: dort keine Nachfrage), settings.gymAuto (GPS beim Start an/aus), settings.gymIgnore [{id, lat, lon}] (Orte ohne Nachfrage).
+   Beim Trainingsstart (A.start → gymResolve) wird der Standort einmal abgefragt, aber nur wenn es mindestens ein Gym gibt: Standard-Gym = keine Frage,
+   anderes bekanntes Gym = „Stimmt das?“, unbekannter Ort = „Als neues Gym speichern?“. Ohne Erlaubnis oder Signal gilt still das Standard-Gym.
+   Koordinaten liegen im Datenobjekt (verschlüsselter Sync, Backup), gehen aber nie in Feed, Freigaben, Study App oder an Claude. Die Adresssuche
+   (nur auf Tipp) geht an nominatim.openstreetmap.org, nur mit dem eingegebenen Text. Alles als function-Deklarationen, weil Ansichten sie beim ersten Zeichnen brauchen. */
+function gymById(id) { return id ? (db.settings.gyms || []).find(g => g.id === id) || null : null; }
+function gymDef() { return gymById(db.settings.gymDefault); }
+function gymRound(x) { return Math.round(x * 1e4) / 1e4; }   // ~11 m
+function gymDist(a, b) {
+  const R = 6371000, rad = x => x * Math.PI / 180, dLa = rad(b.lat - a.lat), dLo = rad(b.lon - a.lon);
+  const h = Math.sin(dLa / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLo / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function gymNear(p) {   // nächstes Gym, dessen Umkreis die Position einschließt
+  let best = null, bd = Infinity;
+  (db.settings.gyms || []).forEach(g => { const d = gymDist(g, p); if (d <= g.r && d < bd) { best = g; bd = d; } });
+  return best;
+}
+function gymPos(timeout, fresh) {
+  return new Promise((res, rej) => {
+    if (!navigator.geolocation) return rej({code: 0});
+    navigator.geolocation.getCurrentPosition(p => res({lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 0}), e => rej(e || {code: 2}), {timeout: timeout || 4500, maximumAge: fresh ? 0 : 120000, enableHighAccuracy: !!fresh});
+  });
+}
+function gymVisible() { return stravaVisible(); }   // Beta: Admin-Token oder vom Admin freigeschaltet (wie Strava, Claude, Live-Lauf)
+function gymLine() {
+  const S = db.settings, G = S.gyms || [], d = gymDef();
+  return G.length ? `${G.length} ${G.length === 1 ? 'Gym' : 'Gyms'}${d ? ', Standard: ' + d.name : ''}${S.gymAuto ? '' : ' · Erkennung aus'}` : 'Gym per GPS erkennen, eigene Übungen pro Gym';
+}
+function gymEquip(g) {
+  const all = Object.keys(db.exercises).length, no = (g.noEx || []).filter(id => db.exercises[id]).length;
+  return no ? `${all - no} von ${all} Übungen` : 'alle Übungen';
+}
+let gymConf = null, gymWarned = false;   // zuletzt bestätigtes Gym {id|null, at, p}: 6 Stunden lang keine zweite Frage am selben Ort
+const gymMemo = (id, p) => gymConf && gymConf.id === id && Date.now() - gymConf.at < 6 * 3600e3 && (!p || !gymConf.p || gymDist(gymConf.p, p) < 300);
+/* Ergebnis {gym} (Gym oder null = ohne Gym) oder {cancel: true} */
+async function gymResolve() {
+  const S = db.settings, def = gymDef();
+  if (!gymVisible()) return {gym: null};
+  if (!(S.gyms || []).length || !S.gymAuto) return {gym: def};
+  let p = null;
+  const tt = setTimeout(() => toast('Standort wird bestimmt …'), 700);
+  try { p = await gymPos(); } catch (e) { if (!gymWarned) { gymWarned = true; setTimeout(() => toast(e && e.code === 1 ? 'Standort blockiert, ich nehme dein Standard-Gym' : 'Kein Standort, ich nehme dein Standard-Gym'), 300); } }
+  clearTimeout(tt);
+  if (!p || p.acc > 300) return {gym: def};
+  const hit = gymNear(p);
+  if (hit && def && hit.id === def.id) return {gym: def};   // Standard-Gym: keine Nachfrage
+  if (hit) {
+    if (gymMemo(hit.id)) return {gym: hit};
+    const v = await askChoice({title: `Du bist jetzt bei „${hit.name}“`, text: 'Erkannt anhand von GPS. Stimmt das?', choices: [{label: `Ja, ${hit.name}`, value: 'yes', style: 'primary'}, {label: 'Nein, anderes Gym', value: 'no'}]});
+    if (v === 'yes') { gymConf = {id: hit.id, at: Date.now(), p}; return {gym: hit}; }
+    return v === 'no' ? gymChoose(p) : {cancel: true};
+  }
+  if ((S.gymIgnore || []).some(x => gymDist(x, p) <= 200) || gymMemo(null, p)) return {gym: null};
+  const v = await askChoice({title: 'Neuer Ort erkannt', text: 'Du bist bei keinem deiner Gyms (erkannt anhand von GPS). Als neues Gym speichern?', choices: [{label: 'Als neues Gym speichern', value: 'new', style: 'primary'}, {label: 'Dieses Mal ohne Gym', value: 'once'}, {label: 'Hier nicht mehr fragen', value: 'ignore'}]});
+  if (v === 'new') {
+    const name = await askGymName();
+    if (name === null) return {cancel: true};
+    const g = {id: uid(), name, lat: gymRound(p.lat), lon: gymRound(p.lon), r: 150, addr: '', noEx: [], noTpl: []};
+    S.gyms.push(g); if (!S.gymDefault) S.gymDefault = g.id;
+    saveDB(); gymConf = {id: g.id, at: Date.now(), p};
+    setTimeout(() => toast(`„${name}“ gespeichert`), 300);
+    return {gym: g};
+  }
+  if (v === 'once') { gymConf = {id: null, at: Date.now(), p}; return {gym: null}; }
+  if (v === 'ignore') { S.gymIgnore.push({id: uid(), lat: gymRound(p.lat), lon: gymRound(p.lon)}); saveDB(); return {gym: null}; }
+  return {cancel: true};
+}
+async function gymChoose(p) {   // „Nein, anderes Gym“: aus der Liste wählen
+  const v = await askChoice({title: 'Welches Gym?', text: '', choices: [...(db.settings.gyms || []).map(g => ({label: g.name, value: g.id})), {label: 'Kein bestimmtes Gym', value: '-'}]});
+  if (v === null) return {cancel: true};
+  const g = gymById(v);
+  gymConf = {id: g ? g.id : null, at: Date.now(), p: p || null};
+  return {gym: g};
+}
+function askGymName() {
+  return new Promise(res => {
+    if (choiceResolve) { const r = choiceResolve; choiceResolve = null; r(null); }
+    choiceList = [];
+    openSheet(`<div class="ask"><h2>Wie heißt das Gym?</h2><p>Der Standort wird gespeichert, damit die App dich hier wiedererkennt.</p><input id="gymNameIn" class="field" type="text" placeholder="z. B. Fitnessstudio Mitte" maxlength="30" autocomplete="off" aria-label="Name des Gyms"><div class="ask-btns"><button class="btn-primary" data-act="gymNameOk">Speichern</button><button class="btn-text muted" data-act="choice" data-i="-1">Abbrechen</button></div></div>`);
+    choiceResolve = res;
+  });
+}
+
+/* Verwaltung: Liste und Editor */
+let ge = null;
+function gymsSheet(keep) {
+  const S = db.settings, G = S.gyms || [];
+  let h = `<div class="sheet-h"><span></span><h2>Gyms</h2><button class="btn-text strong" data-act="closeSheet">Fertig</button></div>`;
+  h += G.length
+    ? `<div class="group">${G.map(g => `<button class="row" data-act="gymEdit" data-id="${esc(g.id)}"><span class="ic-box">📍</span><span class="t"><b>${esc(g.name)}${g.id === S.gymDefault ? ' <i class="tag">Standard</i>' : ''}</b><span>${esc(g.addr || 'Standort gespeichert')} · ${esc(gymEquip(g))}</span></span><span class="chev">${ICON.chev}</span></button>`).join('')}</div>`
+    : `<p class="hint">Lege dein Gym mit Standort an. Beim Trainingsstart erkennt die App per GPS, wo du bist, und lässt Übungen aus, die es dort nicht gibt. Bist du in deinem Standard-Gym, fragt sie nie nach.</p>`;
+  h += `<div class="group mt"><button class="row" data-act="gymEdit" data-id=""><span class="plus-ic">${ICON.plus}</span><span class="t"><b class="lime-t">Gym hinzufügen</b></span></button></div>`;
+  if (G.length) h += `<div class="group mt"><button class="row wrap" data-act="gymAutoToggle" role="switch" aria-checked="${!!S.gymAuto}"><span class="t"><b>Beim Start automatisch erkennen</b><span>Der Standort wird nur einmal beim Tippen auf „Training starten“ abgefragt.</span></span><span class="switch${S.gymAuto ? ' on' : ''}"></span></button></div>`;
+  if (G.length && (S.gymIgnore || []).length) h += `<div class="group mt"><button class="row wrap" data-act="gymIgnoreClear"><span class="t"><b>Ignorierte Orte zurücksetzen</b><span>${S.gymIgnore.length} ${S.gymIgnore.length === 1 ? 'Ort' : 'Orte'}, bei denen nicht mehr nach einem neuen Gym gefragt wird</span></span></button></div>`;
+  h += `<p class="hint">Der Standort deiner Gyms wird mit deinen Geräten verschlüsselt abgeglichen und steht im Backup. Er geht nie an Freunde, den Feed oder andere Dienste. Die GPS-Abfrage bleibt auf dem Gerät. Die Adresssuche geht nur auf Tipp an openstreetmap.org, nur mit dem Text, den du eingibst. Auf dem iPhone funktioniert die Erkennung nur, solange Overload geöffnet ist und der Standort erlaubt ist.</p>`;
+  openSheet(h, keep, true);
+}
+function gymEdit(id) {
+  const g = gymById(id), S = db.settings;
+  ge = g ? {id: g.id, name: g.name, lat: g.lat, lon: g.lon, r: g.r, addr: g.addr || '', noEx: [...g.noEx], noTpl: [...g.noTpl], def: g.id === S.gymDefault}
+    : {id: null, name: '', lat: null, lon: null, r: 150, addr: '', noEx: [], noTpl: [], def: !(S.gyms || []).length};
+  Object.assign(ge, {q: '', res: [], busy: '', err: ''});
+  renderGymEdit();
+}
+function renderGymEdit(keep) {
+  const e = ge, has = e.lat != null, exs = Object.values(db.exercises).sort(byName);
+  let h = `<div class="sheet-h"><button class="btn-text" data-act="gymsBack">Abbrechen</button><h2>${e.id ? 'Gym' : 'Neues Gym'}</h2><button class="btn-text strong" data-act="saveGym">Speichern</button></div>`
+    + `<label class="lbl" for="geName">Name</label><input id="geName" class="field" type="text" data-in="geName" value="${esc(e.name)}" maxlength="30" placeholder="z. B. Fitnessstudio Mitte" autocomplete="off">`
+    + `<label class="lbl">Standort</label><div class="group"><div class="row wrap"><span class="t"><b>${has ? '📍 ' + esc(e.addr || 'Standort gespeichert') : 'Noch kein Standort'}</b><span>${has ? `${e.lat.toFixed(4)}, ${e.lon.toFixed(4)}` : 'Speichere deinen aktuellen Standort oder suche eine Adresse.'}</span></span>`
+    + (has ? `<a class="btn-chip" href="https://maps.apple.com/?ll=${e.lat.toFixed(4)},${e.lon.toFixed(4)}&q=Gym" target="_blank" rel="noopener noreferrer">Karte</a>` : '') + `</div></div>`
+    + `<button class="btn-secondary mt" data-act="geHere" ${e.busy ? 'disabled' : ''}><span>${e.busy === 'gps' ? 'Standort wird bestimmt …' : 'Aktuellen Standort speichern'}</span></button>`
+    + `<div class="ge-q"><input id="geQ" class="field" type="search" data-in="geQ" value="${esc(e.q)}" placeholder="Oder Adresse suchen" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Adresse suchen"><button class="btn-chip" data-act="geSearch" ${e.busy ? 'disabled' : ''}>${e.busy === 'search' ? 'Sucht …' : 'Suchen'}</button></div>`
+    + (e.err ? `<p class="warn">${esc(e.err)}</p>` : '')
+    + (e.res.length ? `<div class="group">${e.res.map((r, i) => `<button class="row" data-act="geAddr" data-i="${i}"><span class="t"><b>${esc(r.name)}</b></span></button>`).join('')}</div>` : '')
+    + `<label class="lbl">Erkennung im Umkreis von</label><div class="seg">${[100, 150, 300].map(v => `<button class="${e.r === v ? 'on' : ''}" data-act="geR" data-v="${v}">${v} m</button>`).join('')}</div>`
+    + `<div class="group mt"><button class="row wrap" data-act="geDef" role="switch" aria-checked="${e.def}"><span class="t"><b>Standard-Gym</b><span>Hier fragt die App nie nach, auch ohne Standort.</span></span><span class="switch${e.def ? ' on' : ''}"></span></button></div>`
+    + `<label class="lbl">Übungen und Geräte hier</label>`;
+  h += exs.length
+    ? `<div class="group">${exs.map(x => { const on = !e.noEx.includes(x.id); return `<button class="row adm-area${on ? ' on' : ''}" data-act="geEx" data-id="${esc(x.id)}" aria-pressed="${on}"><span class="cb">${ICON.check}</span><span class="t"><b>${esc(x.name)}</b></span>${on ? '' : '<span class="r">nicht hier</span>'}</button>`; }).join('')}</div><p class="hint">Was abgewählt ist, wird beim Start in diesem Gym automatisch ausgelassen (mit „Doch machen“ im Training).</p>`
+    : `<p class="hint">Noch keine Übungen angelegt.</p>`;
+  if (db.templates.length) h += `<label class="lbl">Vorlagen hier</label><div class="group">${db.templates.map(t => { const on = !e.noTpl.includes(t.id); return `<button class="row adm-area${on ? ' on' : ''}" data-act="geTpl" data-id="${esc(t.id)}" aria-pressed="${on}"><span class="cb">${ICON.check}</span><span class="t"><b>${esc(t.name)}</b></span>${on ? '' : '<span class="r">nicht hier</span>'}</button>`; }).join('')}</div><p class="hint">Startest du eine abgewählte Vorlage in diesem Gym, schlägt dir die App eine andere vor.</p>`;
+  if (e.id) h += `<button class="btn-text danger wide mt" data-act="gymDel">Gym löschen</button>`;
+  openSheet(h, keep, true);
+}
+const geLive = () => !!$('#sheet.show #geName');   // asynchrone Antworten nur anzeigen, solange das Blatt noch offen ist
+function geGpsError(x) { return x && x.code === 1 ? 'Der Standort ist für Overload blockiert. Erlaube ihn in den iPhone-Einstellungen unter „Datenschutz“ → „Ortungsdienste“ → Safari-Webseiten, oder suche eine Adresse.' : 'Der Standort konnte nicht bestimmt werden. Geh ans Fenster oder suche eine Adresse.'; }
+Object.assign(INPUTS, {
+  geName: (d, el) => { if (ge) ge.name = el.value; },
+  geQ: (d, el) => { if (ge) ge.q = el.value; },
+});
+Object.assign(A, {
+  gymsSheet: () => gymsSheet(),
+  gymsBack: () => { ge = null; gymsSheet(); },
+  gymEdit: ({id}) => gymEdit(id),
+  gymAutoToggle: () => { db.settings.gymAuto = !db.settings.gymAuto; saveDB(); gymsSheet(true); if (view === 'more') render(); },
+  gymIgnoreClear: () => { db.settings.gymIgnore = []; saveDB(); gymsSheet(true); toast('Zurückgesetzt'); },
+  gymNameOk: () => {
+    if (!choiceResolve) return;
+    const v = ($('#gymNameIn')?.value || '').trim().slice(0, 30);
+    if (!v) { toast('Gib dem Gym einen Namen'); return; }
+    const r = choiceResolve; choiceResolve = null; closeSheet(); r(v);
+  },
+  geHere: async () => {
+    if (ge.busy) return;
+    ge.busy = 'gps'; ge.err = ''; renderGymEdit(true);
+    try { const p = await gymPos(15000, true); if (!ge) return; ge.lat = gymRound(p.lat); ge.lon = gymRound(p.lon); ge.addr = ''; ge.res = []; if (p.acc > 100) ge.err = `Der Standort ist nur auf etwa ${Math.round(p.acc)} m genau. Für ein genaues Ergebnis stell dich ans Fenster oder erhöhe den Umkreis.`; }
+    catch (x) { if (ge) ge.err = geGpsError(x); }
+    if (ge) { ge.busy = ''; if (geLive()) renderGymEdit(true); }
+  },
+  geSearch: async () => {
+    if (!ge || ge.busy) return;
+    const q = ge.q.trim();
+    if (q.length < 3) { ge.err = 'Gib eine Adresse oder einen Ortsnamen ein.'; renderGymEdit(true); return; }
+    ge.busy = 'search'; ge.err = ''; renderGymEdit(true);   // nur auf Tipp, nie beim Tippen (Nutzungsregeln von Nominatim)
+    try {
+      const j = await wxGet(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=de&q=${encodeURIComponent(q)}`);
+      if (!ge) return;
+      ge.res = (Array.isArray(j) ? j : []).map(r => ({name: String(r.display_name || '').slice(0, 120), lat: +r.lat, lon: +r.lon})).filter(r => Number.isFinite(r.lat) && Number.isFinite(r.lon) && r.name);
+      ge.err = ge.res.length ? '' : 'Nichts gefunden. Probier es mit Straße, Hausnummer und Ort.';
+    } catch (x) { if (ge) { ge.res = []; ge.err = navigator.onLine ? 'Die Adresssuche ist gerade nicht erreichbar.' : 'Zum Suchen brauchst du Internet.'; } }
+    if (ge) { ge.busy = ''; if (geLive()) renderGymEdit(true); }
+  },
+  geAddr: ({i}) => {
+    const r = ge.res[+i]; if (!r) return;
+    ge.lat = gymRound(r.lat); ge.lon = gymRound(r.lon); ge.addr = r.name.slice(0, 80); ge.res = []; ge.err = '';
+    if (!ge.name.trim()) ge.name = r.name.split(',')[0].trim().slice(0, 30);
+    renderGymEdit(true);
+  },
+  geR: ({v}) => { ge.r = +v; renderGymEdit(true); },
+  geDef: () => { ge.def = !ge.def; renderGymEdit(true); },
+  geEx: ({id}) => { ge.noEx = ge.noEx.includes(id) ? ge.noEx.filter(x => x !== id) : [...ge.noEx, id]; renderGymEdit(true); },
+  geTpl: ({id}) => { ge.noTpl = ge.noTpl.includes(id) ? ge.noTpl.filter(x => x !== id) : [...ge.noTpl, id]; renderGymEdit(true); },
+  saveGym: () => {
+    const e = ge; if (!e) return;
+    const name = e.name.trim().slice(0, 30), S = db.settings;
+    if (!name) { toast('Gib dem Gym einen Namen'); $('#geName')?.focus(); return; }
+    if (e.lat == null) { toast('Speichere den Standort oder such eine Adresse'); return; }
+    let g = e.id ? gymById(e.id) : null;
+    const data = {name, lat: e.lat, lon: e.lon, r: e.r, addr: e.addr, noEx: e.noEx, noTpl: e.noTpl};
+    if (g) Object.assign(g, data); else { g = Object.assign({id: uid()}, data); S.gyms.push(g); }
+    if (e.def) S.gymDefault = g.id; else if (S.gymDefault === g.id) S.gymDefault = null;
+    ge = null; saveDB(); gymsSheet(); if (view === 'more' || view === 'home') render(); toast('Gym gespeichert');
+  },
+  gymDel: async () => {
+    const id = ge.id, g = gymById(id); if (!g) return;
+    const v = await askChoice({title: `„${g.name}“ löschen?`, text: 'Bisherige Trainings behalten den Namen im Verlauf.', choices: [{label: 'Gym löschen', value: 1, style: 'danger'}]});
+    if (v) { const S = db.settings; S.gyms = S.gyms.filter(x => x.id !== id); if (S.gymDefault === id) S.gymDefault = null; ge = null; saveDB(); gymsSheet(); if (view === 'more' || view === 'home') render(); toast('Gym gelöscht'); }
+    else gymEdit(id);
+  },
+  wkGym: async () => {
+    const a = db.active; if (!a) return;
+    const v = await askChoice({title: 'Welches Gym?', text: 'Das ändert nur den Eintrag zu diesem Training.', choices: [...(db.settings.gyms || []).map(g => ({label: g.name, value: g.id, style: g.id === a.gymId ? 'primary' : ''})), {label: 'Kein bestimmtes Gym', value: '-'}]});
+    if (v === null) return;
+    const g = gymById(v);
+    if (g) { a.gymId = g.id; a.gym = g.name; } else { delete a.gymId; delete a.gym; }
+    saveDB(); render();
+  },
 });
 
 /* ---------- Wetter (Open-Meteo, seit 07.10.2026) ----------
